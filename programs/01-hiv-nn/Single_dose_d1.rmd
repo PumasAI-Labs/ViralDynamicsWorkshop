@@ -1,5 +1,5 @@
 ---
-title: "Simulation_120/4days"
+title: "Simulation_500 mg"
 output: html_document
 date: today
 ---
@@ -7,7 +7,7 @@ date: today
 ```{r setup, include=FALSE}
 library(tidyverse)
 
-simData <- data.table::fread("pkpd_hiv_sim_short.csv")
+simData <- data.table::fread("single_dose.csv")
 
 
 sim_full <-  simData%>% 
@@ -16,14 +16,12 @@ sim_full <-  simData%>%
 
 
 obsTime <- c(
-  0.0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28,
-  0.5, 0.6, 1.0, 2.0, 3.0, 7.0, 14.0
+  0, 0.02, 0.08, 0.2, 0.3, 0.5, 1.0, 2.0, 3.0, 7.0, 14.0, 21, 28, 35, 42
 )
 
 
 viralData <-  c(
-  0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28,
-  0.5, 0.6)
+  0.02, 0.08, 0.2, 0.3, 0.5)
 
 ```
 
@@ -32,7 +30,8 @@ viralData <-  c(
 ```{r}
 
 upDated <-  simData %>% 
-  select(id,time,Concentration,Virus,DV,evid,amt,cmt,rate,route,tad,dosenum,iKa=Ka,iCL=CL,iVc=Vc,iQ=Q,iVp=Vp,idur=duration_Depot,iRR0=RR0,iDELTA=DELTA,iLAMBDA=LAMBDA,iIC50=IC50,iDU=DU,iDL=DL,iAL=AL,iPOVC=POVC,iDLL=DLL,iPLLC=PLLC,iQLL=QLL,iQA=QA,iQL=QL,Dose) %>% 
+  
+  select(id,time,Concentration,Virus,DV,evid,amt,cmt,rate,route,tad,dosenum, Dose) %>% 
   
   mutate(Concentration = ifelse(Concentration <= 0, NA, Concentration)) %>% 
   
@@ -42,7 +41,7 @@ upDated <-  simData %>%
   mutate(FLG = ifelse(is.na(FLG), 1, FLG))
 
 
-write.csv(file="hiv_datax.csv", upDated, row.names = F,
+write.csv(file="hiv_d1.csv", upDated, row.names = F,
 na = "")
 
 ```
@@ -58,7 +57,8 @@ df_pre <-  sim_full %>%
                                         "40 mg per day",
                                         "80 mg per day",
                                         "120 mg every day",
-                                        "850 mg every week")))
+                                        "850 mg every week",
+                                        "900 mg single dose")))
 ```
 
 
@@ -92,7 +92,7 @@ ggplot(sum_stat, aes(x=time,y=Median_C, group =amt, fill = Dose)) +
   # Set axis and theme
   theme_bw()+
   theme(legend.position="none")+
-  scale_y_log10()+
+  # scale_y_log10()+
   labs(y = "Concentration (ng/mL)",
        x = "Time (Days)", 
        fill = "Dose (mg)",
@@ -125,7 +125,8 @@ df_pre <-  sim_full %>%
                                         "40 mg per day",
                                         "80 mg per day",
                                         "120 mg every day",
-                                        "850 mg every week")))
+                                        "850 mg every week",
+                                        "900 mg single dose")))
 
 bsl <- df_pre %>% 
   filter(time==0) %>% 

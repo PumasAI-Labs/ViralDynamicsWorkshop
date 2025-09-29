@@ -124,7 +124,8 @@ fit_pkpd = fit(
     nn_hiv,
     _tpop,
     init_params(nn_hiv),
-    JointMAP(),  # Use JointMAP for mixed effects and neural network
+    # JointMAP(),  # Use JointMAP for mixed effects and neural network
+    MAP(FOCE());
     optim_options = (; iterations=100),
 )
 

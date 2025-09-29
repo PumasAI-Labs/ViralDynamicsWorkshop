@@ -32,7 +32,7 @@ viralData <-  c(
 ```{r}
 
 upDated <-  simData %>% 
-  select(id,time,Concentration,Virus,DV,evid,amt,cmt,rate,route,tad,dosenum,iKa=Ka,iCL=CL,iVc=Vc,iQ=Q,iVp=Vp,idur=duration_Depot,iRR0=RR0,iDELTA=DELTA,iLAMBDA=LAMBDA,iIC50=IC50,iDU=DU,iDL=DL,iAL=AL,iPOVC=POVC,iDLL=DLL,iPLLC=PLLC,iQLL=QLL,iQA=QA,iQL=QL,Dose) %>% 
+  select(id,time,Concentration,Virus,DV,evid,amt,cmt,rate,route,Dose) %>% 
   
   mutate(Concentration = ifelse(Concentration <= 0, NA, Concentration)) %>% 
   
@@ -42,7 +42,7 @@ upDated <-  simData %>%
   mutate(FLG = ifelse(is.na(FLG), 1, FLG))
 
 
-write.csv(file="hiv_datax.csv", upDated, row.names = F,
+write.csv(file="hiv_data.csv", upDated, row.names = F,
 na = "")
 
 ```

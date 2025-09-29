@@ -48,7 +48,7 @@ _pop = read_pumas(
 
 # Split into training and validation populations
 _tpop = _pop[1:20]   # Training set: first 20 subjects
-_vpop = _pop[41:end] # Validation set: subjects 41 onward
+_vpop = _pop[21:end] # Validation set: subjects 41 onward
 
 # Visualize the first 8 training subjects
 plotgrid(_tpop[1:8]; data = (; color=:blue))
@@ -187,7 +187,7 @@ model_pred = predict(fit_pkpd, _vpop; obstimes=0:1:42)
 
 # Plot predictions for validation subjects 11 to 30
 plotgrid(
-    model_pred[11:30],
+    model_pred[1:20],
     observation = :DV,
     pred = (; label = "model pred", linestyle=:dash),
     ipred = (; label = "model ipred"),

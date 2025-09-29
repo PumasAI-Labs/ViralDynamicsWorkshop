@@ -1,96 +1,160 @@
-using Pumas, Random, DataFrames, CSV, Distributions, DataFramesMeta
 
 cd(@__DIR__)
 
-hivPKmodel=@model begin
-    @metadata begin
-        desc = "HIV PK"
-        timeu = u"d" # day
-    end
- @param begin
-    tvka ∈ RealDomain(lower=0.0001)
-    tvcl ∈ RealDomain(lower=0.0001)
-    tvvc ∈ RealDomain(lower=0.001)
-    tvq ∈ RealDomain(lower=0.0001)
-    tvvp ∈ RealDomain(lower=0.0001) 
-    tvd ∈ RealDomain(lower=0.0001)
-    
-    Ω ∈ PDiagDomain(5)
-    
-    σ_proppk ∈ RealDomain(lower=0)
-    σ_addpk ∈ RealDomain(lower=0)
-    end
+## Libraries
+
+using Dates
+using CairoMakie
+using DataFramesMeta
+using PharmaDatasets
+using CSV
+using Pumas
+using Random
+using Statistics
+using CategoricalArrays
+using Chain
+using AlgebraOfGraphics
+using DeepPumas
+using Serialization
+using Flux: softmax
+
+hivPKPD_model = @model begin
+  @metadata begin
+    desc   = "HIV PKPD model"
+    timeu  = u"d"   # time in days
+  end
+
+  @param begin
+    # --- PK parameters ---
+    tvka     ∈ RealDomain(lower=0.0001, init= 0.8)   # Absorption rate constant (1/hr, scaled later to 1/day)
+    tvcl     ∈ RealDomain(lower=0.0001, init= 0.6)   # Clearance (L/hr, scaled later to L/day)
+    tvvc     ∈ RealDomain(lower=0.001, init= 47.3)    # Central volume (L)
+
+    # --- PD parameters ---
+    tvpro    ∈ RealDomain(lower=1, init= 6.8)        # Basic reproductive ratio
+    tvdelta  ∈ RealDomain(lower=0, init= 0.6)        # Death rate of actively infected cells
+    tvlambda ∈ RealDomain(lower=0, init= 0.4)        # Production rate of uninfected cells
+    tvic50   ∈ RealDomain(lower=0, init= 100.0)        # IC50 for drug effect
+
+    # Random effects covariance
+    Ω        ∈ PDiagDomain(7)
+
+    # Residual variability
+    σ_add    ∈ RealDomain(lower=0, init= 0.3)        # Additive error (virus)
+    σ_proppk ∈ RealDomain(lower=0, init= 0.1)        # Proportional error (PK)
+    σ_addpk  ∈ RealDomain(lower=0, init= 1.3)         # Additive error (PK)
+  end
+
   @random begin
     η ~ MvNormal(Ω)
- end
- #@covariates N
- @pre begin
-    Ka = tvka * 24 * exp(η[1]) #KA_0*24  1/day
-    CL =  tvcl * 24 * exp(η[2]) #CL_0*24  L/day
-    Vc = tvvc * exp(η[3]) #V2_0
-    Q  = tvq * 24 * exp(η[4]) #Q_0*24   L/day 
-    Vp = tvvp #V3_0  
-    
   end
-    
-    @dosecontrol begin
-        duration = (;
-        Depot = (tvd/24) * exp(η[5])
-        )
-        #sequential zero and first order abs codes
-        end
+
+  @pre begin
+    # --- PK parameters with IIV ---
+    Ka = tvka * 24 * exp(η[5])       # absorption rate (1/day)
+    CL = tvcl * 24 * exp(η[6])       # clearance (L/day)
+    Vc = tvvc * exp(η[7])            # central volume (L)
+
+    # --- PD parameters with IIV ---
+    RR0     = tvpro    * exp(η[1])   # basic reproductive ratio
+    DELTA   = tvdelta  * exp(η[2])   # death rate of active infected cells
+    LAMBDA  = tvlambda * exp(η[3])   # source rate of uninfected cells
+    IC50    = tvic50   * exp(η[4])   # IC50
+
+    # --- Fixed biological constants ---
+    DU   = 0.006     # uninfected cell death rate (1/d)
+    DL   = 0.04      # latently infected cell death rate (1/d)
+    AL   = 0.036     # conversion rate from latent to active (1/d)
+    PROD = 1240      # virus production rate (virions/cell/day)
+    POVC = 35.4      # production-to-clearance ratio
+    DLL  = 0.01      # long-lived infected cell death rate (1/d)
+    PLLC = 0.374     # production-to-clearance ratio for long-lived cells
+    QLL  = 0.001     # fraction long-lived infected
+    QA   = 0.97      # fraction actively infected
+    QL   = 0.029     # fraction latently infected
+  end
 
   @init begin
+    # Initial conditions for cell populations
+    UNINFECTED = LAMBDA / (DU * RR0)
+    ACTIVEIC   = (QA + QL*AL/(DL+AL)) * LAMBDA/DELTA * (1 - 1/RR0)
+    LATENT     = QL * LAMBDA/(DL+AL) * (1 - 1/RR0)
+    LLIC       = QLL * LAMBDA/DLL    * (1 - 1/RR0)
+
+    # PK/PD tracking
     AUC = 0
-    end
+  end
 
   @vars begin
-    Conc = (Central/(Vc/1000))      # conc. in ng/mL drives viral inhibition
-    end
+    # Effective infection rate constant
+    LFAC = QA + QL*AL/(AL+DL)
+    BETA = RR0*DU / LAMBDA / (POVC*LFAC/DELTA + PLLC*QLL/DLL)
 
-    @dynamics begin
-    Depot'= -Ka*Depot
-    Central'= Ka*Depot + (Q/Vp)*Periph - (Q/Vc)*Central - CL/Vc*Central
-    Periph'= -(Q/Vp)*Periph + (Q/Vc)*Central
-    
-    AUC' = (Central/(Vc/1000))
+    # PK concentration (ng/mL)
+    Conc = Central / (Vc/1000)
+
+    # Drug effect (Emax model with IC50)
+    INH = Conc / (Conc + IC50)
+
+    # Viral load (virions/mL)
+    V = abs(POVC*ACTIVEIC + PLLC*LLIC)
   end
-  
-  @derived begin
 
-    Concentration ~ @. (Normal(Conc, sqrt(σ_addpk ^ 2 + (abs(Conc) * σ_proppk) ^ 2)))
+  @dynamics begin
+    # --- PK ---
+    Depot'   = -Ka*Depot
+    Central' =  Ka*Depot - (CL/Vc)*Central
+
+    # --- PD (cell populations) ---
+    UNINFECTED' = LAMBDA - BETA*V*(1-INH)*UNINFECTED - DU*UNINFECTED
+    ACTIVEIC'   = QA*BETA*V*(1-INH)*UNINFECTED - DELTA*ACTIVEIC + AL*LATENT
+    LATENT'     = QL*BETA*V*(1-INH)*UNINFECTED - (DL+AL)*LATENT
+    LLIC'       = QLL*BETA*V*(1-INH)*UNINFECTED - DLL*LLIC
+
+    # PK exposure metric
+    AUC' = Conc
+  end
+
+  @derived begin
+    # PK observations
+    Concentration ~ @. Normal(Conc, sqrt(σ_addpk^2 + (abs(Conc)*σ_proppk)^2))
+
+    # Viral load observations (log10 scale)
+    Virus = @. log10(2*V) + 3
+    iDV ~ @. Normal(Virus, σ_add)
   end
 end
- 
-PKparams = (
-    tvka= 0.408, 
-    tvcl= 1.63,
-    tvvc= 74.3,
-    tvq = 0.989,
-    tvvp= 4.24,
-    tvd= 2.83,
-    
-    Ω = Diagonal([
-        0.2798, 0.128, 0.1722, 0.25, 0.1544
-        ]),
-    σ_proppk = 0.190,
-    σ_addpk = 17.3)
 
-pkData = CSV.read(@__DIR__() *"/hiv_datax.csv" , DataFrame; missingstring = "", stringtype = String)
 
-_popPK = read_pumas(
-    # @rsubset DataFrame(pkData) :time < 3;
-    pkData;
+
+# ---------------------------
+# 1. Load and Prepare Data
+# ---------------------------
+
+# Read the simulated population data
+pdData = CSV.read(joinpath(@__DIR__, "hiv_d1.csv"), DataFrame; missingstring = "", stringtype = String)
+
+# Create a Pumas Population object from the DataFrame
+_pop = read_pumas(
+    pdData;
     id = :id,
     time = :time,
-    observations = [:Concentration], #
+    observations = [:iDV, :Concentration],
     evid = :evid,
     amt = :amt,
-    cmt = :cmt    
+    cmt = :cmt,
 )
 
+# Split into training and validation populations
+_tpop = _pop[1:10]   # Training set: first 40 subjects
+_vpop = _pop[11:end] # Validation set: remaining subjects
 
-pk_fit = fit(hivPKmodel, _popPK, PKparams, FOCE();)
+# Visualize the first 8 training subjects
+plotgrid(_tpop[1:8]; data = (; color=:blue))
+
+
+
+pk_fit = fit(hivPKPD_model, _tpop, init_params(hivPKPD_model), FOCE();)
 
 
 
