@@ -227,7 +227,7 @@ $$
 ::: {.center}
 **Next up:** Hands-on NLME modeling with Pumas
 
-- Real viral dynamics data
+- Synthetic viral dynamics data mimicking HIV
 - Model building and fitting  
 - Understanding the foundations before we add neural networks
 :::
