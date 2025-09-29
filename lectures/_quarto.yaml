@@ -5,6 +5,23 @@ author:
   - Niklas Korsbo
 affiliation: Pumas-AI
 date: today
+
+website:
+  title: "DeepPumas for Viral Dynamics Workshop"
+  navbar:
+    left:
+      - text: "Slides"
+        menu:
+          - text: "01 - Introduction" 
+            href: 01-introduction.html
+          - text: "02 - DeepNLME Part 1"
+            href: 02-deepnlme-part1.html
+          - text: "03 - Complex Covariates" 
+            href: 03-complex-covariates.html
+          - text: "04 - Epidemiology Demo"
+            href: 04-epidemiology-demo.html
+          - text: "05 - Generative AI"
+            href: 05-generative-ai.html
     
 engines: ['julia']
 
@@ -15,11 +32,13 @@ execute:
   eval: false
   freeze: true
   echo: false
+  warning: false
 julia:
   exeflags:
     - '--project=@.'
     - '-t 8'
-logo: https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg
+# logo: https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg
+logo: assets/DeepPumas+Primaryv.svg
 format:
   revealjs:
     width: 1200
@@ -31,7 +50,7 @@ format:
     # allow content to shrink to 30% (but never grow beyond 100%)
     min-scale: 0.3
     max-scale: 1.0
-    # (optional) disable vertical centering if you’d rather top-align
+    # (optional) disable vertical centering if you'd rather top-align
     html-math-method: mathjax
     transition: none
     center: true
@@ -39,13 +58,15 @@ format:
     progress: true
     slide-number: true
     smaller: false
+    footer: "DeepPumas Workshop 2025"
+    chalkboard: true
     theme: 
-      - company.scss 
-      - deeppumas.scss 
+      - default
+      - CSS/deeppumas.scss 
     navigation-mode: vertical
     css: 
-      - style.css
-      - deeppumas-style.css
+      - CSS/style.css
+      - CSS/deeppumas-style.css
     mermaid:
       # theme: dark
       flowchart:

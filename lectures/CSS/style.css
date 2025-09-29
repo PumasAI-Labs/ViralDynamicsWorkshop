@@ -1,0 +1,52 @@
+.caption{
+  text-align: center;
+}
+
+.MathJax {
+  font-size: 100% !important;
+}
+
+.reveal .slide-logo {
+  max-height: 4rem !important;
+}
+
+.img-border {
+  border: 2px solid black;
+  padding: 4px;
+  display: inline-block;
+}
+/* Custom pre-specified classes to be explicitly used in the quarto document by [my content]{.small-text} or as a {.small-text} specification of a slide header, for example. */
+.small-text {
+    font-size: 20px; /* Adjust as needed */
+}
+.smallish-text {
+    font-size: 30px; /* Adjust as needed */
+}
+
+.vcenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+}
+
+
+
+/* 
+Invert the black and white 'channel' in an image. Useful when switching between dark and light mode. Works with svg images. 
+example:
+![description](image.svg){.filter-bw-invert}
+*/
+.filter-bw-invert {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+.reveal .cell-output {
+  font-size: 0.7em;
+  transform: scale(0.8);
+  transform-origin: top left;
+}
+
+.reveal section div.center-h {
+	text-align: center;
+}
