@@ -8,21 +8,17 @@ format:
     code-fold: true
     code-summary: "Click to show/hide code"
     theme: 
-      light: cosmo
-      dark: darkly
+      light: [cosmo, CSS/style-light.css]
+      dark: [darkly, CSS/style-dark.css]
     number-sections: true
     css: 
       - CSS/company.scss
       - CSS/deeppumas.scss
-      - CSS/style.css
       - CSS/deeppumas-style.css
     resources:
       - "fonts/AmplitudeBook.otf"
 ---
 
-::: {.text-center}
-![DeepPumas Logo](assets/DeepPumas+Primaryv.svg){.logo-image width=300}
-:::
 
 ## Workshop Materials
 
@@ -90,8 +86,6 @@ By the end of this workshop, participants will be able to:
 ## Prerequisites
 
 - Familiarity with NLME modeling concepts
-- Basic understanding of Julia and Pumas
-- Interest in machine learning applications to clinical data
 
 ## Resources
 

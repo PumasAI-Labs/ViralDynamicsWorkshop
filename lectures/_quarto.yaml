@@ -40,7 +40,7 @@ julia:
     - '--project=@.'
     - '-t 8'
 # logo: https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg
-logo: assets/DeepPumas+Primaryv.svg
+logo: https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg
 format:
   revealjs:
     width: 1200
