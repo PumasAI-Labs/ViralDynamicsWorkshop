@@ -1,5 +1,7 @@
 project:
-    output-dir: _output
+    render:
+      - "*.qmd"
+      - "!assets/"
 
 author:
   - Niklas Korsbo
@@ -78,11 +80,3 @@ format:
     fig-align: center
     resources:
       - "fonts/AmplitudeBook.otf"
-  html:
-      toc: true
-      toc-location: left
-      code-fold: true
-      code-summary: "Click to show/hide code"
-      theme: cosmo
-      number-sections: true
-      # css: styles.css

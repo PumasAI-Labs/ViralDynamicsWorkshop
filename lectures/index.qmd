@@ -1,8 +1,28 @@
 ---
 title: "DeepPumas for Viral Dynamics Workshop"
 subtitle: "Combining Mechanism and Machine Learning"
-format: html
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: true
+    code-summary: "Click to show/hide code"
+    theme: 
+      light: cosmo
+      dark: darkly
+    number-sections: true
+    css: 
+      - CSS/company.scss
+      - CSS/deeppumas.scss
+      - CSS/style.css
+      - CSS/deeppumas-style.css
+    resources:
+      - "fonts/AmplitudeBook.otf"
 ---
+
+::: {.text-center}
+![DeepPumas Logo](assets/DeepPumas+Primaryv.svg){.logo-image width=300}
+:::
 
 ## Workshop Materials
 
