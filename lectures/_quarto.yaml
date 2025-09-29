@@ -1,0 +1,67 @@
+project:
+    output-dir: _output
+
+author:
+  - Niklas Korsbo
+affiliation: Pumas-AI
+date: today
+    
+engines: ['julia']
+
+execute:
+  error: false
+  daemon: 1800
+  cache: true
+  eval: false
+  freeze: true
+  echo: false
+julia:
+  exeflags:
+    - '--project=@.'
+    - '-t 8'
+logo: https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg
+format:
+  revealjs:
+    width: 1200
+    height: 800
+    auto-stretch: true
+    # leave a bit of breathing room around the edges
+    margin: 0.15
+
+    # allow content to shrink to 30% (but never grow beyond 100%)
+    min-scale: 0.3
+    max-scale: 1.0
+    # (optional) disable vertical centering if you’d rather top-align
+    html-math-method: mathjax
+    transition: none
+    center: true
+    scrollable: false
+    progress: true
+    slide-number: true
+    smaller: false
+    theme: 
+      - company.scss 
+      - deeppumas.scss 
+    navigation-mode: vertical
+    css: 
+      - style.css
+      - deeppumas-style.css
+    mermaid:
+      # theme: dark
+      flowchart:
+        htmlLabels: true
+      # format: png
+    mermaidConfig:
+      flowchart:
+        htmlLabels: true
+    fig-align: center
+    resources:
+      - "fonts/AmplitudeBook.otf"
+  html:
+      toc: true
+      toc-location: left
+      code-fold: true
+      code-summary: "Click to show/hide code"
+      theme: cosmo
+      number-sections: true
+      # css: styles.css

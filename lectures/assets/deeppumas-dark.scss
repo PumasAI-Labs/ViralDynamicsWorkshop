@@ -1,0 +1,51 @@
+/*-- scss:defaults --*/
+
+// colors
+// From the DeepPumas brand book (2024)
+// Primary color
+$primary: #630fc4;
+
+// Secondary colors
+$dark_purple: #250044;
+$light_purple: #AE7FD6;
+
+$darker_grey: #6C6874;
+$medium_grey: #9B97A5;
+$white: #FFFFFF;
+$light_grey: #EEEDF0;
+$light_purple_grey: #EBECF7;
+$light_pink_grey: #F1EAF9;
+$light_beige: #E3E3E3;
+
+
+// Colors not in brand book
+
+$body_grey: #3b3541;
+
+// Colors proposed by Aditi
+$medium_purple: #6b00c7;
+$lighter_purple: #8155ba;
+
+$gold: #fea303;
+$orange: #C36001;
+$orange-brown: #ab6b51;
+$beige: #f9eac2;
+
+$bright-green: #2c6d0d;
+$green: #0e3506;
+$black: #000000;
+
+// $body-bg: #2f2c31 !default;
+// $body-bg: #302e31 !default;
+$body-bg: #353336 !default;
+
+// $body-bg: $white !default;
+// $body-bg: $white !default;
+// $body-color: $light_purple_grey !default;
+$body-color: $light_pink_grey !default;
+$text-muted: $body-color !default;
+$link-color: $light_purple !default;
+$selection-bg: $primary !default;
+$input-panel-bg: $primary !default;
+$presentation-heading-color: $light_purple !default;
+// $presentation-heading-color: $light_purple_grey !default;
