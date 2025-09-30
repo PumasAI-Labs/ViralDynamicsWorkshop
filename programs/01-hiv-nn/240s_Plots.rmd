@@ -36,13 +36,15 @@ upDated <-  simData %>%
   
   mutate(Concentration = ifelse(Concentration <= 0, NA, Concentration)) %>% 
   
-  mutate(iDV = ifelse(time %in% viralData, NA, DV)) %>% 
+  mutate(Virus = ifelse(time %in% viralData, NA, DV)) %>%
   
-  mutate(FLG = ifelse(iDV > 0 | amt>0, 2, 1)) %>% 
-  mutate(FLG = ifelse(is.na(FLG), 1, FLG))
+  select(id,time,Concentration,Virus,evid,amt,cmt,Dose)
+  
+  # mutate(FLG = ifelse(iDV > 0 | amt>0, 2, 1)) %>% 
+  # mutate(FLG = ifelse(is.na(FLG), 1, FLG))
 
 
-write.csv(file="hiv_data.csv", upDated, row.names = F,
+write.csv(file="hiv-pkpd-data.csv", upDated, row.names = F,
 na = "")
 
 ```
