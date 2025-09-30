@@ -1,0 +1,98 @@
+---
+title: "DeepPumas for Viral Dynamics Workshop"
+subtitle: "Combining Mechanism and Machine Learning"
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: true
+    code-summary: "Click to show/hide code"
+    theme: 
+      light: [cosmo, CSS/style-light.css]
+      dark: [darkly, CSS/style-dark.css]
+    number-sections: true
+    css: 
+      - CSS/company.scss
+      - CSS/deeppumas.scss
+      - CSS/deeppumas-style.css
+    resources:
+      - "fonts/AmplitudeBook.otf"
+---
+
+
+## Workshop Materials
+
+This workshop explores how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics applications.
+
+## Schedule and Materials
+
+| Time | Session | Materials |
+|------|---------|-----------|
+| 10:00 - 10:15 | **Introduction** | [Slides](01-introduction.html) |
+| 10:15 - 11:30 | NLME modeling in Pumas (hands-on) | *Hands-on notebook* |
+| 11:30 - 12:00 | **DeepNLME - Part 1** | [Slides](02-deepnlme-part1.html) |
+| | *Neural networks, SciML, UDEs and NeuralODEs* | |
+| 12:00 - 12:30 | DeepNLME - Part 1 (hands-on) | *Hands-on notebook* |
+| 12:30 - 13:30 | 🍽️ **Lunch Break** | |
+| 13:30 - 15:30 | **DeepNLME with Complex Covariates** | [Slides](03-complex-covariates.html) |
+| | *Embeddings, text data, advanced applications* | *Hands-on notebook* |
+| 15:30 - 15:45 | ☕ **Coffee Break** | |
+| 15:45 - 16:15 | **Epidemiology Demo** | [Slides](04-epidemiology-demo.html) |
+| 16:15 - 17:00 | **Generative AI & Discussions** | [Slides](05-generative-ai.html) |
+
+## Key Concepts Covered
+
+### Introduction
+- Comparison of machine learning vs scientific modeling approaches
+- The vision for combining both paradigms
+- Workshop overview and objectives
+
+### DeepNLME - Part 1  
+- Neural networks as universal approximators
+- Scientific Machine Learning (SciML) and Universal Differential Equations (UDEs)
+- Neural ODEs vs structured neural enhancement
+- Extending UDEs for longitudinal data with NLME
+
+### Complex Covariates
+- Patient embeddings and Empirical Bayes Estimates (EBEs)
+- Text embeddings using pre-trained models
+- Dimensionality reduction and subspace analysis
+- Neural networks for predicting patient parameters
+- Augmented NLME models
+
+### Epidemiology Demo
+- Age-stratified seroprevalence modeling
+- Data-driven discovery of force of infection patterns
+- Information sharing across populations
+- Handling heterogeneous data quality
+
+### Generative AI Connections
+- Mathematical connections between NLME and Generative AI
+- Latent variables, embeddings, and their clinical interpretations
+- Future directions and applications
+- Discussion of regulatory and practical considerations
+
+## Learning Objectives
+
+By the end of this workshop, participants will be able to:
+
+1. **Understand** the theoretical foundations connecting mechanistic modeling and machine learning
+2. **Implement** DeepNLME models for viral dynamics and other applications  
+3. **Work with** complex covariates including text data and embeddings
+4. **Apply** information sharing techniques across populations
+5. **Recognize** connections between NLME and modern generative AI
+6. **Evaluate** when and how to use DeepNLME approaches in practice
+
+## Prerequisites
+
+- Familiarity with NLME modeling concepts
+
+## Resources
+
+- [DeepPumas Documentation](https://docs.pumas.ai/dev/DeepPumas/overview/)
+- [Pumas Documentation](https://docs.pumas.ai/)
+- [Workshop GitHub Repository](https://github.com/PumasAI-Labs/ViralDynamicsWorkshop)
+
+---
+
+*Workshop developed by Niklas Korsbo, Pumas-AI*

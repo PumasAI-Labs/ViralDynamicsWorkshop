@@ -1,0 +1,519 @@
+---
+title: "DeepNLME - Part 1"  
+subtitle: "Neural Networks, SciML, and Universal Differential Equations"
+---
+
+
+```{julia}
+#| warning: false
+#| output: false
+#| echo: false
+
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
+using DeepPumas
+using StableRNGs
+using PumasPlots
+using CairoMakie
+using Serialization
+using Latexify
+using Markdown
+using Flux
+using Colors
+
+assets = @__DIR__() * "/assets/"
+
+DeepPumas.set_mlp_backend(:staticflux)
+dark = false
+if dark
+  set_theme!(deep_dark(); backgroundcolor=:transparent, fontsize=45)
+  fgcolor = (:white, 0.6)
+else
+  set_theme!(deep_light();backgroundcolor=:transparent, fontsize=45, Axis=(; 
+    backgroundcolor=:transparent,
+  ))
+  fgcolor = (:black, 0.7)
+end
+
+figure = (; resolution=(1200, 700), fontsize=25)
+Latexify.set_default(starred=true, convert_unicode=false)
+```
+
+# NLME Modeling
+
+## Traditional NLME {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**[Nonlinear Mixed Effects]{style="font-size: 170%"}**
+
+::: {.absolute top=500, right=100, width="600"}
+![](assets/multi_traj.png)
+:::
+
+:::
+
+::: {.column width="50%"}
+
+Typical values
+$$
+tvKa, \; tvCL, \; tvVc, \; Ω, \; σ
+$$
+
+Covariates
+$$
+Age, \; Weight
+$$
+
+Random effects
+$$
+η \sim MvNormal(Ω)
+$$
+
+Individual parameters
+\begin{align*}
+Ka_i &= tvKa \cdot e^{η_{i,1}} \\
+CL_i &= tvCL \cdot e^{η_{i,2}} \\
+Vc_i &= tvVc \cdot e^{η_{i,3}}
+\end{align*}
+
+Dynamics
+$$
+\begin{align*}
+\frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \frac{CL}{Vc} \cdot Central(t)
+\end{align*}
+$$
+
+Error model
+$$
+dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+$$
+
+:::
+::::
+
+## What if components are unknown? {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**[Nonlinear Mixed Effects]{style="font-size: 170%"}**
+
+::: {.absolute top=500, right=100, width="600"}
+![](assets/multi_traj.png)
+:::
+
+:::
+
+::: {.column width="50%"}
+
+Typical values
+$$
+tvKa, \; tvCL, \; tvVc, \; Ω, \; σ
+$$
+
+Covariates
+$$
+Age, \; Weight, \; \color{red}{???}
+$$
+
+Random effects
+$$
+η \sim MvNormal(Ω)
+$$
+
+Individual parameters
+\begin{align*}
+Ka_i &= tvKa \cdot e^{η_{i,1}} \\
+CL_i &= tvCL \cdot e^{η_{i,2}} \cdot \color{red}{NN(...)} \\
+Vc_i &= tvVc \cdot e^{η_{i,3}}
+\end{align*}
+
+Dynamics
+$$
+\begin{align*}
+\frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \color{red}{NN(...)}
+\end{align*}
+$$
+
+Error model
+$$
+dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+$$
+
+:::
+::::
+
+```{julia}
+#| output: false
+ninput = 1
+nhidden = 6
+act=tanh
+
+opt = Flux.Adam()
+X = permutedims(collect(range(0, stop=1, length=301)))
+Ys = [X .^ 2 .+ X, 2 .* X ./ (0.3 .+ X), sin.(2π .* X) .+ 1, exp2.(X)]
+
+nnf = Flux.Chain(Dense(1,nhidden, act), Dense(nhidden, nhidden, act), Dense(nhidden, 1))
+Ŷ = Observable(vec(Ys[end]))
+Y = Observable(vec(Ys[1]))
+
+fig, ax = lines(
+  vec(X),
+  Y; 
+  linewidth=6,
+  axis=(ylabel="Output", xlabel="x"),
+  label="f(x)",
+  figure=(
+    ; size=(400,400),
+    fontsize=25,
+    backgroundcolor="white"
+  )
+)
+lines!(vec(X), Ŷ, label="NN(x)", linewidth=6)
+Legend(fig[0,:], ax, orientation=:horizontal, framevisible=false)
+Ys = [X .^ 2 .+ X, 2 .* X ./ (0.3 .+ X), sin.(2π .* X) .+ 1, exp2.(X)]
+nframes = 400
+opt_state = Flux.setup(opt, nnf)
+record(fig, assets * "nn_demo_test.mp4", 1:nframes; framerate=30) do frame
+  _Y = Ys[min(round(Int, frame ÷ (nframes/length(Ys))) + 1, end)]
+  Y[] = vec(_Y)
+  Ŷ[] = vec(nnf(X))
+  
+  steps_per_y = nframes / length(Ys)
+  
+  for j in 1:round(Int, 50 / steps_per_y * (frame%steps_per_y))
+    grads = gradient(m -> Flux.mse(m(X), _Y), nnf)
+    Flux.Optimise.update!(opt_state, nnf, grads[1])
+  end
+end 
+```
+
+
+## Neural networks {.smaller}
+
+:::: {.columns}
+::: {.column width="50%"}
+
+[Information processing mechanism]{.att}
+
+- Loosely based on neurons
+
+<!-- ![&nbsp;](image-4.png){fig-align="center"} -->
+![&nbsp;](assets/nn_small_back_transparent.png){fig-align="center"}
+
+- Mathematically just a function!
+- Usable anywhere you'd use a function!
+
+:::
+::: {.column width="50%"}
+
+[Universal approximators!]{.att}
+
+![](assets/nn_demo_test.mp4){loop="true" autoplay="true" muted="true"}
+
+- Approximate *any* function
+- Functional form tuned by parameters
+
+:::
+::::
+
+## Neural networks in NLME dynamics {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**[Focus: Neural Networks in Dynamics]{style="font-size: 150%"}**
+
+::: {.absolute top=500, right=100, width="600"}
+![](assets/multi_traj.png)
+:::
+:::
+
+::: {.column width="50%"}
+
+Typical values
+$$
+tvKa, \; tvCL, \; tvVc, \; Ω, \; σ
+$$
+
+Covariates
+$$
+Age, \; Weight
+$$
+
+Random effects
+$$
+η \sim MvNormal(Ω)
+$$
+
+Individual parameters
+\begin{align*}
+Ka_i &= tvKa \cdot e^{η_{i,1}} \\
+CL_i &= tvCL \cdot e^{η_{i,2}} \\
+Vc_i &= tvVc \cdot e^{η_{i,3}}
+\end{align*}
+
+Dynamics **← This lecture focuses here**
+$$
+\begin{align*}
+\frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \color{red}{NN(...)}
+\end{align*}
+$$
+
+Error model
+$$
+DV(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+$$
+
+:::
+::::
+
+# Scientific Machine Learning
+
+## Neural-embedded dynamical systems
+
+2018 - "Neural Ordinary Differential Equations", Chen et al.
+
+::: {.fragment fragment-index=1}
+2020 - "Universal Differential Equations for Scientific Machine Learning", Rackauckas et al.
+:::
+
+:::: {.columns}
+::: {.column width="33%"}
+
+[Neural ODE]{.att}
+
+$$
+\frac{d\mathbf{X}}{dt} = NN(\mathbf{X}(t), t)
+$$
+
+::: {style="font-size: 80%"}
+- ODE solver as scaffold for neural networks
+- Similar to recurrent neural networks and ResNets
+- Pure machine learning approach
+:::
+:::
+
+::: {.column width="33%"}
+
+::: {.fragment fragment-index=1}
+[Universal Differential Equations (UDE)]{.att}
+
+\begin{align*}
+\frac{dx}{dt} &= x \cdot y - NN(x)\\
+\frac{dy}{dt} &= p - x \cdot y
+\end{align*}
+
+::: {style="font-size: 80%"}
+- Insert universal approximators (NNs) to capture unknown terms
+- **Combine scientific knowledge with machine learning**
+- More data-efficient than pure ML approaches
+:::
+:::
+
+:::
+
+::: {.column width="33%"}
+
+::: {.fragment fragment-index=2}
+[Scientific Machine Learning (SciML)]{.att}
+
+::: {style="font-size: 80%"}
+- **Abstract idea**: mixing science and machine learning
+- Umbrella term for hybrid approaches
+- Includes UDEs, Physics-Informed NNs, etc.
+- Goal: leverage domain knowledge to improve ML
+:::
+:::
+
+:::
+::::
+
+## Encoding Knowledge {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+[**Pure Neural ODE**]{.att}
+$$
+\begin{aligned}
+\frac{dDepot}{dt} &= NN(Depot, Central, R)[1]\\
+\frac{dCentral}{dt} &= NN(Depot, Central, R)[2]\\
+\frac{dR}{dt} &= NN(Depot, Central, R)[3]
+\end{aligned}
+$$
+
+- Number of states
+
+::: {.fragment}
+
+[**Structured Neural ODE**]{.att}
+$$
+\begin{aligned}
+\frac{dDepot}{dt} &= - NN_1(Depot)\\
+\frac{dCentral}{dt} &= NN_1(Depot) - NN_2(Central)\\
+\frac{dR}{dt} &= NN_3(Central, R)
+\end{aligned}
+$$
+
+- Number of states
+- Dependencies  
+- Conservation principles
+
+:::
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment}
+
+[**Hybrid Model**]{.att}
+$$
+\begin{aligned}
+\frac{dDepot}{dt} &= - K_a \cdot Depot\\
+\frac{dCentral}{dt} &= K_a \cdot Depot - CL/V_c \cdot Central\\
+\frac{dR}{dt} &= NN_3\left(\frac{Central}{V_c}, R\right)
+\end{aligned}
+$$
+
+- Explicit knowledge of some terms
+- Neural networks only where needed
+
+:::
+  
+::: {.fragment}
+[**Targeted Neural Enhancement**]{.att}
+$$
+\begin{aligned}
+\frac{dDepot}{dt} &= - K_a \cdot Depot\\
+\frac{dCentral}{dt} &= K_a \cdot Depot - CL/V_c \cdot Central\\
+\frac{dR}{dt} &= k_{in} \cdot \left(1 + NN\left(\frac{Central}{V_c}\right)\right) - k_{out} \cdot R
+\end{aligned}
+$$
+
+- **Most knowledge encoded!**
+- Neural network captures unknown drug effect
+- Precise positioning and inputs
+
+:::
+:::
+
+::::
+
+# DeepNLME for Longitudinal Data
+
+## Extending for longitudinal data with DeepNLME {.smaller}
+
+\begin{equation}
+η \sim \mathcal{N}\left(Ω\right)
+\end{equation}
+\begin{align*}
+Ka &= tvKa \cdot e^{η_{2}} \\
+V_c &= tvV_c \cdot e^{η_{3}} \\
+Kout &= tvKout \cdot e^{η_{4}}
+\end{align*}
+
+[
+\begin{align*}
+\frac{\mathrm{d} Depot(t)}{\mathrm{d}t} &=  - Ka \cdot Depot(t) \\
+\frac{\mathrm{d} Central(t)}{\mathrm{d}t} &= \frac{ - CL \cdot Central(t)}{V_c} + Ka \cdot Depot(t) \\
+\frac{\mathrm{d} R(t)}{\mathrm{d}t} &= Kin \cdot \left( 1 + NN\left(\frac{Central}{V_c} \right) \right) - Kout \cdot R(t)
+\end{align*}
+]{.att}
+
+\begin{align*}
+yPK &\sim \mathrm{Normal}\left( \frac{Central}{V_c}, σ_{pk} \right) \\
+yPD &\sim \mathrm{Normal}\left( R, σ_{pd} \right)
+\end{align*}
+
+**Neural network captures unknown drug effect mechanism**
+
+## Individual-level neural networks {.smaller}
+
+\begin{equation}
+η \sim \mathcal{N}\left(Ω\right)
+\end{equation}
+\begin{align*}
+Ka &= tvKa \cdot e^{η_{2}} \\
+V_c &= tvV_c \cdot e^{η_{3}} \\
+Kout &= tvKout \cdot e^{η_{4}}
+\end{align*}
+
+\begin{align*}
+\frac{\mathrm{d} Depot(t)}{\mathrm{d}t} &=  - Ka \cdot Depot(t) \\
+\frac{\mathrm{d} Central(t)}{\mathrm{d}t} &= \frac{ - CL \cdot Central(t)}{V_c} + Ka \cdot Depot(t) \\
+\frac{\mathrm{d} R(t)}{\mathrm{d}t} &= Kin \cdot \left( 1 + NN\left(\frac{Central}{V_c}, {\color{orange} η₁} \right) \right) - Kout \cdot R(t)
+\end{align*}
+
+\begin{align*}
+yPK &\sim \mathrm{Normal}\left( \frac{Central}{V_c}, σ_{pk} \right) \\
+yPD &\sim \mathrm{Normal}\left( R, σ_{pd} \right)
+\end{align*}
+
+**Random effects allow individual-level neural network behavior!**
+
+## A concrete example {.smaller}
+
+```{julia}
+#| echo: true
+#| eval: false
+deepnlme_model = @model begin
+    @param begin
+        tvKa ∈ RealDomain(; lower=0.)
+        tvVc ∈ RealDomain(; lower=0.)
+        tvKout ∈ RealDomain(; lower=0.)
+        Kin ∈ RealDomain(; lower=0.)
+        CL ∈ RealDomain(; lower=0.)
+        Ω ∈ PDiagDomain(5)
+        σ_pk ∈ RealDomain(; lower=0.)
+        σ_pd ∈ RealDomain(; lower=0.)
+        NN ∈ MLPDomain(3, 4, 4, (1, identity); reg = L2(1e-2, bias=false))
+    end
+    @random η ~ MvNormal(Ω)
+    @pre begin
+        Ka = tvKa * exp(η[1])
+        Vc = tvVc * exp(η[2])
+        Kout = tvKout * exp(η[3])
+    end
+    @init R = Kin / Kout
+    @dynamics begin
+        Depot' = -Ka * Depot
+        Central' = Ka * Depot - (CL / Vc) * Central
+        R' = Kin * (1 + NN(Central / Vc, η[4], η[5])[1]) - Kout * R
+    end
+    @derived begin
+        yPK ~ @. Normal(Central ./ Vc, σ_pk)
+        yPD ~ @. Normal(R, σ_pd)
+    end
+end
+```
+
+## Key Benefits
+
+- **Scientific structure preserved**: PK follows well-understood compartmental model
+- **Flexibility where needed**: Neural network captures unknown PD mechanism  
+- **Individual-level adaptation**: Random effects allow personalized neural network behavior
+- **Data efficiency**: Much less data needed than pure ML approaches
+- **Interpretability**: Can understand which parts are mechanism vs data-driven
+
+## Next Steps
+
+::: {.center}
+**Coming up:** Hands-on implementation
+
+- Build your first DeepNLME model
+- See how neural networks integrate with NLME
+- Practice with synthetic viral dynamics data
+- Understand the power of combining mechanism with ML
+:::

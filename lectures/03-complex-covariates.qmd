@@ -1,0 +1,588 @@
+---
+title: "DeepNLME with Complex Covariates"
+subtitle: "Embeddings, Text Data, and Advanced Applications"
+---
+
+
+```{julia}
+#| warning: false
+#| output: false
+#| echo: false
+
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
+using DeepPumas
+using StableRNGs
+using PumasPlots
+using CairoMakie
+using AlgebraOfGraphics
+using CSV
+using DataFrames
+using DataFramesMeta
+using Flux
+using MultivariateStats
+using PrettyTables
+using Transformers
+using Transformers.HuggingFace
+using Transformers.TextEncoders
+
+assets = @__DIR__() * "/assets/"
+const AoG = AlgebraOfGraphics
+
+DeepPumas.set_mlp_backend(:staticflux)
+set_theme!(deep_light(); backgroundcolor=:white)
+
+figure = (; resolution=(1200, 700), fontsize=25)
+
+
+"""
+    unroll(nt::NamedTuple) -> NamedTuple
+
+Transforms a NamedTuple by unrolling its array fields into individual key–value pairs. For each array field, each element is assigned a new key formed by appending a subscript (derived via `Pumas._to_subscript`) to the original field name. Non-array fields are kept unchanged.
+
+# Examples
+```julia
+nt = (a = [10, 20], b = 5)
+# unroll(nt) returns a NamedTuple with keys like :a₁, :a₂, and :b, for example:
+# (:a₁ => 10, :a₂ => 20, :b => 5)
+"""
+function unroll(nt::NamedTuple)
+  mapreduce(_unroll, merge, pairs(nt))
+end
+
+unroll(f::Function; kwargs...) = x->unroll(f, x; kwargs...)
+
+_unroll(p::Pair) = _unroll(p.first, p.second)
+_unroll(key::Symbol, val::Any) = (; key => val)
+function _unroll(key::Symbol, val::AbstractArray{T}) where T
+  inds = CartesianIndices(val)
+  syms = Vector{Symbol}(undef, length(inds))
+  flat_vals = Vector{T}(undef, length(inds))
+  for (i, ind) ∈ enumerate(inds)
+    syms[i] = Symbol(string(key, join(map(Pumas._to_subscript, Tuple(ind)), ",")))
+    flat_vals[i] = val[ind]
+  end
+  NamedTuple{Tuple(syms)}(flat_vals)
+end
+
+
+
+```
+
+# Complex Covariates in NLME
+
+## The Data Challenge
+
+```{julia}
+#| output: false
+# Load example data with complex text covariates
+patient_data = CSV.read(@__DIR__() * "/data_prognostic_text.csv", DataFrame);
+pop = read_pumas(patient_data; observations = [:yPK, :yPD], covariates = [:Description, :Score])
+
+train_pop = pop[1:100]
+test_pop = pop[101:200]
+
+# Show example data
+subj_ids = unique(patient_data.id)[[1, 2, 3, 8]]
+_df = @by DataFrame(patient_data[patient_data.id .∈ Ref(subj_ids), :]) :id begin
+    :Description = first(:Description)
+    :Score = first(:Score)
+end
+```
+
+```{julia}
+fig = data(semijoin(patient_data, _df; on = :id)) * mapping(:time, :yPD, col=:id => presorted) * visual(Scatter) |> draw(; figure=(; size=(1000, 600)))
+for (i, id) in enumerate(subj_ids)
+  Label(fig.figure[2, i, Top()], _df[i, :Description], word_wrap=true, tellheight=false, fontsize=20, valign=:top)
+end
+Label(fig.figure[2, 0, Right()], "Baseline text\ncovariate", tellwidth=false, tellheight=false, word_wrap=true, fontsize=20, rotation=pi/2)
+
+save(assets * "data_example.png", fig; px_per_unit=4)
+fig
+```
+
+![](assets/data_example.png){width=80%}
+
+**Challenge:** How do we use rich text descriptions as covariates in NLME models?
+
+## Traditional NLME with Simple Covariates
+
+```{julia}
+#| output: false
+model = @model begin
+    @param begin
+        tvKa ∈ RealDomain(; lower=0.)
+        tvVc ∈ RealDomain(; lower=0.)
+        tvSmax ∈ RealDomain(; lower=0.)
+        tvSC50 ∈ RealDomain(; lower=0.)
+        tvKout ∈ RealDomain(; lower=0.)
+        Kin ∈ RealDomain(; lower=0.)
+        CL ∈ RealDomain(; lower=0.)
+        Ω ∈ PDiagDomain(4)
+        σ_pk ∈ RealDomain(; lower=0.)
+        σ_pd ∈ RealDomain(; lower=0.)
+    end
+    @random η ~ MvNormal(Ω)
+    @pre begin
+        Smax = tvSmax * exp(η[1])
+        SC50 = tvSC50
+        Ka = tvKa * exp(η[2])
+        Vc = tvVc * exp(η[3])
+        Kout = tvKout * exp(η[4])
+    end
+    @init R = Kin / Kout
+    @vars begin
+        cp = abs(Central / Vc)
+        EFF = Smax * cp / (SC50 + cp)
+    end
+    @dynamics begin
+        Depot' = -Ka * Depot
+        Central' = Ka * Depot - (CL / Vc) * Central
+        R' = Kin * (1 + EFF) - Kout * R
+    end
+    @derived begin
+        yPK ~ @. Normal(Central ./ Vc, σ_pk)
+        yPD ~ @. Normal(R, σ_pd)
+    end
+end
+
+fitted_nlme = fit(model, train_pop, init_params(model), FOCE())
+pred = predict(fitted_nlme, test_pop[1:6]; obstimes=0:0.025:15)
+```
+
+```{julia}
+plt = plotgrid(pred; observation=:yPD, figure = (; size = (600, 400)), layout = (3,2))
+save(assets * "ipred_traj.png", plt; px_per_unit=4)
+plt
+```
+
+![](assets/ipred_traj.png)
+
+Good predictions, but **missing information from complex covariates**
+
+# Patient Embeddings
+
+## EBEs as Patient Embeddings
+
+```{julia}
+#| output: false
+η_train = mapreduce(x->x.η, hcat, empirical_bayes(fitted_nlme))
+η_test = mapreduce(x->x.η, hcat, empirical_bayes(fitted_nlme, test_pop))
+
+# Show visualization of EBEs as embeddings
+pred = predict(fitted_nlme, test_pop[1:3])
+plt = plotgrid(pred; data=true, ipred=false, pred=false, figure = (; size = (300, 600)), legend=false, observation=:yPD, ylabel="")
+save(assets * "encoder_1.png", plt; px_per_unit=4)
+
+# Show EBE table
+η_syms = [:η₁, :η₂, :η₃, :η₄]
+ebes = getfield.(pred, :ebes)
+_df = DataFrame(permutedims(reduce(hcat, only.(values.(ebes)))), η_syms)
+_df = DataFrame(permutedims(reduce(hcat, only.(values.(ebes)))), η_syms)
+_df.patient = ["Patient $i" for i in 1:3]
+select!(_df, :patient, :)
+
+open(assets * "table_ebe.md", "w") do f
+  pretty_table(f, _df; backend=Val(:markdown), formatters=ft_round(2), header=names(_df))
+end
+
+# Show recreation
+sim = simobs(fitted_nlme.model, test_pop[1:3], coef(fitted_nlme), ebes; simulate_error=false)
+plt = plotgrid(sim; pred=false, sim = (; plot_type=:scatter), layout=(1,3), data=false, 
+              figure = (; size = (300, 600)), legend = false, ylabel="", observation=:yPD)
+save(assets * "encoder_2.png", plt; px_per_unit=4)
+```
+
+:::: {layout="[30, 5, 30, 5, 30]" layout-valign="center" .center-h}
+
+::: {#first-column .center-h}
+**Data**
+
+![](assets/encoder_1.png){width=100%}
+:::
+
+::: {}
+:::
+
+::: {}
+**Embedding** 
+
+::: {.small-text .center}
+{{< include assets/table_ebe.md >}}
+:::
+:::
+
+::: {}
+:::
+
+::: {}
+**Generated**
+
+![](assets/encoder_2.png){width=100%}
+:::
+
+::::
+
+**Key insight:** EBEs encode patient-specific information as low-dimensional vectors!
+
+## Validation: Known Relationships
+
+```{julia}
+_df = @by DataFrame(predict(fitted_nlme)) :id $first
+plt = data(stack(_df, η_syms)) * mapping(:Score => "Wellness score", :value => "Empirical Bayes estimate", layout=:variable) * visual(Scatter) 
+fig = draw(plt; figure = (; size=(600,400)))
+save(assets * "ebe_vs_latent.png", fig; px_per_unit=4)
+fig
+```
+
+![](assets/ebe_vs_latent.png){width=70% fig-align="center"}
+
+EBEs capture the underlying patient characteristics!
+
+# Text Embeddings
+
+## The Ease of Creating Embeddings
+
+```{julia}
+#| echo: true
+#| output: false
+#| warning: false
+# Load a pre-trained text embedding model from HuggingFace
+loaded_model = hgf"avsolatorio/NoInstruct-small-Embedding-v0"
+
+const encoder = loaded_model[1]
+const llm = loaded_model[2];
+
+# Define how to get a patient's embedding
+get_embedding(subj::DeepPumas.Pumas.Subject) = get_embedding(subj.covariates(0).Description)
+function get_embedding(context)
+    enc = encode(encoder, context)
+    out = llm(enc)
+    return out.pooled
+end
+
+# Get the embeddings for all patients and put it in a matrix
+X_train = mapreduce(get_embedding, hcat, train_pop)
+X_test = mapreduce(get_embedding, hcat, test_pop)
+```
+
+## Embedding Subspacing
+
+::: {.incremental}
+- Consider the embedding space as a "meaning space"
+- The original model had Shakespeare and Twitter in its training
+- Our data are all about describing wellness
+- Our data should be on a **low-dimensional manifold** of the embedding space
+:::
+
+**Solution:** Use PCA for dimension reduction
+
+```{julia}
+#| echo: true
+trained_pca = fit(PCA, X_train; maxoutdim = 10)
+X_train_pc = predict(trained_pca, X_train)
+X_test_pc = predict(trained_pca, X_test)
+```
+
+## Embedding Space Structure
+
+```{julia}
+scores = unique(patient_data, :id).Score
+
+npc = 6
+pc_labels = ["pc$(Pumas._to_subscript(i))" for i in 1:npc]
+df = hcat(
+  DataFrame(X_train_pc[1:npc, :]', pc_labels), 
+  DataFrame((; wellness_score = scores[1:length(train_pop)])), 
+)
+
+plt = AoG.data(stack(df, pc_labels)) * mapping(:wellness_score => "Wellness score", :value => "Principal component value"; layout = :variable) * visual(Scatter)
+fig = draw(plt; figure = (; fontsize=16))
+
+save(assets * "wellness_vs_latent.png", fig; px_per_unit=4)
+fig
+```
+
+![](assets/wellness_vs_latent.png){width=60% fig-align="center"}
+
+Text embeddings capture meaningful clinical information!
+
+## Connecting Embeddings to EBEs
+
+```{julia}
+npc = 4
+pc_labels = ["pc$(Pumas._to_subscript(i))" for i in 1:6]
+df = hcat(
+    DataFrame(X_train_pc[1:npc, :]', pc_labels[1:npc]), 
+    DataFrame(η_syms .=> eachrow(η_train))
+)
+plt = AoG.data(stack(stack(df, r"pc."; variable_name = :pc_sym, value_name=:pc_value), η_syms)) * 
+      mapping(:value => "Empirical Bayes estimate", :pc_value=>"Principal component value"; 
+              row = :pc_sym, col=:variable) * visual(Scatter)
+fig = draw(plt; figure = (; fontsize=16, size = (800, 600)))
+
+save(assets * "ebe_vs_embedding.png", fig; px_per_unit=4)
+fig
+```
+
+![](assets/ebe_vs_embedding.png)
+
+**Strong correlations** between text embeddings and patient-specific parameters!
+
+# Predicting Patient Parameters
+
+## Neural Network Architecture
+
+```{julia}
+#| output: false
+pc_embedder(subj::Pumas.Subject) = vec(predict(trained_pca, get_embedding(subj)))
+pc_embedder(str::String) = vec(predict(trained_pca, get_embedding(str)))
+
+_df = DataFrame(vcat(train_pop, test_pop))
+_df = innerjoin(
+  _df,
+  DataFrame(embeddings = pc_embedder.(vcat(train_pop, test_pop)), id = getfield.(vcat(train_pop, test_pop), :id)); 
+  on=:id
+)
+
+embedding_pop = read_pumas(_df; observations = [:yPK, :yPD], covariates = [:Description, :Score, :embeddings])
+tpope = embedding_pop[1:length(train_pop)]
+vpope = embedding_pop[length(train_pop)+1 : end]
+
+target = preprocess(fitted_nlme.model, tpope, coef(fitted_nlme), FOCE(); covs=(:embeddings,))
+nn = MLPDomain(numinputs(target), 15, 10, (numoutputs(target), identity); backend=:staticflux, act=tanh, reg=L1(1))
+fnn = fit(nn, target; optim_options = (; loss = DeepPumas.l2), training_fraction=0.8)
+```
+
+::: {layout="[0.5,1]" layout-valign="center"}
+
+```{julia}
+#| output: false
+using Luxor
+
+# Create neural network diagram
+layer_sizes = [3, 5, 5, 2]   
+
+# Drawing(800, 700, assets * "nn.png")
+# Drawing(180, 150, assets * "nn_small_back_transparent.png")
+Drawing(180, 150, assets * "nn_small_white_transparent.png")
+origin()
+Luxor.sethue("white")
+background("transparent")
+r = 10
+rel_x_space = 5
+rel_y_space = 3
+# r = 15
+# rel_x_space = 13
+# rel_y_space = 3
+points = map(enumerate(range.(1, layer_sizes))) do (layer, node_range)
+    map(node_range) do node
+      Luxor.Point(
+        r * rel_x_space * (layer - 0.5 - length(layer_sizes) / 2),
+        r * rel_y_space * (node - 0.5 - layer_sizes[layer] / 2),
+      )
+    end
+end
+circles = map(x->circle.(x, r, :stroke), points)
+edges = map(zip(points[1:end-1], points[2:end])) do (p1, p2)
+  map(Iterators.product(p1, p2)) do (x,y)
+    arrow(x + (r, 0), y - (r, 0); arrowheadangle = π/20 )
+  end
+end
+
+Luxor.fontsize(45)
+# Luxor.text("Text embeddings", mean(points[1]) - (3r, 0), angle=-π/2, halign=:center)
+
+map(enumerate(η_syms)) do (i, η)
+  # Luxor.text(string(η), points[end][i] + (2r, r/2), valign=:center, halign=:left)
+end
+
+finish()
+preview()
+```
+
+![](assets/nn.png){width=100% fig-align="center"}
+
+```{julia}
+# Show prediction accuracy
+vη = empirical_bayes(model, vpope, coef(fitted_nlme), FOCE())
+id_nts = ((; id = i) for i in getfield.(vpope, :id))
+
+df1 = stack(DataFrame(unroll.(merge.(fnn(vpope), id_nts))); value_name=:prediction)
+df2 = stack(DataFrame(unroll.(merge.(vη, id_nts))); value_name = :target)
+_df = innerjoin(df1, df2, on = [:id, :variable])
+
+plt = data(_df) * mapping(:prediction, :target => "EBE (Test)", layout=:variable) 
+fig = draw(plt)
+save(assets * "predicted_ebes.png", fig; px_per_unit=4)
+fig
+```
+
+![](assets/predicted_ebes.png)
+:::
+
+**Text → Embeddings → Neural Network → Patient Parameters**
+
+# Augmented NLME Models
+
+## Usage with NLME
+
+Multiple approaches available:
+
+::: {.incremental}
+1. **Use embeddings as NLME covariates**
+   - Straightforward integration
+   - Limited by traditional covariate modeling
+   
+2. **Jointly model NLME and embeddings** 
+   - More sophisticated approach
+   - Accounts for uncertainty in embeddings
+   
+3. **Augment existing models**
+   - Add predicted EBEs to trained models
+   - Preserve existing model structure
+:::
+
+## Embedding-Augmented Predictions
+
+```{julia}
+#| output: false
+using Setfield
+@set! fitted_nlme.data = tpope
+deep_fpm = augment(fitted_nlme, fnn)
+
+fit_deep = fit(
+  deep_fpm.model,
+  tpope,
+  coef(deep_fpm),
+  MAP(FOCE());
+  constantcoef = Tuple(setdiff(keys(coef(deep_fpm)), (:Ω,)))
+)
+
+# Generate predictions and comparisons
+pred = predict(deep_fpm, vpope[1:12]; obstimes = 0:0.1:10)
+
+_dfp = DataFrame(predict(deep_fpm))
+_dfp_orig = DataFrame(predict(fitted_nlme, vpope))
+__df = @chain vcat(_dfp_orig, _dfp, cols=:intersect, source = :source => [:Original, :Augmented]) begin
+  dropmissing(:yPD)
+  @by :source begin 
+    :MAE = mean(abs, :yPD .- :yPD_pred)
+    :r2 = cor(:yPD, :yPD_pred)^2
+  end
+end
+
+open(assets * "aug.md", "w") do f
+  pretty_table(f, __df; backend=Val(:markdown), formatters=ft_round(3), header=names(__df))
+end
+```
+
+:::: {layout="[20, 80]" layout-valign="center"}
+
+::: {.small-text .center}
+**Performance on test data**
+
+{{< include assets/aug.md >}}
+:::
+
+```{julia}
+fig = plotgrid(pred; ipred=false, observation = :yPD)
+save(assets * "aug_traj.png", fig; px_per_unit=4)
+fig
+```
+
+![](assets/aug_traj.png){width=80%}
+::::
+
+**Significant improvement** using text embeddings!
+
+## Improved Population Modeling
+
+```{julia}
+#| output: false
+_vpc1 = vpc(deep_fpm; observations=[:yPD])
+fig_vpc_1 = vpc_plot(_vpc1; figure = (; size = (900,300)))
+
+_vpc2 = vpc(fit_deep; observations=[:yPD])
+fig_vpc_2 = vpc_plot(_vpc2; figure = (; size = (900,300)))
+
+save(assets * "vpc1.png", fig_vpc_1)
+save(assets * "vpc2.png", fig_vpc_2)
+```
+
+**Before (traditional NLME)**
+![](assets/vpc1.png){width=80%}
+
+**After (embedding-augmented)**
+![](assets/vpc2.png){width=80%}
+
+Better population-level predictions and reduced unexplained variability!
+
+# Generalization to Other Data Types
+
+## Embeddings from Any Data
+
+::: {.incremental}
+- **Text** (clinical notes, patient descriptions)
+- **2D Images** (X-rays, histology, photos)
+- **3D Images** (CT scans, MRI - limited model availability)  
+- **Omics data** (genomics, proteomics - specialized models)
+- **Time series** (ECG, continuous monitoring)
+- **Mixed modalities** (combining multiple data types)
+:::
+
+## Simple Conceptual Pipeline
+
+::: {.incremental}
+1. **Model longitudinal data** with traditional NLME
+2. **Convert complex covariates** to embeddings using pre-trained models
+3. **Find relevant subspace** using dimensionality reduction (PCA)
+4. **Regress embeddings to EBEs** using neural networks
+5. **Predict patient parameters** for new subjects: $η_{pred}$
+6. **Augment NLME model:** $η \rightarrow η + η_{pred}$
+7. **Refit residual distribution** to reflect reduced unexplained variability
+8. **Apply standard NLME methods** (VPC, simulations, etc.)
+:::
+
+**Close to trivial to implement!**
+
+## Generalized Framework
+
+**Training Phase:**
+$$
+\max_θ \log p(y | θ) = \sum_i^N \log \int p(y_i | θ, η_i) \cdot p(η_i | θ) dη_i
+$$
+
+**Embedding Phase:**  
+$$
+z_i^* = \text{Embed}(x_i) \quad \text{where } x_i \text{ is complex covariate data}
+$$
+
+**Joint Modeling:**
+$$
+\max_{θ,w} \log p(y | θ, z^*) = \sum_i^N \log \int p(y_i | θ, η_i, z_i^*) \cdot p(η_i | θ) dη_i
+$$
+
+## Key Advantages
+
+::: {.incremental}
+- **Leverages existing models**: Use pre-trained embeddings (GPT, BERT, vision models)
+- **Data efficient**: Much less data needed than training from scratch
+- **Scientifically grounded**: Preserves mechanistic understanding in NLME
+- **Flexible**: Works with any type of complex covariate
+- **Interpretable**: Can understand which parts are mechanism vs data-driven
+- **Scalable**: Can handle large-scale clinical datasets
+:::
+
+## Next Steps
+
+::: {.center}
+**Coming up:** Hands-on implementation
+
+- Work with synthetic text data
+- Build embedding pipelines  
+- Augment NLME models
+- See the power of complex covariates in action
+:::

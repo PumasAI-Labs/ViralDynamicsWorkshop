@@ -1,0 +1,151 @@
+/*-- scss:rules --*/
+
+/* Dark theme specific styles */
+
+.caption{
+  text-align: center;
+}
+
+.caption {
+  text-align: center;
+}
+
+.MathJax {
+  font-size: 100% !important;
+}
+
+/* Logo styling - works for both RevealJS slides and HTML pages */
+.reveal .slide-logo,
+.navbar-brand img,
+.logo img {
+  max-height: 4rem !important;
+}
+
+.img-border {
+  border: 2px solid white;
+  padding: 4px;
+  display: inline-block;
+}
+
+/* Custom pre-specified classes to be explicitly used in the quarto document by [my content]{.small-text} or as a {.small-text} specification of a slide header, for example. */
+.small-text {
+    font-size: 20px; /* Adjust as needed */
+}
+.smallish-text {
+    font-size: 30px; /* Adjust as needed */
+}
+
+/* Vertical centering - works for both contexts */
+.vcenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+}
+
+/* 
+Invert the black and white 'channel' in an image. Useful when switching between dark and light mode. Works with svg images. 
+example:
+![description](image.svg){.filter-bw-invert}
+*/
+.filter-bw-invert {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+/* Cell output styling - RevealJS and HTML versions */
+.reveal .cell-output,
+.cell-output {
+  font-size: 0.7em;
+  transform: scale(0.8);
+  transform-origin: top left;
+}
+
+/* Center alignment - works for both contexts */
+.reveal section div.center-h,
+.center-h,
+.text-center {
+	text-align: center;
+}
+
+/* Position logo above the TOC */
+#TOC::before {
+  content: "";
+  display: block;
+  background-image: url('https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 180px;
+  height: 60px;
+  margin: 0 auto 1rem auto;
+}
+
+/* Remove the logo from main content area */
+body .text-center:first-of-type {
+  display: none;
+}
+
+/* Dark theme logo styling */
+.logo-image {
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto 1rem auto;
+  display: block;
+  filter: brightness(1.5) saturate(0.8); /* Make logo brighter and less saturated for dark theme */
+}
+
+/* Dark theme TOC styling */
+#TOC .nav-link.active,
+#TOC .nav-link:hover {
+  color: #AE7FD6 !important; /* Light purple for dark mode */
+  font-weight: 600;
+}
+
+#TOC .nav-link {
+  color: inherit; /* Keep default color for non-active links */
+}
+
+/* Dark theme table styling */
+.table {
+  margin: 1.5rem 0;
+}
+
+.table th {
+  background-color: #212529 !important; /* Darker background that matches darkly theme */
+  border-bottom: 2px solid #AE7FD6;
+  font-weight: 600;
+  color: #ffffff !important;
+  border-top: 1px solid #495057;
+}
+
+.table td, .table th {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+.table a {
+  font-weight: 500;
+  text-decoration: none;
+  color: #AE7FD6 !important; /* Light purple for dark mode */
+}
+
+.table a:hover {
+  text-decoration: underline;
+  color: #8155ba !important; /* Lighter purple on hover in dark mode */
+}
+
+/* General link styling for HTML pages - dark theme */
+a {
+  color: #AE7FD6 !important; /* Light purple for dark mode */
+}
+
+a:hover {
+  color: #8155ba !important; /* Lighter purple on hover in dark mode */
+}
+
+/* Responsive table for mobile */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+}

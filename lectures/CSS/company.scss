@@ -1,0 +1,25 @@
+/*-- scss:defaults --*/
+
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+// You need to have ./fonts/AmplitudeBook.otf file
+@font-face {
+  font-family: 'Amplitude';
+  src: url('../../../../../fonts/AmplitudeBook.otf') format('opentype');
+  font-style: normal;
+  font-weight: 400;
+}
+
+// fonts
+// Brand wordmark font:       Amplitude
+// Brand communication font:  Assistant
+// Brand product font:        Nunito
+$font-family-sans-serif: Assistant, sans-serif !default;
+$presentation-heading-font: Amplitude, sans-serif !default;
+
+/*-- scss:rules --*/
+
+html * {
+  color-profile: sRGB;
+  rendering-intent: auto;
+}

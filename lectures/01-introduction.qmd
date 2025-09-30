@@ -1,0 +1,237 @@
+---
+title: "DeepPumas for Viral Dynamics"
+subtitle: "Introduction - Combining Mechanism and Machine Learning"
+---
+
+# Welcome
+
+
+## Workshop Overview
+
+| Time | Session | Duration |
+|------|---------|----------|
+| 10:00 - 10:20 | **Introduction** | **20 min** |
+| 10:20 - 11:30 | NLME modeling in Pumas (hands-on) | 1h 10min |
+| 11:30 - 12:00 | DeepNLME - Part 1 (lecture) | 30 min |
+| 12:00 - 12:30 | DeepNLME - Part 1 (hands-on) | 30 min |
+| 12:30 - 13:30 | 🍽️ Lunch Break | 1h |
+| 13:30 - 15:30 | DeepNLME with complex covariates | 2h |
+| 15:30 - 15:45 | ☕ Coffee Break | 15 min |
+| 15:45 - 16:15 | Epidemiology demo | 30 min |
+| 16:15 - 17:00 | Discussions and conclusions | 45 min |
+
+## 
+
+![&nbsp;](images/image.png){width=50% fig-align="center"}
+
+:::: {.columns style="font-size: 70%"}
+::: {.column width=0.4}
+Machine learning
+
+::: {.callout-tip appearance="minimal"}
+- Data-driven model discovery
+- Finds unintuitive relationships
+- Handles complex data
+:::
+
+::: {.callout-important appearance="minimal"}
+- Lacks scientific understanding
+- Requires big data
+:::
+:::
+  
+
+::: {.column width=0.4}
+Scientific modelling
+
+::: {.callout-tip appearance="minimal"}
+- Encodes scientific understanding
+- Data-efficient
+- Interpretable
+- Simple counterfactuals
+:::
+
+::: {.callout-important appearance="minimal"}
+- Labor intensive
+- Misses unintuitive relationships
+- Hard to utilize complex data
+:::
+:::
+::::
+
+## Data + Knowledge {.center}
+
+![](images/good_preds.svg)
+
+## Vision Spanning Pharma
+
+![](images/across_pharma.svg)
+
+
+```{julia}
+#| warning: false
+#| output: false
+#| echo: false
+
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
+using DeepPumas
+using StableRNGs
+using PumasPlots
+using CairoMakie
+using Serialization
+using Latexify
+using Markdown
+
+assets = @__DIR__() * "/assets/"
+
+DeepPumas.set_mlp_backend(:staticflux)
+dark = false
+if dark
+  set_theme!(deep_dark(); backgroundcolor=:transparent, fontsize=45)
+  fgcolor = (:white, 0.6)
+else
+  set_theme!(deep_light();backgroundcolor=:transparent, fontsize=45, Axis=(; 
+    backgroundcolor=:transparent,
+    # foregroundcolor=:black
+  ))
+  fgcolor = (:black, 0.7)
+end
+
+figure = (; resolution=(1200, 700), fontsize=25)
+
+Latexify.set_default(starred=true, convert_unicode=false)
+```
+
+## What We'll Build Today
+
+Starting with traditional NLME models...
+
+```{julia}
+#| output: false
+pkmodel = @model begin
+  @param begin
+    tvKa in RealDomain(; lower=0)
+    tvCL in RealDomain(; lower=0)
+    tvVc in RealDomain(; lower=0)
+    Ω in PDiagDomain(3)
+    σ in RealDomain(; lower=0)
+  end
+  @random η ~ MvNormal(Ω)
+  @pre begin
+    Ka = tvKa * exp(η[1])
+    CL = tvCL * exp(η[2])
+    Vc = tvVc * exp(η[3])
+  end
+  @dynamics Depots1Central1
+  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
+end
+
+param = (; tvKa = 2., tvCL=3., tvVc=1., Ω = Diagonal([0.5, 0.5, 0.5]), σ=0.1)
+rng = StableRNG(2)
+sims = map(1:20) do i 
+  _subj = Subject(; id=i, events = DosageRegimen(1, ii=1, addl=2))
+  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.2:4)
+end
+pop = Subject.(sims)
+```
+
+## Traditional NLME {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**[Nonlinear Mixed Effects]{style="font-size: 170%"}**
+
+::: {.fragment fragment-index=3 .fade-out}
+::: {.absolute top=300, right=10, width=600}
+
+```{julia}
+sim = (; label="Data", markersize=15, linewidth=1, color=fgcolor)
+plt = plotgrid(sims[1:1]; sim)
+save(assets * "single_traj.png", plt; px_per_unit=4)
+plt
+```
+![](assets/single_traj.png)
+
+:::
+:::
+
+::: {.fragment fragment-index=3}
+
+::: {.absolute top=500, right=100, width="600"}
+
+```{julia}
+foreach(sims[2:4]) do _sim
+  plotgrid!(plt, [_sim]; sim)
+end
+save(assets * "multi_traj.png", plt; px_per_unit=4)
+plt
+```
+![](assets/multi_traj.png)
+
+:::
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment fragment-index=5}
+Typical values
+$$
+tvKa, \; tvCL, \; tvVc, \; Ω, \; σ
+$$
+
+Covariates
+$$
+Age, \; Weight
+$$
+
+Random effects
+$$
+η \sim MvNormal(Ω)
+$$
+:::
+  
+::: {.fragment fragment-index=4}
+Individual parameters
+\begin{align*}
+Ka_i &= tvKa \cdot e^{η_{i,1}} \\
+CL_i &= tvCL \cdot e^{η_{i,2}} \\
+Vc_i &= tvVc \cdot e^{η_{i,3}}
+\end{align*}
+:::
+
+::: {.fragment fragment-index=1}
+Dynamics
+$$
+\begin{align*}
+\frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \frac{CL}{Vc} \cdot Central(t)
+\end{align*}
+$$
+:::
+
+::: {.fragment fragment-index=2}
+Error model
+$$
+dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+$$
+:::
+
+:::
+::::
+
+## Let's Get Started!
+
+::: {.center}
+**Next up:** Hands-on NLME modeling with Pumas
+
+- Synthetic viral dynamics data mimicking HIV
+- Model building and fitting  
+- Understanding the foundations before we add neural networks
+:::
