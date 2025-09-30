@@ -3,13 +3,16 @@ title: "DeepNLME with Complex Covariates"
 subtitle: "Embeddings, Text Data, and Advanced Applications"
 ---
 
-## Setup
 
 ```{julia}
 #| warning: false
 #| output: false
 #| echo: false
 
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
 using DeepPumas
 using StableRNGs
 using PumasPlots
@@ -32,6 +35,40 @@ DeepPumas.set_mlp_backend(:staticflux)
 set_theme!(deep_light(); backgroundcolor=:white)
 
 figure = (; resolution=(1200, 700), fontsize=25)
+
+
+"""
+    unroll(nt::NamedTuple) -> NamedTuple
+
+Transforms a NamedTuple by unrolling its array fields into individual key–value pairs. For each array field, each element is assigned a new key formed by appending a subscript (derived via `Pumas._to_subscript`) to the original field name. Non-array fields are kept unchanged.
+
+# Examples
+```julia
+nt = (a = [10, 20], b = 5)
+# unroll(nt) returns a NamedTuple with keys like :a₁, :a₂, and :b, for example:
+# (:a₁ => 10, :a₂ => 20, :b => 5)
+"""
+function unroll(nt::NamedTuple)
+  mapreduce(_unroll, merge, pairs(nt))
+end
+
+unroll(f::Function; kwargs...) = x->unroll(f, x; kwargs...)
+
+_unroll(p::Pair) = _unroll(p.first, p.second)
+_unroll(key::Symbol, val::Any) = (; key => val)
+function _unroll(key::Symbol, val::AbstractArray{T}) where T
+  inds = CartesianIndices(val)
+  syms = Vector{Symbol}(undef, length(inds))
+  flat_vals = Vector{T}(undef, length(inds))
+  for (i, ind) ∈ enumerate(inds)
+    syms[i] = Symbol(string(key, join(map(Pumas._to_subscript, Tuple(ind)), ",")))
+    flat_vals[i] = val[ind]
+  end
+  NamedTuple{Tuple(syms)}(flat_vals)
+end
+
+
+
 ```
 
 # Complex Covariates in NLME
@@ -48,7 +85,7 @@ train_pop = pop[1:100]
 test_pop = pop[101:200]
 
 # Show example data
-subj_ids = [1, 2, 3, 8]  
+subj_ids = unique(patient_data.id)[[1, 2, 3, 8]]
 _df = @by DataFrame(patient_data[patient_data.id .∈ Ref(subj_ids), :]) :id begin
     :Description = first(:Description)
     :Score = first(:Score)
@@ -56,7 +93,7 @@ end
 ```
 
 ```{julia}
-fig = data(DataFrame(groupby(patient_data, :id)[subj_ids])) * mapping(:time, :yPD, col=:id => presorted) * visual(Scatter) |> draw(; figure=(; size=(1000, 600)))
+fig = data(semijoin(patient_data, _df; on = :id)) * mapping(:time, :yPD, col=:id => presorted) * visual(Scatter) |> draw(; figure=(; size=(1000, 600)))
 for (i, id) in enumerate(subj_ids)
   Label(fig.figure[2, i, Top()], _df[i, :Description], word_wrap=true, tellheight=false, fontsize=20, valign=:top)
 end
@@ -326,14 +363,20 @@ fnn = fit(nn, target; optim_options = (; loss = DeepPumas.l2), training_fraction
 using Luxor
 
 # Create neural network diagram
-layer_sizes = [10, 15, 15, 4]   
+layer_sizes = [3, 5, 5, 2]   
 
-Drawing(800, 700, assets * "nn.png")
+# Drawing(800, 700, assets * "nn.png")
+# Drawing(180, 150, assets * "nn_small_back_transparent.png")
+Drawing(180, 150, assets * "nn_small_white_transparent.png")
 origin()
+Luxor.sethue("white")
 background("transparent")
-r = 15
-rel_x_space = 13
+r = 10
+rel_x_space = 5
 rel_y_space = 3
+# r = 15
+# rel_x_space = 13
+# rel_y_space = 3
 points = map(enumerate(range.(1, layer_sizes))) do (layer, node_range)
     map(node_range) do node
       Luxor.Point(
@@ -350,10 +393,10 @@ edges = map(zip(points[1:end-1], points[2:end])) do (p1, p2)
 end
 
 Luxor.fontsize(45)
-Luxor.text("Text embeddings", mean(points[1]) - (3r, 0), angle=-π/2, halign=:center)
+# Luxor.text("Text embeddings", mean(points[1]) - (3r, 0), angle=-π/2, halign=:center)
 
 map(enumerate(η_syms)) do (i, η)
-  Luxor.text(string(η), points[end][i] + (2r, r/2), valign=:center, halign=:left)
+  # Luxor.text(string(η), points[end][i] + (2r, r/2), valign=:center, halign=:left)
 end
 
 finish()
@@ -538,7 +581,7 @@ $$
 ::: {.center}
 **Coming up:** Hands-on implementation
 
-- Work with real text data
+- Work with synthetic text data
 - Build embedding pipelines  
 - Augment NLME models
 - See the power of complex covariates in action

@@ -10,6 +10,10 @@ subtitle: "DeepNLME for Population-Level Viral Dynamics"
 #| output: false
 #| echo: false
 
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
 using DeepPumas
 using StableRNGs
 using PumasPlots

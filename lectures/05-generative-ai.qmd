@@ -81,49 +81,34 @@ $$
 - Individual predictions ↔ Generative model
 :::
 
-## Mathematical Framework Comparison
+## Mathematical Framework Comparison {visibility="hidden"}
 
-```{julia}
-#| echo: false
-#| output: false
-#| warning: false
+The NLME and Generative AI formulations share an identical marginalization structure:
 
-using CairoMakie
+::::{.columns}
 
-fig = Figure(; size=(1000, 600), fontsize=20)
+:::{.column width="50%"}
+**NLME Framework**
 
-# NLME side
-ax1 = Axis(fig[1,1], title="NLME Framework", titlesize=24)
-hidedecorations!(ax1)
-hidespines!(ax1)
+- Observations: y
+- Random Effects: η  
+- Fixed Effects: θ
+- **Marginal Likelihood:** ∫ p(y|η,c) p(η) dη
+:::
 
-text!(ax1, 0.1, 0.8, text="Observations: y", fontsize=18)
-text!(ax1, 0.1, 0.6, text="Random Effects: η", fontsize=18)  
-text!(ax1, 0.1, 0.4, text="Fixed Effects: θ", fontsize=18)
-text!(ax1, 0.1, 0.2, text="Marginal Likelihood:", fontsize=18, weight=:bold)
-text!(ax1, 0.1, 0.05, text="∫ p(y|η,c) p(η) dη", fontsize=16)
+:::{.column width="50%"}
+**Generative AI Framework**
 
-# GenAI side  
-ax2 = Axis(fig[1,2], title="Generative AI Framework", titlesize=24)
-hidedecorations!(ax2)
-hidespines!(ax2)
+- Generated Data: x
+- Latent Variables: z
+- Model Parameters: θ  
+- **Marginal Likelihood:** ∫ p(x|z) p(z) dz
+:::
 
-text!(ax2, 0.1, 0.8, text="Generated Data: x", fontsize=18)
-text!(ax2, 0.1, 0.6, text="Latent Variables: z", fontsize=18)
-text!(ax2, 0.1, 0.4, text="Model Parameters: θ", fontsize=18)  
-text!(ax2, 0.1, 0.2, text="Marginal Likelihood:", fontsize=18, weight=:bold)
-text!(ax2, 0.1, 0.05, text="∫ p(x|z) p(z) dz", fontsize=16)
+::::
 
-# Arrow between them
-arrows!(fig.content[1], [Point2f(0.9, 0.5)], [Point2f(0.1, 0.5)], 
-        arrowsize=30, linewidth=4, color=:red)
-text!(fig.content[1], 0.5, 0.5, "Same Math!", fontsize=24, weight=:bold, 
-      color=:red, align=(:center, :center))
+**Same mathematical structure!**
 
-fig
-```
-
-![](assets/genai_nlme_comparison.png){fig-align="center"}
 
 ## What Are Latent Variables? {.smaller}
 
@@ -150,14 +135,17 @@ $z$ captures informative properties not directly observed
 ## Latent Variables as Information
 
 **For images:**
+
 - Not pixel-by-pixel intensity
 - **Rather:** Objects, characteristics, actions, style, lighting
 
 **For text:**  
+
 - Not individual words
 - **Rather:** Sentiment, information content, writing style, language
 
 **For clinical data:**
+
 - Not individual measurements
 - **Rather:** Disease state, treatment response, patient phenotype
 
@@ -198,6 +186,7 @@ $z$ captures informative properties not directly observed
 - **Individual variation:** Random effects
 
 **Practical implementation:**
+
 - Pre-trained text models (HuggingFace)
 - PCA for dimension reduction
 - Neural networks for EBE prediction

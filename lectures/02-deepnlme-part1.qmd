@@ -3,13 +3,16 @@ title: "DeepNLME - Part 1"
 subtitle: "Neural Networks, SciML, and Universal Differential Equations"
 ---
 
-## Setup
 
 ```{julia}
 #| warning: false
 #| output: false
 #| echo: false
 
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
 using DeepPumas
 using StableRNGs
 using PumasPlots
@@ -37,6 +40,116 @@ end
 figure = (; resolution=(1200, 700), fontsize=25)
 Latexify.set_default(starred=true, convert_unicode=false)
 ```
+
+# NLME Modeling
+
+## Traditional NLME {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**[Nonlinear Mixed Effects]{style="font-size: 170%"}**
+
+::: {.absolute top=500, right=100, width="600"}
+![](assets/multi_traj.png)
+:::
+
+:::
+
+::: {.column width="50%"}
+
+Typical values
+$$
+tvKa, \; tvCL, \; tvVc, \; Ω, \; σ
+$$
+
+Covariates
+$$
+Age, \; Weight
+$$
+
+Random effects
+$$
+η \sim MvNormal(Ω)
+$$
+
+Individual parameters
+\begin{align*}
+Ka_i &= tvKa \cdot e^{η_{i,1}} \\
+CL_i &= tvCL \cdot e^{η_{i,2}} \\
+Vc_i &= tvVc \cdot e^{η_{i,3}}
+\end{align*}
+
+Dynamics
+$$
+\begin{align*}
+\frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \frac{CL}{Vc} \cdot Central(t)
+\end{align*}
+$$
+
+Error model
+$$
+dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+$$
+
+:::
+::::
+
+## What if components are unknown? {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**[Nonlinear Mixed Effects]{style="font-size: 170%"}**
+
+::: {.absolute top=500, right=100, width="600"}
+![](assets/multi_traj.png)
+:::
+
+:::
+
+::: {.column width="50%"}
+
+Typical values
+$$
+tvKa, \; tvCL, \; tvVc, \; Ω, \; σ
+$$
+
+Covariates
+$$
+Age, \; Weight, \; \color{red}{???}
+$$
+
+Random effects
+$$
+η \sim MvNormal(Ω)
+$$
+
+Individual parameters
+\begin{align*}
+Ka_i &= tvKa \cdot e^{η_{i,1}} \\
+CL_i &= tvCL \cdot e^{η_{i,2}} \cdot \color{red}{NN(...)} \\
+Vc_i &= tvVc \cdot e^{η_{i,3}}
+\end{align*}
+
+Dynamics
+$$
+\begin{align*}
+\frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \color{red}{NN(...)}
+\end{align*}
+$$
+
+Error model
+$$
+dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+$$
+
+:::
+::::
 
 ```{julia}
 #| output: false
@@ -83,7 +196,6 @@ record(fig, assets * "nn_demo_test.mp4", 1:nframes; framerate=30) do frame
 end 
 ```
 
-# Neural Networks
 
 ## Neural networks {.smaller}
 
@@ -94,7 +206,8 @@ end
 
 - Loosely based on neurons
 
-![&nbsp;](image-4.png){fig-align="center"}
+<!-- ![&nbsp;](image-4.png){fig-align="center"} -->
+![&nbsp;](assets/nn_small_back_transparent.png){fig-align="center"}
 
 - Mathematically just a function!
 - Usable anywhere you'd use a function!
@@ -112,13 +225,13 @@ end
 :::
 ::::
 
-## Deep Nonlinear Mixed Effects {.smaller}
+## Neural networks in NLME dynamics {.smaller}
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 
-**[Deep Nonlinear Mixed Effects]{.att style="font-size: 170%"}**
+**[Focus: Neural Networks in Dynamics]{style="font-size: 150%"}**
 
 ::: {.absolute top=500, right=100, width="600"}
 ![](assets/multi_traj.png)
@@ -149,29 +262,17 @@ CL_i &= tvCL \cdot e^{η_{i,2}} \\
 Vc_i &= tvVc \cdot e^{η_{i,3}}
 \end{align*}
 
-::: {.fragment}
-![](image-8.png){.absolute top=50 right=90 width=110}
-:::
-::: {.fragment}
-![](image-4.png){.absolute top=430 right=130 width=140}
-:::
-::: {.fragment}
-![](image-4.png){.absolute bottom=140 right=120 width=160}
-
-**Neural networks can be embedded anywhere in the model!**
-:::
-
-Dynamics
+Dynamics **← This lecture focuses here**
 $$
 \begin{align*}
 \frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
-\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \frac{CL}{Vc} \cdot Central(t)
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \color{red}{NN(...)}
 \end{align*}
 $$
 
 Error model
 $$
-Concentration(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+DV(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
 $$
 
 :::
@@ -188,7 +289,7 @@ $$
 :::
 
 :::: {.columns}
-::: {.column width="50%"}
+::: {.column width="33%"}
 
 [Neural ODE]{.att}
 
@@ -203,7 +304,7 @@ $$
 :::
 :::
 
-::: {.column width="50%"}
+::: {.column width="33%"}
 
 ::: {.fragment fragment-index=1}
 [Universal Differential Equations (UDE)]{.att}
@@ -217,6 +318,21 @@ $$
 - Insert universal approximators (NNs) to capture unknown terms
 - **Combine scientific knowledge with machine learning**
 - More data-efficient than pure ML approaches
+:::
+:::
+
+:::
+
+::: {.column width="33%"}
+
+::: {.fragment fragment-index=2}
+[Scientific Machine Learning (SciML)]{.att}
+
+::: {style="font-size: 80%"}
+- **Abstract idea**: mixing science and machine learning
+- Umbrella term for hybrid approaches
+- Includes UDEs, Physics-Informed NNs, etc.
+- Goal: leverage domain knowledge to improve ML
 :::
 :::
 
@@ -238,7 +354,7 @@ $$
 \end{aligned}
 $$
 
-- No prior knowledge encoded
+- Number of states
 
 ::: {.fragment}
 
@@ -385,13 +501,11 @@ end
 
 ## Key Benefits
 
-::: {.incremental}
 - **Scientific structure preserved**: PK follows well-understood compartmental model
 - **Flexibility where needed**: Neural network captures unknown PD mechanism  
 - **Individual-level adaptation**: Random effects allow personalized neural network behavior
 - **Data efficiency**: Much less data needed than pure ML approaches
 - **Interpretability**: Can understand which parts are mechanism vs data-driven
-:::
 
 ## Next Steps
 
@@ -400,6 +514,6 @@ end
 
 - Build your first DeepNLME model
 - See how neural networks integrate with NLME
-- Practice with real viral dynamics data
+- Practice with synthetic viral dynamics data
 - Understand the power of combining mechanism with ML
 :::

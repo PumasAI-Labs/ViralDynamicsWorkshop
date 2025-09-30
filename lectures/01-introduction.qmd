@@ -5,14 +5,13 @@ subtitle: "Introduction - Combining Mechanism and Machine Learning"
 
 # Welcome
 
-![&nbsp;](images/image.png){width=50% fig-align="center"}
 
 ## Workshop Overview
 
 | Time | Session | Duration |
 |------|---------|----------|
-| 10:00 - 10:15 | **Introduction** | **20 min** |
-| 10:15 - 11:30 | NLME modeling in Pumas (hands-on) | 1h 10min |
+| 10:00 - 10:20 | **Introduction** | **20 min** |
+| 10:20 - 11:30 | NLME modeling in Pumas (hands-on) | 1h 10min |
 | 11:30 - 12:00 | DeepNLME - Part 1 (lecture) | 30 min |
 | 12:00 - 12:30 | DeepNLME - Part 1 (hands-on) | 30 min |
 | 12:30 - 13:30 | 🍽️ Lunch Break | 1h |
@@ -21,7 +20,9 @@ subtitle: "Introduction - Combining Mechanism and Machine Learning"
 | 15:45 - 16:15 | Epidemiology demo | 30 min |
 | 16:15 - 17:00 | Discussions and conclusions | 45 min |
 
-## The Challenge
+## 
+
+![&nbsp;](images/image.png){width=50% fig-align="center"}
 
 :::: {.columns style="font-size: 70%"}
 ::: {.column width=0.4}
@@ -66,13 +67,16 @@ Scientific modelling
 
 ![](images/across_pharma.svg)
 
-## Setup
 
 ```{julia}
 #| warning: false
 #| output: false
 #| echo: false
 
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
 using DeepPumas
 using StableRNGs
 using PumasPlots
@@ -215,7 +219,7 @@ $$
 ::: {.fragment fragment-index=2}
 Error model
 $$
-Concentration(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
+dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\right)
 $$
 :::
 
