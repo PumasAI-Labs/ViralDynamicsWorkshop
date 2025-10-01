@@ -25,17 +25,9 @@ using Serialization              # serialize/deserialize fits
 # Choose a readable theme; try deep_dark() if presenting on dark slides
 set_theme!(deep_light())
 
-# Make any stochastic results reproducible (e.g., simulation/VPC resampling)
-Random.seed!(1234)
-
-# Optional: set the working dir to this script's folder (handy in workshops)
-cd(@__DIR__)
-
-
 # All outputs (plots/tables/serialized fits) go here
-
 # Check if "artifacts" directory exists in the current working directory.
-artifacts_path = joinpath(pwd(), "artifacts")
+artifacts_path = joinpath(@__DIR__, "artifacts")
 
 if !isdir(artifacts_path)
     println("Artifacts directory does not exist. Creating: $artifacts_path")
@@ -44,21 +36,21 @@ else
     println("Artifacts directory already exists: $artifacts_path")
 end
 
-const ARTIFACTS_DIR = artifacts_path
+ARTIFACTS_DIR = artifacts_path
 
 
 ########################################
 # 1) Load & validate the source dataset
 ########################################
 # Expect a file `hiv-pkpd-data.csv` in the same folder as this script
-const DATA_PATH = joinpath(@__DIR__, "hiv-pkpd-data.csv")
-@info "Reading data" DATA_PATH
+DATA_PATH = joinpath(@__DIR__, "hiv-pkpd-data.csv")
 
 df_pk = CSV.read(DATA_PATH, DataFrame; missingstring = "", stringtype = String)
 
 # Inspect basic structure
 vscodedisplay(df_pk)
-unique(df_pk.time)  # observation time grid (hours expected originally)
+
+unique(df_pk.time)  # observation time grid 
 
 #############################################################
 # 2) Parse NM-TRAN style table → Pumas Population{Subject}
@@ -73,13 +65,13 @@ pop_pk = read_pumas(
     evid         = :evid
 )
 
-# Indexing examples (Population behaves like a Vector{Subject})
+# Indexing examples (a Population is a Vector{Subject} and can be indexed or sliced accordingly)
 pop_pk[1]
 pop_pk[5:10]
 pop_pk[begin:30]
 pop_pk[30:end]
 
-# Round-trip conversions (useful for demos)
+# Converting back to a DataFrame
 reconstructed_pkdata   = DataFrame(pop_pk)
 reconstructed_subject1 = DataFrame(pop_pk[1])
 
@@ -97,10 +89,10 @@ model_pk2cmt = @model begin
   end
 
   @param begin
-    tvka      ∈ RealDomain(lower=0.0001, init=0.408)
-    tvcl      ∈ RealDomain(lower=0.0001, init=1.63)
+    tvka      ∈ RealDomain(lower=0.0001, init=1.408)
+    tvcl      ∈ RealDomain(lower=0.0001, init=10.063)
     tvvc      ∈ RealDomain(lower=0.001,  init=74.3)
-    tvq       ∈ RealDomain(lower=0.0001, init=0.989)
+    tvq       ∈ RealDomain(lower=0.0001, init=2.0989)
     tvvp      ∈ RealDomain(lower=0.0001, init=4.24)
     Ω         ∈ PDiagDomain(3)  # IIV on Ka, CL, Vc
     σ_proppk  ∈ RealDomain(lower=0, init=0.1)
@@ -111,14 +103,14 @@ model_pk2cmt = @model begin
     η ~ MvNormal(Ω)
   end
 
-  # @covariates could be added here if present (e.g., WT)
+  # @covariates #could be added here if present (e.g., WT)
 
   @pre begin
-    Ka = tvka * 24 * exp(η[1])   # 1/day
-    CL = tvcl * 24 * exp(η[2])   # L/day
-    Vc = tvvc       * exp(η[3])  # L
-    Q  = tvq  * 24               # L/day
-    Vp = tvvp                    # L
+    Ka = tvka * exp(η[1])   # 1/day
+    CL = tvcl * exp(η[2])   # L/day
+    Vc = tvvc * exp(η[3])   # L
+    Q  = tvq                # L/day
+    Vp = tvvp               # L
   end
 
   @init begin
@@ -146,18 +138,18 @@ end
 
 # Reasonable initial parameters
 param_pk2cmt = (
-  tvka = 0.408,
-  tvcl = 1.63,
+  tvka = 1.408,
+  tvcl = 15.63,
   tvvc = 74.3,
-  tvq  = 0.989,
+  tvq  = 1.989,
   tvvp = 4.24,
-  Ω         = Diagonal([0.2798, 0.128, 0.1722]),
-  σ_proppk  = 0.190,
-  σ_addpk   = 17.3
+  Ω         = Diagonal([0.1, 0.1, 0.1]),
+  σ_proppk  = 0.2,
+  σ_addpk   = 10.0
 )
 
 #########################################
-# 4) Estimation for Model 1 (2CMT FO absorption)
+# 4) Estimation for Model 1 (2CMT first-order absorption)
 #########################################
 # fit_pk2cmt_foce        = fit(model_pk2cmt, pop_pk, init_params(model_pk2cmt), FOCE())
 fit_pk2cmt_foce        = fit(model_pk2cmt, pop_pk, param_pk2cmt, FOCE())
@@ -178,7 +170,7 @@ DataFrame(icoef(fit_pk2cmt_foce))
 pred_pk2cmt_obs   = predict(fit_pk2cmt_foce)           # at observed times
 DataFrame(pred_pk2cmt_obs)
 
-pred_pk2cmt_dense = predict(fit_pk2cmt_foce; obstimes = 0:1:18)
+pred_pk2cmt_dense = predict(fit_pk2cmt_foce; obstimes = 0:0.1:18)
 
 plotgrid(pred_pk2cmt_obs[1:6])
 plotgrid(pred_pk2cmt_dense[1:6])
@@ -215,12 +207,12 @@ model_pkseq = @model begin
   end
 
   @param begin
-    tvka      ∈ RealDomain(lower=0.0001, init=0.408)
-    tvcl      ∈ RealDomain(lower=0.0001, init=1.63)
+    tvka      ∈ RealDomain(lower=0.0001, init=1.0408)
+    tvcl      ∈ RealDomain(lower=0.0001, init=13.063)
     tvvc      ∈ RealDomain(lower=0.001,  init=70.3)
-    tvq       ∈ RealDomain(lower=0.0001, init=0.989)
+    tvq       ∈ RealDomain(lower=0.0001, init=2.0989)
     tvvp      ∈ RealDomain(lower=0.0001, init=4.24)
-    tvd       ∈ RealDomain(lower=0.0001, init=5.83)  # zero-order duration
+    tvd       ∈ RealDomain(lower=0.0001, init=0.83)  # zero-order duration
     Ω         ∈ PDiagDomain(4)
     σ_proppk  ∈ RealDomain(lower=0, init=0.1)
     σ_addpk   ∈ RealDomain(lower=0, init=10)
@@ -231,16 +223,16 @@ model_pkseq = @model begin
   end
 
   @pre begin
-    Ka = tvka * 24 * exp(η[1])
-    CL = tvcl * 24 * exp(η[2])
-    Vc = tvvc      * exp(η[3])
-    Q  = tvq  * 24
+    Ka = tvka * exp(η[1])
+    CL = tvcl * exp(η[2])
+    Vc = tvvc * exp(η[3])
+    Q  = tvq  
     Vp = tvvp
   end
 
   @dosecontrol begin
     # Duration for zero-order input into Depot (convert hours → days to match timeu)
-    duration = (; Depot = (tvd/24) * exp(η[4]))
+    duration = (; Depot = (tvd) * exp(η[4]))
   end
 
   @init begin
@@ -275,7 +267,7 @@ fit_pkseq_foce    = fit(model_pkseq, pop_pk_seq, init_params(model_pkseq), FOCE(
 tbl_metrics_pk2cmt = metrics_table(fit_pk2cmt_foce)
 tbl_metrics_pkseq  = metrics_table(fit_pkseq_foce)
 
-# Individual calls if you want to narrate differences
+# Individual calls are also available
 loglikelihood(fit_pkseq_foce)
 aic(fit_pkseq_foce)
 bic(fit_pkseq_foce)
@@ -287,11 +279,13 @@ ins_pk2cmt = inspect(fit_pk2cmt_foce)
 ins_pkseq  = inspect(fit_pkseq_foce)
 
 goffig_pk2cmt = goodness_of_fit(ins_pk2cmt)
-goffig_pkseq  = goodness_of_fit(ins_pkseq)
+goffig_pkseq  = goodness_of_fit(ins_pkseq; figure = (; fontsize = 15))
 
 # Overlay individual prediction plots for quick visual comparison on early window
-pred_pkseq_dense = predict(fit_pkseq_foce; obstimes=0:0.5:18)
-plt_overlay = plotgrid(pred_pk2cmt_dense[1:6])
+pred_pkseq_dense = predict(fit_pkseq_foce; obstimes=0:0.1:18)
+
+
+plt_overlay = plotgrid(pred_pk2cmt_dense[1:6]);
 plotgrid!(
   plt_overlay,
   pred_pkseq_dense[1:6];
@@ -309,19 +303,21 @@ vpcfig_pk2cmt = vpc_plot(
   vpc_pk2cmt;
   simquantile_medians = true, observations = false, include_legend = false,
   axis = (xlabel = "Time (h)", ylabel = "Concentration (ng/mL)", xticks = 0:50:200)
-)
-figurelegend(vpcfig_pk2cmt, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true)
+);
 
-# vpcfig_pk2cmt
+figurelegend(vpcfig_pk2cmt, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true);
+
+vpcfig_pk2cmt
 
 vpcfig_pkseq = vpc_plot(
   vpc_pkseq;
   simquantile_medians = true, observations = false, include_legend = false,
   axis = (xlabel = "Time (h)", ylabel = "Concentration (ng/mL)", xticks = 0:50:200)
-)
-figurelegend(vpcfig_pkseq, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true)
+);
 
-# vpcfig_pkseq
+figurelegend(vpcfig_pkseq, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true);
+
+vpcfig_pkseq
 
 
 ###### Covarience step ######
@@ -357,7 +353,7 @@ serialize(joinpath(ARTIFACTS_DIR, "fit_pkseq_foce.jls"), fit_pkseq_foce)
 
 @info "Artifacts saved in" ARTIFACTS_DIR
 # =============================================================================
-# End of refined script
+# End of script
 # =============================================================================
 
 
