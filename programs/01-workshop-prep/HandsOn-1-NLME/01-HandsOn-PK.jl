@@ -207,12 +207,12 @@ model_pkseq = @model begin
   end
 
   @param begin
-    tvka      ∈ RealDomain(lower=0.0001, init=1.0408)
-    tvcl      ∈ RealDomain(lower=0.0001, init=13.063)
-    tvvc      ∈ RealDomain(lower=0.001,  init=70.3)
-    tvq       ∈ RealDomain(lower=0.0001, init=2.0989)
-    tvvp      ∈ RealDomain(lower=0.0001, init=4.24)
-    tvd       ∈ RealDomain(lower=0.0001, init=0.83)  # zero-order duration
+    tvka      ∈ RealDomain(lower=0.0001, init=2.10)
+    tvcl      ∈ RealDomain(lower=0.0001, init=15.3)
+    tvvc      ∈ RealDomain(lower=0.001,  init=80.3)
+    tvq       ∈ RealDomain(lower=0.0001, init=4.9)
+    tvvp      ∈ RealDomain(lower=0.0001, init=5.5)
+    tvd       ∈ RealDomain(lower=0.0001, init=5.83)  # zero-order duration
     Ω         ∈ PDiagDomain(4)
     σ_proppk  ∈ RealDomain(lower=0, init=0.1)
     σ_addpk   ∈ RealDomain(lower=0, init=10)
@@ -353,7 +353,7 @@ serialize(joinpath(ARTIFACTS_DIR, "fit_pkseq_foce.jls"), fit_pkseq_foce)
 
 @info "Artifacts saved in" ARTIFACTS_DIR
 # =============================================================================
-# End of script
+# End of the script
 # =============================================================================
 
 
