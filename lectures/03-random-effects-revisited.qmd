@@ -1,0 +1,398 @@
+---
+title: "Random effects"
+subtitle: "And how they interact with machine learning"
+---
+
+
+```{julia}
+#| warning: false
+#| output: false
+#| echo: false
+#| eval: false
+
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
+using DeepPumas
+using StableRNGs
+using PumasPlots
+using CairoMakie
+using AlgebraOfGraphics
+using CSV
+using DataFrames
+using DataFramesMeta
+using Flux
+using PrettyTables
+
+assets = @__DIR__() * "/assets/"
+const AoG = AlgebraOfGraphics
+
+DeepPumas.set_mlp_backend(:staticflux)
+set_theme!(deep_light(); backgroundcolor=:transparent)
+
+figure = (; resolution=(1200, 700), fontsize=25)
+
+```
+
+# Mixed effects (?)
+
+## What are mixed effects models?
+
+- Fixed effects, $θ$
+  - Model parameters modelled as deterministic quantities
+- Random effects, $η_i$
+  - Model parameters modelled as random variables
+    
+
+[**Hierarchical**]{.att}
+
+We typically define hierarchies where $θ$ are shared parameters but $η$ is subject-specific.
+
+
+## No need to assign too much meaning to random effects
+
+- Indicates unknown parameters that vary between subjects (or whatever hierarchy we use)
+- Usually tied very closely to a specific parameter in pharmacometrics. $CL = tvCL \cdot e^{η_{CL}}$
+- Enables degree o freedom along which the model can account for heterogenous outcomes
+
+## Simulating with random effects
+
+[Simple]{.att}
+
+- We have given $θ$ and covariates $x$
+- [Sample]{.att} from the prior $η | θ$
+- Compute your individual parameters and propagate your ODE
+- Sample your observations $y | θ, η, x$
+
+## Fitting with random effects
+
+[Conditional probability / Joint likelihood / MLE]{.att}
+
+Probability of the response [$y$]{.att} according to the model given specific values of [$θ$]{.att}, [$η$]{.att}, and [$x$]{.att}.
+
+$$
+p_c(y | θ, η, x)
+$$
+
+Fit model by simply finding the values of [$θ$]{.att} and [$η$]{.att} that jointly maximize the probability?
+
+Equivalent to minimizing a distance metric (e.g. MSE) between observed and predicted data.
+
+. . . 
+
+[Not what we do]{.att}
+
+
+## Fitting with random effects
+
+[Marginal probability]{.att}
+
+Integrates out the effect of the random effects.
+
+$$
+p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
+$$
+
+Average conditional probability weighted by a prior
+
+## Fitting with random effects
+
+```{julia}
+#| fig-cap: '&nbsp;'
+
+f(x; s=1, μ=0, σ=1) = @. s * exp(- (x-μ)^2/(2σ^2)) 
+p(x; σ = 1.1) = f(x; σ, s=1/(σ*sqrt(2π)))
+
+x = -3:0.01:3
+
+
+fig = Figure(; size=(1300, 700), fontsize=25)
+ylabels=[L"p(y|θ,η,x)", L"p_{p}(η|θ)", L"p(y|θ,η,x) \cdot p_{p}(η|θ)"]
+axes = [Axis(fig[i,1], ylabel=ylabels[i]) for i in 1:3]
+_l1 = lines!(axes[1], x, f(x; s=0.7, μ=0.3, σ=0.3))
+_l2 = lines!(axes[1], x, f(x; s=0.9, μ=-1.5, σ=0.1))
+_l3 = lines!(axes[1], x, f(x; s=0.4, μ=1., σ=0.9))
+
+lines!(axes[2], x, p(x), color=fgcolor)
+
+lines!(axes[3], x, p(x) .* f(x; s=0.7, μ=0.3, σ=0.3))
+band!(axes[3], x, 0, p(x) .* f(x; s=0.7, μ=0.3, σ=0.3), alpha=0.6)
+lines!(axes[3], x, p(x) .* f(x; s=0.9, μ=-1.5, σ=0.1))
+band!(axes[3], x, 0, p(x) .* f(x; s=0.9, μ=-1.5, σ=0.1), alpha=0.6)
+lines!(axes[3], x, p(x) .* f(x; s=0.4, μ=1., σ=0.9))
+band!(axes[3], x, 0, p(x) .* f(x; s=0.4, μ=1., σ=0.9), alpha=0.6)
+Label(fig[end+1, :], "η", tellwidth=false)
+Legend(fig[0,:], [_l1, _l2, _l3], ["Patient 1", "Patient 2", "Patient 3"], tellwidth=false, orientation=:horizontal)
+
+Label(fig[1, 2], "Conditional/Joint\nlikelihood",  tellheight=false)
+Label(fig[2, 2], "Prior", tellheight=false)
+Label(fig[3, 2], "Line:       Joint MAP\nShaded: Marginal likelihood", tellheight=false, justification=:left)
+
+save(assets * "random_effects_marginal_likelihood.png", fig; px_per_unit=4)
+fig
+```
+![&nbsp;](assets/random_effects_marginal_likelihood.png)
+
+## One dimension per random effect
+
+
+- $η$ here can be multi-dimensional
+
+$$
+p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
+$$
+
+- This is a multi-variate integral
+
+- One dimension (degree of freedom) along which to account for between subject variability in the data for each random effect.
+
+- Marginalization incentivizes that each random effect controls a single [smooth]{.att} dimension between-subject variability.
+
+
+## "Smoothness"?
+
+[Classical NLME]{.att}
+
+$$
+EFF = \left(1 + Smax \cdot \frac{C}{tvSC50 \cdot exp\left(\mathbf{\eta}\right) + C}\right)
+$$
+
+:::: {.columns}
+::: {.column width="50%"}
+
+- This function is somewhat smooth in $η$ by structural definition.
+- Very little flexibility to affect the smoothness by tuning fixed effects.
+  
+:::
+::: {.column width="50%"}
+```{julia}
+eff(c, η; Smax=2.0, tvSC50=0.3) = 1 .+ Smax .* c ./ (tvSC50 * exp(η) .+ c)
+crange = 0:0.01:2
+ηrange = -2:0.2:2
+
+df = map(Iterators.product(crange, ηrange)) do (c, η)
+  (; c, η, EFF = eff(c, η))
+end |> vec |> DataFrame
+
+spec = data(df) * mapping(:c, :EFF; color=:η, group=:η=>string) * visual(Lines, linewidth=3)  
+plt = draw(spec; figure=(; size=(400, 300))) 
+
+save(assets * "eff_classical.png", plt; px_per_unit=4)
+
+plt
+```
+
+![](assets/eff_classical.png)
+:::
+::::
+
+[DeepNLME]{.att}
+
+$$
+EFF = \left(1 + NN(C, η)\right)
+$$
+
+- This function _can_ be very non-smooth in $η$.
+- Lots of flexibility to affect the smoothness by tuning fixed effects.
+- Incentivizing smoothness by marginalization in the fit really helps here!
+
+
+# Maximizing the marginal likelihood
+
+The marginal likelihood is often intractable to compute exactly.
+$$
+p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
+$$
+
+:::: {.columns}
+::: {.column width="50%"}
+
+- [No marginalization]{.att}
+  - `NaivePooled()` <!-- - Ignores random effects -->
+  <!-- - Equivalent to assuming $η=0$ for all subjects -->
+  - `JointMAP()`
+    <!-- - Maximizes the joint aposteriori likelihood
+    - Equivalent to estimating $η$ as fixed effects -->
+- [Maximize an approximation]{.att}
+  - `LaplaceI()` 
+  - `FOCE()` - Often our first choice
+  - `FO()`
+:::     
+::: {.column width="50%"}
+- [Expectation maximization (EM, indirect)]{.att}
+  - `SAEM()`
+  - Markov Chain EM
+  - Variational EM (Later this year)
+- [Monte Carlo integration]{.att}
+  - `BayesMCMC()`
+  - `MarginalMCMC()`
+
+:::     
+::::
+
+Many can be wrapped in `MAP()` to do maximum a-posteriori estimation of fixed effects.
+
+
+
+
+<!-- 
+      
+## Let's incrementally break this
+
+```{julia}
+#| output: true 
+#| eval: true
+pkmodel = @model begin
+  @param begin
+    # tvKa in RealDomain(; lower=0)
+    tvCL in RealDomain(; lower=0)
+    tvVc in RealDomain(; lower=0)
+    Ω in PDiagDomain(1)
+    σ in RealDomain(; lower=0)
+  end
+  @random η ~ MvNormal(Ω)
+  @pre begin
+    CL = tvCL #* exp(η[1])
+    Vc = tvVc * exp(η[1])
+  end
+  @dynamics Central1
+  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
+end
+
+param = (; 
+  # tvKa = 2.,
+  tvCL=3.,
+  tvVc=1.,
+  Ω = Diagonal([0.1]),
+  σ=0.1
+)
+rng = StableRNG(2)
+sims = map(1:20) do i 
+  _subj = Subject(; id=i, events = DosageRegimen(1))
+  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.1:1)
+end
+pop = Subject.(sims)
+
+latexify(pkmodel, :dynamics)
+plotgrid(sims)
+```
+
+
+```{julia}
+model1 = @model begin
+  @param begin
+    # tvKa in RealDomain(; lower=0)
+    tvCL in RealDomain(; lower=0)
+    tvVc in RealDomain(; lower=0)
+    Ω in PDiagDomain(1)
+    σ in RealDomain(; lower=0)
+  end
+  @random η ~ MvNormal(Ω)
+  @pre begin
+    CL = tvCL * exp(η[1])
+    Vc = tvVc #* exp(η[1])
+  end
+  @dynamics Central1
+  @derived Concentration ~ @. Normal(Central/Vc, σ)
+end
+
+
+fpm = fit(model1, pop, init_params(model1), FOCE())
+```
+
+
+```{julia}
+#| output: true 
+#| eval: true
+pkmodel = @model begin
+  @param begin
+    # tvKa in RealDomain(; lower=0)
+    tvCL in RealDomain(; lower=0)
+    tvVc in RealDomain(; lower=0)
+    Ω in PSDDomain(2)
+    σ in RealDomain(; lower=0)
+  end
+  @random η ~ MvNormal(Ω)
+  @pre begin
+    CL = tvCL * exp(η[1])
+    Vc = tvVc * exp(η[2])
+  end
+  @dynamics Central1
+  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
+end
+
+param = (; 
+  # tvKa = 2.,
+  tvCL=0.7,
+  tvVc=1.,
+  Ω = [0.1 0.0
+       0.0 0.1],
+  σ=0.1
+)
+rng = StableRNG(2)
+sims = map(1:20) do i 
+  _subj = Subject(; id=i, events = DosageRegimen(1))
+  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.4:2)
+end
+pop = Subject.(sims)
+
+plotgrid(sims)
+```
+
+
+```{julia}
+model2 = @model begin
+  @param begin
+    # tvKa in RealDomain(; lower=0)
+    tvCL in RealDomain(; lower=0)
+    tvVc in RealDomain(; lower=0)
+    Ω in PDiagDomain(1)
+    σ in RealDomain(; lower=0)
+  end
+  @random η ~ MvNormal(Ω)
+  @pre begin
+    CL = tvCL #* exp(η[1])
+    Vc = tvVc * exp(η[1])
+  end
+  @dynamics Central1
+  @derived Concentration ~ @. Normal(Central/Vc, σ)
+end
+```
+
+```{julia}
+model3 = @model begin
+  @param begin
+    # tvKa in RealDomain(; lower=0)
+    tvCL in RealDomain(; lower=0)
+    tvVc in RealDomain(; lower=0)
+    Ω in PDiagDomain(1)
+    c in RealDomain(; lower=0, upper=1, init=0.5)
+    σ in RealDomain(; lower=0)
+  end
+  @random η ~ MvNormal(Ω)
+  @pre begin
+    CL = tvCL * exp(c * η[1])
+    Vc = tvVc * exp((1 - c) * η[1])
+  end
+  @dynamics Central1
+  @derived Concentration ~ @. Normal(Central/Vc, σ)
+end
+```
+
+```{julia}
+fpm1 = fit(model1, pop, init_params(model1), FOCE())
+fpm2 = fit(model2, pop, init_params(model2), FOCE())
+fpm3 = fit(model3, pop, init_params(model3), FOCE())
+```
+```{julia}
+coef(fpm3).c
+```
+
+```{julia}
+@show loglikelihood(pkmodel, pop, param, FOCE())
+@show loglikelihood(fpm1)
+@show loglikelihood(fpm2)
+@show loglikelihood(fpm3)
+``` -->
+
