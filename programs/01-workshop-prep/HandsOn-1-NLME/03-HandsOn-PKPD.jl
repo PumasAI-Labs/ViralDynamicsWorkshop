@@ -58,6 +58,7 @@ pop_pd = read_pumas(
     evid       = :evid,
     amt        = :amt,
     cmt        = :cmt,
+    rate       = :rate,
     covariates = [:iKa, :iCL, :iVc, :iQ, :iVp, :iDur]
 )
 
@@ -76,7 +77,7 @@ model_pd = @model begin
 
     @param begin
         """ Viral production rate multiplier """
-        tvpro    ∈ RealDomain(lower=1, init=6.1)
+        tvpro    ∈ RealDomain(lower=1, init=6.1) # if <1, won't stay infected
         """ Death rate of actively infected cells (1/day) """
         tvdelta  ∈ RealDomain(lower=0, init=0.63)
         """ Source rate of uninfected cells (cells/day) """
@@ -168,7 +169,7 @@ model_pd = @model begin
         """ Plasma concentration (ng/mL) """
         Concentration = Conc
         """ Viral load (log10 scale) """
-        ipred = @. log10(2*V) + 3
+        ipred = @. log10(2*V) + 3 #double for 2 RNA copies/virion; add 3 to change log10 c/uL to log10 c/mL
         """ Observed viral load """
         Virus ~ @. Normal(ipred, σ_add)
     end

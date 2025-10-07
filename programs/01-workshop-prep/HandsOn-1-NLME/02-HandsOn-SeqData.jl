@@ -39,6 +39,10 @@ DATA_PATH = joinpath(@__DIR__, "hiv-pkpd-data.csv")
 # Load PK dataset
 df_pk = CSV.read(DATA_PATH, DataFrame; missingstring = "", stringtype = String)
 
+df_pk_seq = @chain df_pk begin
+    @rtransform(:rate = :evid == 1 ? -2 : missing)
+  end
+
 # Load previously fitted PK model (FOCE method) from artifacts
 fit_pkseq_foce = deserialize(joinpath(ARTIFACTS_DIR, "fit_pkseq_foce.jls"))
 
@@ -76,7 +80,7 @@ first(icoef_dataframe, 5)
 icoef_dataframe.id = parse.(Int64, string.(icoef_dataframe.id))
 
 # Merge PK parameters with original dataset by ID
-pd_dataframe = outerjoin(df_pk, icoef_dataframe; on = [:id])
+pd_dataframe = outerjoin(df_pk_seq, icoef_dataframe; on = [:id])
 
 # Display merged dataset (optional)
 vscodedisplay(pd_dataframe)
