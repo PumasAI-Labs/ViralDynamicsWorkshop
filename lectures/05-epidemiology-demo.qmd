@@ -1,0 +1,314 @@
+---
+title: "Epidemiology Demo"
+subtitle: "DeepNLME for Population-Level Viral Dynamics"
+---
+
+## Setup
+
+```{julia}
+#| warning: false
+#| output: false
+#| echo: false
+
+if isinteractive()
+  import Pkg
+  Pkg.activate(@__DIR__())
+end
+using DeepPumas
+using StableRNGs
+using PumasPlots
+using CairoMakie
+using Statistics
+using Random
+
+assets = @__DIR__() * "/assets/"
+
+DeepPumas.set_mlp_backend(:staticflux)
+set_theme!(deep_light(); backgroundcolor=:white)
+
+figure = (; resolution=(1200, 700), fontsize=25)
+```
+
+# Epidemiological Modeling Challenge
+
+## The Problem: Age-Stratified Seroprevalence
+
+```{julia}
+#| output: false
+t = 0:0.1:100
+
+# True epidemiological model with known force of infection
+epi_data_model = @model begin
+  @param begin
+    σ ∈ RealDomain(; lower=0, init=10)
+    tvc ∈ RealDomain(; lower=0)
+    ω ∈ RealDomain(; lower=0)
+  end
+  @random η ~ Normal(0, ω)
+  @pre begin
+    c = tvc * exp(η)
+    _λ = t -> c * (pdf.(Normal(16, 7),t) .+ 1.2.*pdf.(Normal(37, 10), t) .+ 0.4 .* pdf.(Normal(65, 14), t) .+ 0.02)
+  end
+  @init S = 1
+  @dynamics begin
+    S' = - _λ(t) * S
+  end
+  @derived begin
+    "Positive test fraction"
+    PosFrac ~ @. Beta(σ*(1-0.99S), σ*(0.99S))
+  end
+end
+
+countries = ["Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Sweden"]
+
+p_epi = (; tvc=0.3, σ=1000., ω=0.6)
+obstimes=vcat(0:5,10:5:100)
+rng = StableRNG(123)
+
+# Simulate data for well-sampled countries
+sim = map(eachindex(countries)) do i
+  simobs(
+    epi_data_model,
+    Subject(; id=countries[i]),
+    p_epi;
+    rng,
+    obstimes = sort(sample(rng, obstimes, rand(rng, 1:20); replace=false))
+  )
+end
+pop_epi_good = Subject.(sim)
+
+# Add sparsely sampled countries
+sparse_countries = ["Brazil", "Vietnam"]
+sim_sparse = map(eachindex(sparse_countries)) do i
+  simobs(
+    epi_data_model,
+    Subject(; id=sparse_countries[i]),
+    p_epi;
+    obstimes = sort(sample(rng, 1:100, rand(rng, 1:2); replace=false)),
+    rng
+  )
+end
+
+sims = vcat(sim, sim_sparse)
+pop_epi = Subject.(sims)
+
+tpop_epi = pop_epi[1:end-4]
+vpop_epi = pop_epi[end-3:end]
+```
+
+```{julia}
+plt = plotgrid(
+  pop_epi; 
+  xlabel="AGE",
+  ylabel="Fraction positive tests",
+  figure = (; fontsize=20, resolution=0.7 .* (1700, 1200)),
+  legend=false,
+  data = (; markersize=10),
+  axis = (; yticks=0:0.25:1),
+  title = (s, i) -> "$(s.id) ($(s.id in getfield.(vpop_epi, :id) ? "Test" : "Train"))"
+)
+save(assets * "epi_data.png", plt; px_per_unit=4)
+plt
+```
+
+![](assets/epi_data.png)
+
+## The Challenge
+
+::: {.incremental}
+- **Multi-country seroprevalence data** across age groups
+- **Unknown force of infection** λ(age) patterns  
+- **Heterogeneous data quality**: Some countries well-sampled, others sparse
+- **Need to share information** between populations
+- **Discover age-specific transmission patterns**
+:::
+
+**Traditional approaches:** Pre-specify parametric forms for λ(age)
+
+**DeepNLME approach:** Let data discover the functional form!
+
+## DeepNLME Epidemiological Model {.smaller}
+
+```{julia}
+#| echo: true
+#| output: false
+epi_model = @model begin
+  @param begin
+    N ∈ RealDomain(; lower=0, init=1000)
+    λ ∈ MLPDomain(2, 5, 5, (1, softplus); reg=L2(1e-2))
+  end
+  @random η ~ Normal(0, 0.1)
+  @init S = 1
+  @dynamics begin
+    S' = - λ(t/100, η)[1] * S
+  end
+  @derived PosFrac ~ @. Beta(abs(N*(1-0.99S)), abs(N*(0.99S)))
+end
+```
+
+**Key features:**
+
+- **Neural network λ** discovers age-specific force of infection
+- **Individual random effects** η allow country-specific scaling
+- **Shared function** across populations with individual tuning
+- **Mechanistic structure** preserves epidemiological interpretation
+
+```{julia}
+#| output: false
+#| warning: false
+fpm_epi = fit(
+  epi_model,
+  tpop_epi,
+  init_params(epi_model),
+  MAP(LaplaceI());
+  checkidentification=false,
+  optim_options = (; time_limit=5*60)
+)
+```
+
+# Results
+
+## Model Predictions
+
+```{julia}
+plt_epi = plotgrid(
+  predict(fpm_epi, pop_epi; obstimes=1:100); 
+  xlabel="AGE",
+  ylabel="Fraction positive tests",
+  figure = (; fontsize=20, resolution=0.7 .* (1700, 1200)),
+  data = (; markersize=10),
+  axis = (; yticks=0:0.25:1),
+  title = (s, i) -> "$(s.id) ($(s.id in getfield.(vpop_epi, :id) ? "Test" : "Train"))",
+  ipred = (; label="DeepNLME ipred"),
+  pred=false,
+)
+save(assets * "epi_ipred.png", plt_epi; px_per_unit=4)
+plt_epi
+```
+
+![](assets/epi_ipred.png)
+
+**Excellent fit across all countries**, including sparsely sampled test data!
+
+## Comparison with Truth
+
+```{julia}
+plotgrid!(
+  plt_epi,
+  simobs(epi_data_model, pop_epi, p_epi, getfield.(sims, :randeffs); simulate_error=false, obstimes=1:100); 
+  sim = (; linestyle=:solid, markersize=0, linewidth=2, label="Truth")
+)
+save(assets * "epi_ipred_truth.png", plt_epi; px_per_unit=4)
+plt_epi
+```
+
+![](assets/epi_ipred_truth.png)
+
+**Neural network accurately recovers** the true underlying force of infection!
+
+## Discovered Force of Infection Pattern
+
+```{julia}
+country_id=20
+nn = coef(fpm_epi).λ
+η = empirical_bayes(fpm_epi, pop_epi[country_id]).η
+inn = t -> nn(t/100, η)[1]
+iλ = sims[country_id].icoefs._λ[1]
+fig = Figure(; fontsize=30)
+ax = Axis(fig[1,1], xlabel="Age", ylabel="λ", xticks=0:10:100, title=vcat(countries, sparse_countries)[country_id])
+data_times = sims[country_id].time
+
+lines!(ax, t, iλ; label="Truth")
+scatter!(ax, data_times, iλ; markersize=25)
+lines!(ax, t, inn; label="DeepNLME")
+ylims!(ax, 0, nothing)
+axislegend(ax)
+fig
+save(assets * "epi_foi.png", fig; px_per_unit=4)
+fig
+```
+
+![](assets/epi_foi.png)
+
+**Complex multi-modal pattern** discovered automatically from data!
+
+## Information Sharing Across Populations
+
+```{julia}
+ids = [1,2,19,20]
+plt = plotgrid(
+  predict(fpm_epi, pop_epi[ids]; obstimes=1:100); 
+  xlabel="AGE",
+  ylabel="Fraction positive tests",
+  figure = (; fontsize=30, resolution=0.7 .* (1700, 600)),
+  data = (; markersize=15),
+  axis = (; yticks=0:0.25:1),
+  layout = (4,1),
+  title = (s, i) -> "$(s.id) ($(s.id in getfield.(vpop_epi, :id) ? "Test" : "Train"))",
+  ipred = (; label="DeepNLME ipred"),
+  pred=false,
+)
+plotgrid!(
+  plt,
+  simobs(epi_data_model, pop_epi[ids], p_epi, getfield.(sims[ids], :randeffs); simulate_error=false, obstimes=1:100); 
+  sim = (; linestyle=:solid, markersize=0, linewidth=2, label="Truth")
+)
+save(assets * "epi_comparison.png", plt; px_per_unit=4)
+plt
+```
+
+![](assets/epi_comparison.png)
+
+**Dense data informs sparse data** through shared neural network function!
+
+# Key Insights
+
+## What DeepNLME Achieved
+
+::: {.incremental}
+- **Data-driven discovery** of force of infection λ(age)
+- **Automatic pattern recognition** without pre-specifying functional forms  
+- **Information sharing** between populations via shared neural network
+- **Individual adaptation** through random effects
+- **Robust extrapolation** to poorly sampled regions/countries
+- **Mechanistically interpretable** results
+:::
+
+## Epidemiological Applications
+
+::: {.incremental}
+- **Infectious disease surveillance**: Age-stratified transmission patterns
+- **Vaccine impact assessment**: Changes in force of infection over time
+- **Cross-population studies**: Sharing information between countries/regions
+- **Sparse data settings**: Leveraging information from well-studied populations
+- **Outbreak investigation**: Discovering transmission hotspots
+- **Public health planning**: Age-specific intervention strategies
+:::
+
+## Beyond Epidemiology
+
+**The same principles apply to:**
+
+::: {.incremental}
+- **Dose-response relationships**: Unknown functional forms
+- **Biomarker dynamics**: Complex temporal patterns
+- **Population pharmacokinetics**: Covariate effects discovery  
+- **Disease progression**: Natural history modeling
+- **Treatment response**: Personalized medicine applications
+:::
+
+## Summary
+
+**DeepNLME enables:**
+
+::: {.incremental}
+- **Flexible function discovery** while preserving scientific structure
+- **Population-level insights** from individual-level data
+- **Robust handling** of heterogeneous data quality  
+- **Mechanistic interpretation** of discovered patterns
+- **Principled uncertainty quantification**
+:::
+
+::: {.center}
+**The future of epidemiological modeling:** Mechanism + Machine Learning
+:::
