@@ -358,7 +358,7 @@ $$
 
 ::: {.fragment}
 
-[**Structured Neural ODE**]{.att}
+[**Graph Neural ODE**]{.att}
 $$
 \begin{aligned}
 \frac{dDepot}{dt} &= - NN_1(Depot)\\
@@ -378,7 +378,7 @@ $$
 
 ::: {.fragment}
 
-[**Hybrid Model**]{.att}
+[**UDE**]{.att}
 $$
 \begin{aligned}
 \frac{dDepot}{dt} &= - K_a \cdot Depot\\
@@ -393,7 +393,7 @@ $$
 :::
   
 ::: {.fragment}
-[**Targeted Neural Enhancement**]{.att}
+[**Targeted Neural Enhancement (still a UDE)**]{.att}
 $$
 \begin{aligned}
 \frac{dDepot}{dt} &= - K_a \cdot Depot\\
@@ -461,59 +461,4 @@ yPK &\sim \mathrm{Normal}\left( \frac{Central}{V_c}, σ_{pk} \right) \\
 yPD &\sim \mathrm{Normal}\left( R, σ_{pd} \right)
 \end{align*}
 
-**Random effects allow individual-level neural network behavior!**
-
-## A concrete example {.smaller}
-
-```{julia}
-#| echo: true
-#| eval: false
-deepnlme_model = @model begin
-    @param begin
-        tvKa ∈ RealDomain(; lower=0.)
-        tvVc ∈ RealDomain(; lower=0.)
-        tvKout ∈ RealDomain(; lower=0.)
-        Kin ∈ RealDomain(; lower=0.)
-        CL ∈ RealDomain(; lower=0.)
-        Ω ∈ PDiagDomain(5)
-        σ_pk ∈ RealDomain(; lower=0.)
-        σ_pd ∈ RealDomain(; lower=0.)
-        NN ∈ MLPDomain(3, 4, 4, (1, identity); reg = L2(1e-2, bias=false))
-    end
-    @random η ~ MvNormal(Ω)
-    @pre begin
-        Ka = tvKa * exp(η[1])
-        Vc = tvVc * exp(η[2])
-        Kout = tvKout * exp(η[3])
-    end
-    @init R = Kin / Kout
-    @dynamics begin
-        Depot' = -Ka * Depot
-        Central' = Ka * Depot - (CL / Vc) * Central
-        R' = Kin * (1 + NN(Central / Vc, η[4], η[5])[1]) - Kout * R
-    end
-    @derived begin
-        yPK ~ @. Normal(Central ./ Vc, σ_pk)
-        yPD ~ @. Normal(R, σ_pd)
-    end
-end
-```
-
-## Key Benefits
-
-- **Scientific structure preserved**: PK follows well-understood compartmental model
-- **Flexibility where needed**: Neural network captures unknown PD mechanism  
-- **Individual-level adaptation**: Random effects allow personalized neural network behavior
-- **Data efficiency**: Much less data needed than pure ML approaches
-- **Interpretability**: Can understand which parts are mechanism vs data-driven
-
-## Next Steps
-
-::: {.center}
-**Coming up:** Hands-on implementation
-
-- Build your first DeepNLME model
-- See how neural networks integrate with NLME
-- Practice with synthetic viral dynamics data
-- Understand the power of combining mechanism with ML
-:::
+# Viral dynamics DeepNLME
