@@ -4,18 +4,21 @@
 
 | Time | Session | Duration |
 |------|---------|----------|
-| 10:00 - 10:15 | Introduction | 15 min |
-| 10:15 - 11:30 | NLME modeling in Pumas (hands-on) | 1h 15min |
-| 11:30 - 12:00 | DeepNLME - Part 1 (lecture) | 30 min |
-| 12:00 - 12:30 | DeepNLME - Part 1 (hands-on) | 30 min |
-| 12:30 - 13:30 | 🍽️ Lunch Break | 1h |
-| 13:30 - 15:30 | DeepNLME with complex covariates (lecture & hands-on) | 2h |
-| 15:30 - 15:45 | ☕ Coffee Break | 15 min |
-| 15:45 - 16:15 | Epidemiology demo | 30 min |
-| 16:15 - 17:00 | Discussions and conclusions | 45 min |
+| 09:00 - 09:20 | **Welcome and Introduction** | 20 min |
+| 09:20 - 10:30 | **NLME modeling in Pumas** (hands-on) | 1h 10min |
+| 10:30 - 10:45 | ☕ **Coffee Break** | 15 min |
+| 10:45 - 11:15 | **DeepNLME** (lecture) | 30 min |
+|  | _Neural networks, SciML, UDEs and NeuralODEs_ | |
+| 11:15 - 12:30 | **DeepNLME** (hands-on) | 1h 15min |
+| 12:30 - 13:30 | 🍽️ **Lunch Break** | 1h |
+| 13:30 - 14:15 | **Random effects, fitting NLME, and Generative AI** | 45 min |
+| 14:15 - 15:30 | **DeepNLME with Complex Covariates** (lecture & hands-on) | 1h 15min |
+| 15:30 - 15:45 | ☕ **Coffee Break** | 15 min |
+| 15:45 - 16:15 | **Epidemiology Demo** | 30 min |
+| 16:15 - 17:00 | **Discussions and Conclusions** | 45 min |
 
-**Total Workshop Time:** 10:00 - 17:00 (7 hours including breaks)  
-**Total Session Time:** 5h 45min
+**Total Workshop Time:** 09:00 - 17:00 (8 hours including breaks)  
+**Total Session Time:** 6h 30min
 
 
 - Introduction

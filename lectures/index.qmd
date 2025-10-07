@@ -28,15 +28,15 @@ This workshop explores how to combine mechanistic modeling with machine learning
 
 | Time | Session | Materials |
 |------|---------|-----------|
-| 10:00 - 10:15 | **Introduction** | [Slides](01-introduction.html) |
-| 10:15 - 11:30 | NLME modeling in Pumas (hands-on) | *Hands-on notebook* |
-| 11:30 - 12:00 | **DeepNLME - Part 1** | [Slides](02-deepnlme-part1.html) |
+| 09:00 - 09:20 | **Welcome and Introduction** | [Slides](01-introduction.html) |
+| 09:20 - 10:30 | **NLME modeling in Pumas** | *Hands-on* |
+| 10:30 - 10:45 | ☕ **Coffee Break** | |
+| 10:45 - 11:15 | **DeepNLME** | [Slides](02-deepnlme-part1.html) |
 | | *Neural networks, SciML, UDEs and NeuralODEs* | |
-| 12:00 - 12:30 | DeepNLME - Part 1 (hands-on) | *Hands-on notebook* |
+| 11:15 - 12:30 | **DeepNLME (hands-on)** | *Hands-on* |
 | 12:30 - 13:30 | 🍽️ **Lunch Break** | |
-| 13:30 - 14:15 | **DeepNLME, random effects, and GenAI** | [Slides](03-random-effects-revisited.html) |
-| 14:15 - 15:30 | **DeepNLME with Complex Covariates** | [Slides](04-complex-covariates.html) |
-| | *Embeddings, text data, advanced applications* | *Hands-on notebook* |
+| 13:30 - 14:15 | **Random effects, fitting NLME, and Generative AI** | [Slides](03-random-effects-revisited.html) |
+| 14:15 - 15:30 | **DeepNLME with Complex Covariates** | [Slides](04-complex-covariates.html) and hands-on |
 | 15:30 - 15:45 | ☕ **Coffee Break** | |
 | 15:45 - 16:15 | **Epidemiology Demo** | [Slides](04-epidemiology-demo.html) |
 | 16:15 - 17:00 | **Discussions and Conclusions** |  |
