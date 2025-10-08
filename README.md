@@ -1,4 +1,4 @@
-![Static Badge](https://img.shields.io/badge/Take%20me%20to%20the%20website?link=https%3A%2F%2Fpumasai-labs.github.io%2FViralDynamicsWorkshop%2F)
+[Get to the website](https://pumasai-labs.github.io/ViralDynamicsWorkshop/)
 
 # DeepPumas for viral dynamics workshop
 
