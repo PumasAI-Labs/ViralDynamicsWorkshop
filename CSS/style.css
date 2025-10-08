@@ -1,0 +1,161 @@
+.caption{
+  text-align: center;
+}
+
+.MathJax {
+  font-size: 100% !important;
+}
+
+/* Logo styling - works for both RevealJS slides and HTML pages */
+.reveal .slide-logo,
+.navbar-brand img,
+.logo img {
+  max-height: 4rem !important;
+}
+
+.img-border {
+  border: 2px solid black;
+  padding: 4px;
+  display: inline-block;
+}
+
+/* Custom pre-specified classes to be explicitly used in the quarto document by [my content]{.small-text} or as a {.small-text} specification of a slide header, for example. */
+.small-text {
+    font-size: 20px; /* Adjust as needed */
+}
+.smallish-text {
+    font-size: 30px; /* Adjust as needed */
+}
+
+/* Vertical centering - works for both contexts */
+.vcenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+}
+
+/* 
+Invert the black and white 'channel' in an image. Useful when switching between dark and light mode. Works with svg images. 
+example:
+![description](image.svg){.filter-bw-invert}
+*/
+.filter-bw-invert {
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+/* Cell output styling - RevealJS and HTML versions */
+.reveal .cell-output,
+.cell-output {
+  font-size: 0.7em;
+  transform: scale(0.8);
+  transform-origin: top left;
+}
+
+/* Center alignment - works for both contexts */
+.reveal section div.center-h,
+.center-h,
+.text-center {
+	text-align: center;
+}
+
+/* HTML-specific enhancements for website index */
+.logo-image {
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto 1rem auto;
+  display: block;
+}
+
+/* Position logo above the TOC */
+#TOC::before {
+  content: "";
+  display: block;
+  background-image: url('../assets/DeepPumas+Primaryv.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 180px;
+  height: 60px;
+  margin: 0 auto 1rem auto;
+}
+
+/* Remove the logo from main content area */
+body .text-center:first-of-type {
+  display: none;
+}
+
+/* TOC styling - highlighted section in DeepPumas purple */
+#TOC .nav-link.active,
+#TOC .nav-link:hover {
+  color: #630fc4 !important; /* DeepPumas primary purple */
+  font-weight: 600;
+}
+
+#TOC .nav-link {
+  color: inherit; /* Keep default color for non-active links */
+}
+
+.table {
+  margin: 1.5rem 0;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #630fc4;
+  font-weight: 600;
+}
+
+.table td, .table th {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+.table a {
+  font-weight: 500;
+  text-decoration: none;
+  color: #630fc4; /* DeepPumas primary purple */
+}
+
+.table a:hover {
+  text-decoration: underline;
+  color: #250044; /* DeepPumas dark purple on hover */
+}
+
+/* General link styling for HTML pages */
+a {
+  color: #630fc4 !important; /* DeepPumas primary purple */
+}
+
+a:hover {
+  color: #250044 !important; /* DeepPumas dark purple on hover */
+}
+
+/* Responsive table for mobile */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+}
+
+/* Dark theme specific adjustments */
+html[data-bs-theme="dark"] .table th {
+  background-color: #343a40 !important; /* Darker background for table headers */
+  color: #ffffff !important;
+  border-bottom-color: #AE7FD6 !important;
+}
+
+html[data-bs-theme="dark"] #TOC .nav-link.active,
+html[data-bs-theme="dark"] #TOC .nav-link:hover {
+  color: #AE7FD6 !important; /* Light purple for dark mode TOC */
+}
+
+html[data-bs-theme="dark"] .table a,
+html[data-bs-theme="dark"] a:not(.nav-link) {
+  color: #AE7FD6 !important; /* Light purple links in dark mode */
+}
+
+html[data-bs-theme="dark"] .table a:hover,
+html[data-bs-theme="dark"] a:not(.nav-link):hover {
+  color: #8155ba !important; /* Lighter purple on hover in dark mode */
+}

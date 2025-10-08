@@ -1,0 +1,520 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "DeepPumas for Viral Dynamics Workshop",
+    "section": "",
+    "text": "This workshop explores how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics applications."
+  },
+  {
+    "objectID": "index.html#workshop-materials",
+    "href": "index.html#workshop-materials",
+    "title": "DeepPumas for Viral Dynamics Workshop",
+    "section": "",
+    "text": "This workshop explores how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics applications."
+  },
+  {
+    "objectID": "index.html#schedule-and-materials",
+    "href": "index.html#schedule-and-materials",
+    "title": "DeepPumas for Viral Dynamics Workshop",
+    "section": "2 Schedule and Materials",
+    "text": "2 Schedule and Materials\n\n\n\nTime\nSession\nMaterials\n\n\n\n\n09:00 - 09:20\nWelcome and Introduction\nSlides\n\n\n09:20 - 10:30\nNLME modeling in Pumas\nHands-on\n\n\n10:30 - 10:45\n☕ Coffee Break\n\n\n\n10:45 - 11:15\nDeepNLME\nSlides\n\n\n\nNeural networks, SciML, UDEs and NeuralODEs\n\n\n\n11:15 - 12:30\nDeepNLME (hands-on)\nHands-on\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n\n\n\n13:30 - 14:15\nRandom effects, fitting NLME, and Generative AI\nSlides\n\n\n14:15 - 15:30\nDeepNLME with Complex Covariates\nSlides and hands-on\n\n\n15:30 - 15:45\n☕ Coffee Break\n\n\n\n15:45 - 16:15\nEpidemiology Demo\nSlides\n\n\n16:15 - 17:00\nDiscussions and Conclusions"
+  },
+  {
+    "objectID": "index.html#key-concepts-covered",
+    "href": "index.html#key-concepts-covered",
+    "title": "DeepPumas for Viral Dynamics Workshop",
+    "section": "3 Key Concepts Covered",
+    "text": "3 Key Concepts Covered\n\n3.1 Introduction\n\nComparison of machine learning vs scientific modeling approaches\nThe vision for combining both paradigms\nWorkshop overview and objectives\n\n\n\n3.2 DeepNLME - Part 1\n\nNeural networks as universal approximators\nScientific Machine Learning (SciML) and Universal Differential Equations (UDEs)\nNeural ODEs vs structured neural enhancement\nExtending UDEs for longitudinal data with NLME\n\n\n\n3.3 Complex Covariates\n\nPatient embeddings and Empirical Bayes Estimates (EBEs)\nText embeddings using pre-trained models\nDimensionality reduction and subspace analysis\nNeural networks for predicting patient parameters\nAugmented NLME models\n\n\n\n3.4 Epidemiology Demo\n\nAge-stratified seroprevalence modeling\nData-driven discovery of force of infection patterns\nInformation sharing across populations\nHandling heterogeneous data quality\n\n\n\n3.5 Generative AI Connections\n\nMathematical connections between NLME and Generative AI\nLatent variables, embeddings, and their clinical interpretations\nFuture directions and applications\nDiscussion of regulatory and practical considerations"
+  },
+  {
+    "objectID": "index.html#learning-objectives",
+    "href": "index.html#learning-objectives",
+    "title": "DeepPumas for Viral Dynamics Workshop",
+    "section": "4 Learning Objectives",
+    "text": "4 Learning Objectives\nBy the end of this workshop, participants will be able to:\n\nUnderstand the theoretical foundations connecting mechanistic modeling and machine learning\nImplement DeepNLME models for viral dynamics and other applications\n\nWork with complex covariates including text data and embeddings\nApply information sharing techniques across populations\nRecognize connections between NLME and modern generative AI\nEvaluate when and how to use DeepNLME approaches in practice"
+  },
+  {
+    "objectID": "index.html#prerequisites",
+    "href": "index.html#prerequisites",
+    "title": "DeepPumas for Viral Dynamics Workshop",
+    "section": "5 Prerequisites",
+    "text": "5 Prerequisites\n\nFamiliarity with NLME modeling concepts"
+  },
+  {
+    "objectID": "index.html#resources",
+    "href": "index.html#resources",
+    "title": "DeepPumas for Viral Dynamics Workshop",
+    "section": "6 Resources",
+    "text": "6 Resources\n\nDeepPumas Documentation\nPumas Documentation\nWorkshop GitHub Repository\n\n\nWorkshop developed by Niklas Korsbo, Pumas-AI"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#setup",
+    "href": "05-epidemiology-demo.html#setup",
+    "title": "Epidemiology Demo",
+    "section": "Setup",
+    "text": "Setup"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#the-problem-age-stratified-seroprevalence",
+    "href": "05-epidemiology-demo.html#the-problem-age-stratified-seroprevalence",
+    "title": "Epidemiology Demo",
+    "section": "The Problem: Age-Stratified Seroprevalence",
+    "text": "The Problem: Age-Stratified Seroprevalence"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#the-challenge",
+    "href": "05-epidemiology-demo.html#the-challenge",
+    "title": "Epidemiology Demo",
+    "section": "The Challenge",
+    "text": "The Challenge\n\nMulti-country seroprevalence data across age groups\nUnknown force of infection λ(age) patterns\n\nHeterogeneous data quality: Some countries well-sampled, others sparse\nNeed to share information between populations\nDiscover age-specific transmission patterns\n\nTraditional approaches: Pre-specify parametric forms for λ(age)\nDeepNLME approach: Let data discover the functional form!"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#deepnlme-epidemiological-model",
+    "href": "05-epidemiology-demo.html#deepnlme-epidemiological-model",
+    "title": "Epidemiology Demo",
+    "section": "DeepNLME Epidemiological Model",
+    "text": "DeepNLME Epidemiological Model\n\nepi_model = @model begin\n  @param begin\n    N ∈ RealDomain(; lower=0, init=1000)\n    λ ∈ MLPDomain(2, 5, 5, (1, softplus); reg=L2(1e-2))\n  end\n  @random η ~ Normal(0, 0.1)\n  @init S = 1\n  @dynamics begin\n    S' = - λ(t/100, η)[1] * S\n  end\n  @derived PosFrac ~ @. Beta(abs(N*(1-0.99S)), abs(N*(0.99S)))\nend\n\nKey features:\n\nNeural network λ discovers age-specific force of infection\nIndividual random effects η allow country-specific scaling\nShared function across populations with individual tuning\nMechanistic structure preserves epidemiological interpretation"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#model-predictions",
+    "href": "05-epidemiology-demo.html#model-predictions",
+    "title": "Epidemiology Demo",
+    "section": "Model Predictions",
+    "text": "Model Predictions\n\nExcellent fit across all countries, including sparsely sampled test data!"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#comparison-with-truth",
+    "href": "05-epidemiology-demo.html#comparison-with-truth",
+    "title": "Epidemiology Demo",
+    "section": "Comparison with Truth",
+    "text": "Comparison with Truth\n\nNeural network accurately recovers the true underlying force of infection!"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#discovered-force-of-infection-pattern",
+    "href": "05-epidemiology-demo.html#discovered-force-of-infection-pattern",
+    "title": "Epidemiology Demo",
+    "section": "Discovered Force of Infection Pattern",
+    "text": "Discovered Force of Infection Pattern\n\nComplex multi-modal pattern discovered automatically from data!"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#information-sharing-across-populations",
+    "href": "05-epidemiology-demo.html#information-sharing-across-populations",
+    "title": "Epidemiology Demo",
+    "section": "Information Sharing Across Populations",
+    "text": "Information Sharing Across Populations\n\nDense data informs sparse data through shared neural network function!"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#what-deepnlme-achieved",
+    "href": "05-epidemiology-demo.html#what-deepnlme-achieved",
+    "title": "Epidemiology Demo",
+    "section": "What DeepNLME Achieved",
+    "text": "What DeepNLME Achieved\n\nData-driven discovery of force of infection λ(age)\nAutomatic pattern recognition without pre-specifying functional forms\n\nInformation sharing between populations via shared neural network\nIndividual adaptation through random effects\nRobust extrapolation to poorly sampled regions/countries\nMechanistically interpretable results"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#epidemiological-applications",
+    "href": "05-epidemiology-demo.html#epidemiological-applications",
+    "title": "Epidemiology Demo",
+    "section": "Epidemiological Applications",
+    "text": "Epidemiological Applications\n\nInfectious disease surveillance: Age-stratified transmission patterns\nVaccine impact assessment: Changes in force of infection over time\nCross-population studies: Sharing information between countries/regions\nSparse data settings: Leveraging information from well-studied populations\nOutbreak investigation: Discovering transmission hotspots\nPublic health planning: Age-specific intervention strategies"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#beyond-epidemiology",
+    "href": "05-epidemiology-demo.html#beyond-epidemiology",
+    "title": "Epidemiology Demo",
+    "section": "Beyond Epidemiology",
+    "text": "Beyond Epidemiology\nThe same principles apply to:\n\nDose-response relationships: Unknown functional forms\nBiomarker dynamics: Complex temporal patterns\nPopulation pharmacokinetics: Covariate effects discovery\n\nDisease progression: Natural history modeling\nTreatment response: Personalized medicine applications"
+  },
+  {
+    "objectID": "05-epidemiology-demo.html#summary",
+    "href": "05-epidemiology-demo.html#summary",
+    "title": "Epidemiology Demo",
+    "section": "Summary",
+    "text": "Summary\nDeepNLME enables:\n\nFlexible function discovery while preserving scientific structure\nPopulation-level insights from individual-level data\nRobust handling of heterogeneous data quality\n\nMechanistic interpretation of discovered patterns\nPrincipled uncertainty quantification\n\n\nThe future of epidemiological modeling: Mechanism + Machine Learning"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#what-are-mixed-effects-models",
+    "href": "03-random-effects-revisited.html#what-are-mixed-effects-models",
+    "title": "Random effects",
+    "section": "What are mixed effects models?",
+    "text": "What are mixed effects models?\n\nFixed effects, \\(θ\\)\n\nModel parameters modelled as deterministic quantities\n\nRandom effects, \\(η_i\\)\n\nModel parameters modelled as random variables\n\n\nHierarchical\nWe typically define hierarchies where \\(θ\\) are shared parameters but \\(η\\) is subject-specific."
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#no-need-to-assign-too-much-meaning-to-random-effects",
+    "href": "03-random-effects-revisited.html#no-need-to-assign-too-much-meaning-to-random-effects",
+    "title": "Random effects",
+    "section": "No need to assign too much meaning to random effects",
+    "text": "No need to assign too much meaning to random effects\n\nIndicates unknown parameters that vary between subjects (or whatever hierarchy we use)\nUsually tied very closely to a specific parameter in pharmacometrics. \\(CL = tvCL \\cdot e^{η_{CL}}\\)\nEnables degree o freedom along which the model can account for heterogenous outcomes"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#simulating-with-random-effects",
+    "href": "03-random-effects-revisited.html#simulating-with-random-effects",
+    "title": "Random effects",
+    "section": "Simulating with random effects",
+    "text": "Simulating with random effects\nSimple\n\nWe have given \\(θ\\) and covariates \\(x\\)\nSample from the prior \\(η | θ\\)\nCompute your individual parameters and propagate your ODE\nSample your observations \\(y | θ, η, x\\)"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects",
+    "href": "03-random-effects-revisited.html#fitting-with-random-effects",
+    "title": "Random effects",
+    "section": "Fitting with random effects",
+    "text": "Fitting with random effects\nConditional probability / Joint likelihood / MLE\nProbability of the response \\(y\\) according to the model given specific values of \\(θ\\), \\(η\\), and \\(x\\).\n\\[\np_c(y | θ, η, x)\n\\]\nFit model by simply finding the values of \\(θ\\) and \\(η\\) that jointly maximize the probability?\nEquivalent to minimizing a distance metric (e.g. MSE) between observed and predicted data.\n\nNot what we do"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects-1",
+    "href": "03-random-effects-revisited.html#fitting-with-random-effects-1",
+    "title": "Random effects",
+    "section": "Fitting with random effects",
+    "text": "Fitting with random effects\nMarginal probability\nIntegrates out the effect of the random effects.\n\\[\np_m(y | θ, x) = \\int p_c(y | θ, η, x) \\cdot p_{prior}(η | θ) dη\n\\]\nAverage conditional probability weighted by a prior"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects-2",
+    "href": "03-random-effects-revisited.html#fitting-with-random-effects-2",
+    "title": "Random effects",
+    "section": "Fitting with random effects",
+    "text": "Fitting with random effects"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#one-dimension-per-random-effect",
+    "href": "03-random-effects-revisited.html#one-dimension-per-random-effect",
+    "title": "Random effects",
+    "section": "One dimension per random effect",
+    "text": "One dimension per random effect\n\n\\(η\\) here can be multi-dimensional\n\n\\[\np_m(y | θ, x) = \\int p_c(y | θ, η, x) \\cdot p_{prior}(η | θ) dη\n\\]\n\nThis is a multi-variate integral\nOne dimension (degree of freedom) along which to account for between subject variability in the data for each random effect.\nMarginalization incentivizes that each random effect controls a single smooth dimension between-subject variability."
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#smoothness",
+    "href": "03-random-effects-revisited.html#smoothness",
+    "title": "Random effects",
+    "section": "“Smoothness”?",
+    "text": "“Smoothness”?\nClassical NLME\n\\[\nEFF = \\left(1 + Smax \\cdot \\frac{C}{tvSC50 \\cdot exp\\left(\\mathbf{\\eta}\\right) + C}\\right)\n\\]\n\n\n\nThis function is somewhat smooth in \\(η\\) by structural definition.\nVery little flexibility to affect the smoothness by tuning fixed effects.\n\n\n\n\nDeepNLME\n\\[\nEFF = \\left(1 + NN(C, η)\\right)\n\\]\n\nThis function can be very non-smooth in \\(η\\).\nLots of flexibility to affect the smoothness by tuning fixed effects.\nIncentivizing smoothness by marginalization in the fit really helps here!"
+  },
+  {
+    "objectID": "01-introduction.html#workshop-overview",
+    "href": "01-introduction.html#workshop-overview",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Workshop Overview",
+    "text": "Workshop Overview\n\n\n\nTime\nSession\nDuration\n\n\n\n\n10:00 - 10:20\nIntroduction\n20 min\n\n\n10:20 - 11:30\nNLME modeling in Pumas (hands-on)\n1h 10min\n\n\n11:30 - 12:00\nDeepNLME - Part 1 (lecture)\n30 min\n\n\n12:00 - 12:30\nDeepNLME - Part 1 (hands-on)\n30 min\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n1h\n\n\n13:30 - 15:30\nDeepNLME with complex covariates\n2h\n\n\n15:30 - 15:45\n☕ Coffee Break\n15 min\n\n\n15:45 - 16:15\nEpidemiology demo\n30 min\n\n\n16:15 - 17:00\nDiscussions and conclusions\n45 min"
+  },
+  {
+    "objectID": "01-introduction.html#section",
+    "href": "01-introduction.html#section",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "",
+    "text": "Machine learning\n\n\n\n\nData-driven model discovery\nFinds unintuitive relationships\nHandles complex data\n\n\n\n\n\n\n\n\nLacks scientific understanding\nRequires big data\n\n\n\n\n\nScientific modelling\n\n\n\n\nEncodes scientific understanding\nData-efficient\nInterpretable\nSimple counterfactuals\n\n\n\n\n\n\n\n\nLabor intensive\nMisses unintuitive relationships\nHard to utilize complex data"
+  },
+  {
+    "objectID": "01-introduction.html#data-knowledge",
+    "href": "01-introduction.html#data-knowledge",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Data + Knowledge",
+    "text": "Data + Knowledge"
+  },
+  {
+    "objectID": "01-introduction.html#vision-spanning-pharma",
+    "href": "01-introduction.html#vision-spanning-pharma",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Vision Spanning Pharma",
+    "text": "Vision Spanning Pharma"
+  },
+  {
+    "objectID": "01-introduction.html#what-well-build-today",
+    "href": "01-introduction.html#what-well-build-today",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "What We’ll Build Today",
+    "text": "What We’ll Build Today\nStarting with traditional NLME models…"
+  },
+  {
+    "objectID": "01-introduction.html#traditional-nlme",
+    "href": "01-introduction.html#traditional-nlme",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Traditional NLME",
+    "text": "Traditional NLME\n\n\nNonlinear Mixed Effects\n\n\n\n\n\n\n\n\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\n\n\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\n\n\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\frac{CL}{Vc} \\cdot Central(t)\n\\end{align*}\n\\]\n\n\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "01-introduction.html#lets-get-started",
+    "href": "01-introduction.html#lets-get-started",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Let’s Get Started!",
+    "text": "Let’s Get Started!\n\nNext up: Hands-on NLME modeling with Pumas\n\nSynthetic viral dynamics data mimicking HIV\nModel building and fitting\n\nUnderstanding the foundations before we add neural networks"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#traditional-nlme",
+    "href": "02-deepnlme-part1.html#traditional-nlme",
+    "title": "DeepNLME - Part 1",
+    "section": "Traditional NLME",
+    "text": "Traditional NLME\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\frac{CL}{Vc} \\cdot Central(t)\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#what-if-components-are-unknown",
+    "href": "02-deepnlme-part1.html#what-if-components-are-unknown",
+    "title": "DeepNLME - Part 1",
+    "section": "What if components are unknown?",
+    "text": "What if components are unknown?\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight, \\; \\color{red}{???}\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\cdot \\color{red}{NN(...)} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{NN(...)}\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#neural-networks",
+    "href": "02-deepnlme-part1.html#neural-networks",
+    "title": "DeepNLME - Part 1",
+    "section": "Neural networks",
+    "text": "Neural networks\n\n\nInformation processing mechanism\n\nLoosely based on neurons\n\n\n\n\n\n \n\n\n\nMathematically just a function!\nUsable anywhere you’d use a function!\n\n\nUniversal approximators!\nVideo\n\nApproximate any function\nFunctional form tuned by parameters"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
+    "href": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
+    "title": "DeepNLME - Part 1",
+    "section": "Neural networks in NLME dynamics",
+    "text": "Neural networks in NLME dynamics\n\n\nFocus: Neural Networks in Dynamics\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics ← This lecture focuses here \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{NN(...)}\n\\end{align*}\n\\]\nError model \\[\nDV(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
+    "href": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
+    "title": "DeepNLME - Part 1",
+    "section": "Neural-embedded dynamical systems",
+    "text": "Neural-embedded dynamical systems\n2018 - “Neural Ordinary Differential Equations”, Chen et al.\n\n2020 - “Universal Differential Equations for Scientific Machine Learning”, Rackauckas et al.\n\n\n\nNeural ODE\n\\[\n\\frac{d\\mathbf{X}}{dt} = NN(\\mathbf{X}(t), t)\n\\]\n\n\nODE solver as scaffold for neural networks\nSimilar to recurrent neural networks and ResNets\nPure machine learning approach\n\n\n\n\nUniversal Differential Equations (UDE)\n\\[\\begin{align*}\n\\frac{dx}{dt} &= x \\cdot y - NN(x)\\\\\n\\frac{dy}{dt} &= p - x \\cdot y\n\\end{align*}\\]\n\n\nInsert universal approximators (NNs) to capture unknown terms\nCombine scientific knowledge with machine learning\nMore data-efficient than pure ML approaches\n\n\n\n\n\nScientific Machine Learning (SciML)\n\n\nAbstract idea: mixing science and machine learning\nUmbrella term for hybrid approaches\nIncludes UDEs, Physics-Informed NNs, etc.\nGoal: leverage domain knowledge to improve ML"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#encoding-knowledge",
+    "href": "02-deepnlme-part1.html#encoding-knowledge",
+    "title": "DeepNLME - Part 1",
+    "section": "Encoding Knowledge",
+    "text": "Encoding Knowledge\n\n\nPure Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= NN(Depot, Central, R)[1]\\\\\n\\frac{dCentral}{dt} &= NN(Depot, Central, R)[2]\\\\\n\\frac{dR}{dt} &= NN(Depot, Central, R)[3]\n\\end{aligned}\n\\]\n\nNumber of states\n\n\nGraph Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - NN_1(Depot)\\\\\n\\frac{dCentral}{dt} &= NN_1(Depot) - NN_2(Central)\\\\\n\\frac{dR}{dt} &= NN_3(Central, R)\n\\end{aligned}\n\\]\n\nNumber of states\nDependencies\n\nConservation principles\n\n\n\n\nUDE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= NN_3\\left(\\frac{Central}{V_c}, R\\right)\n\\end{aligned}\n\\]\n\nExplicit knowledge of some terms\nNeural networks only where needed\n\n\n\nTargeted Neural Enhancement (still a UDE) \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= k_{in} \\cdot \\left(1 + NN\\left(\\frac{Central}{V_c}\\right)\\right) - k_{out} \\cdot R\n\\end{aligned}\n\\]\n\nMost knowledge encoded!\nNeural network captures unknown drug effect\nPrecise positioning and inputs"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
+    "href": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
+    "title": "DeepNLME - Part 1",
+    "section": "Extending for longitudinal data with DeepNLME",
+    "text": "Extending for longitudinal data with DeepNLME\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]\nNeural network captures unknown drug effect mechanism"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#individual-level-neural-networks",
+    "href": "02-deepnlme-part1.html#individual-level-neural-networks",
+    "title": "DeepNLME - Part 1",
+    "section": "Individual-level neural networks",
+    "text": "Individual-level neural networks\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c}, {\\color{orange} η₁} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]"
+  },
+  {
+    "objectID": "04-complex-covariates.html#the-data-challenge",
+    "href": "04-complex-covariates.html#the-data-challenge",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "The Data Challenge",
+    "text": "The Data Challenge\n\nChallenge: How do we use rich text descriptions as covariates in NLME models?"
+  },
+  {
+    "objectID": "04-complex-covariates.html#traditional-nlme-with-simple-covariates",
+    "href": "04-complex-covariates.html#traditional-nlme-with-simple-covariates",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Traditional NLME with Simple Covariates",
+    "text": "Traditional NLME with Simple Covariates\n\nGood predictions, but missing information from complex covariates"
+  },
+  {
+    "objectID": "04-complex-covariates.html#ebes-as-patient-embeddings",
+    "href": "04-complex-covariates.html#ebes-as-patient-embeddings",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "EBEs as Patient Embeddings",
+    "text": "EBEs as Patient Embeddings\n\n\n\nData\n\n\n\n\n\n\nEmbedding\n\n\n\n\npatient\nη₁\nη₂\nη₃\nη₄\n\n\n\n\nPatient 1\n0.42\n0.1\n-0.26\n0.28\n\n\nPatient 2\n0.66\n0.08\n-0.92\n0.23\n\n\nPatient 3\n-0.43\n-0.03\n0.23\n-0.28\n\n\n\n\n\n\n\n\n\nGenerated\n\n\n\n\nKey insight: EBEs encode patient-specific information as low-dimensional vectors!"
+  },
+  {
+    "objectID": "04-complex-covariates.html#validation-known-relationships",
+    "href": "04-complex-covariates.html#validation-known-relationships",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Validation: Known Relationships",
+    "text": "Validation: Known Relationships\n\nEBEs capture the underlying patient characteristics!"
+  },
+  {
+    "objectID": "04-complex-covariates.html#the-ease-of-creating-embeddings",
+    "href": "04-complex-covariates.html#the-ease-of-creating-embeddings",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "The Ease of Creating Embeddings",
+    "text": "The Ease of Creating Embeddings\n\n# Load a pre-trained text embedding model from HuggingFace\nloaded_model = hgf\"avsolatorio/NoInstruct-small-Embedding-v0\"\n\nconst encoder = loaded_model[1]\nconst llm = loaded_model[2];\n\n# Define how to get a patient's embedding\nget_embedding(subj::DeepPumas.Pumas.Subject) = get_embedding(subj.covariates(0).Description)\nfunction get_embedding(context)\n    enc = encode(encoder, context)\n    out = llm(enc)\n    return out.pooled\nend\n\n# Get the embeddings for all patients and put it in a matrix\nX_train = mapreduce(get_embedding, hcat, train_pop)\nX_test = mapreduce(get_embedding, hcat, test_pop)"
+  },
+  {
+    "objectID": "04-complex-covariates.html#embedding-subspacing",
+    "href": "04-complex-covariates.html#embedding-subspacing",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embedding Subspacing",
+    "text": "Embedding Subspacing\n\nConsider the embedding space as a “meaning space”\nThe original model had Shakespeare and Twitter in its training\nOur data are all about describing wellness\nOur data should be on a low-dimensional manifold of the embedding space\n\nSolution: Use PCA for dimension reduction\n\ntrained_pca = fit(PCA, X_train; maxoutdim = 10)\nX_train_pc = predict(trained_pca, X_train)\nX_test_pc = predict(trained_pca, X_test)"
+  },
+  {
+    "objectID": "04-complex-covariates.html#embedding-space-structure",
+    "href": "04-complex-covariates.html#embedding-space-structure",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embedding Space Structure",
+    "text": "Embedding Space Structure\n\nText embeddings capture meaningful clinical information!"
+  },
+  {
+    "objectID": "04-complex-covariates.html#connecting-embeddings-to-ebes",
+    "href": "04-complex-covariates.html#connecting-embeddings-to-ebes",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Connecting Embeddings to EBEs",
+    "text": "Connecting Embeddings to EBEs\n\nStrong correlations between text embeddings and patient-specific parameters!"
+  },
+  {
+    "objectID": "04-complex-covariates.html#neural-network-architecture",
+    "href": "04-complex-covariates.html#neural-network-architecture",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Neural Network Architecture",
+    "text": "Neural Network Architecture\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nText → Embeddings → Neural Network → Patient Parameters"
+  },
+  {
+    "objectID": "04-complex-covariates.html#usage-with-nlme",
+    "href": "04-complex-covariates.html#usage-with-nlme",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Usage with NLME",
+    "text": "Usage with NLME\nMultiple approaches available:\n\nUse embeddings as NLME covariates\n\nStraightforward integration\nLimited by traditional covariate modeling\n\nJointly model NLME and embeddings\n\nMore sophisticated approach\nAccounts for uncertainty in embeddings\n\nAugment existing models\n\nAdd predicted EBEs to trained models\nPreserve existing model structure"
+  },
+  {
+    "objectID": "04-complex-covariates.html#embedding-augmented-predictions",
+    "href": "04-complex-covariates.html#embedding-augmented-predictions",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embedding-Augmented Predictions",
+    "text": "Embedding-Augmented Predictions\n\n\n\nPerformance on test data\n\n\n\nsource\nMAE\nr2\n\n\n\n\nOriginal\n0.361\n0.712\n\n\nAugmented\n0.27\n0.82\n\n\nDataModel\n0.229\n0.865\n\n\n\n\n\n\n\n\n\nSignificant improvement using text embeddings!"
+  },
+  {
+    "objectID": "04-complex-covariates.html#improved-population-modeling",
+    "href": "04-complex-covariates.html#improved-population-modeling",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Improved Population Modeling",
+    "text": "Improved Population Modeling\nBefore (traditional NLME) \nAfter (embedding-augmented) \nBetter population-level predictions and reduced unexplained variability!"
+  },
+  {
+    "objectID": "04-complex-covariates.html#embeddings-from-any-data",
+    "href": "04-complex-covariates.html#embeddings-from-any-data",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embeddings from Any Data",
+    "text": "Embeddings from Any Data\n\nText (clinical notes, patient descriptions)\n2D Images (X-rays, histology, photos)\n3D Images (CT scans, MRI - limited model availability)\n\nOmics data (genomics, proteomics - specialized models)\nTime series (ECG, continuous monitoring)\nMixed modalities (combining multiple data types)"
+  },
+  {
+    "objectID": "04-complex-covariates.html#simple-conceptual-pipeline",
+    "href": "04-complex-covariates.html#simple-conceptual-pipeline",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Simple Conceptual Pipeline",
+    "text": "Simple Conceptual Pipeline\n\nModel longitudinal data with traditional NLME\nConvert complex covariates to embeddings using pre-trained models\nFind relevant subspace using dimensionality reduction (PCA)\nRegress embeddings to EBEs using neural networks\nPredict patient parameters for new subjects: \\(η_{pred}\\)\nAugment NLME model: \\(η \\rightarrow η + η_{pred}\\)\nRefit residual distribution to reflect reduced unexplained variability\nApply standard NLME methods (VPC, simulations, etc.)\n\nClose to trivial to implement!"
+  },
+  {
+    "objectID": "04-complex-covariates.html#generalized-framework",
+    "href": "04-complex-covariates.html#generalized-framework",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Generalized Framework",
+    "text": "Generalized Framework\nTraining Phase: \\[\n\\max_θ \\log p(y | θ) = \\sum_i^N \\log \\int p(y_i | θ, η_i) \\cdot p(η_i | θ) dη_i\n\\]\nEmbedding Phase:\n\\[\nz_i^* = \\text{Embed}(x_i) \\quad \\text{where } x_i \\text{ is complex covariate data}\n\\]\nJoint Modeling: \\[\n\\max_{θ,w} \\log p(y | θ, z^*) = \\sum_i^N \\log \\int p(y_i | θ, η_i, z_i^*) \\cdot p(η_i | θ) dη_i\n\\]"
+  },
+  {
+    "objectID": "04-complex-covariates.html#key-advantages",
+    "href": "04-complex-covariates.html#key-advantages",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Key Advantages",
+    "text": "Key Advantages\n\nLeverages existing models: Use pre-trained embeddings (GPT, BERT, vision models)\nData efficient: Much less data needed than training from scratch\nScientifically grounded: Preserves mechanistic understanding in NLME\nFlexible: Works with any type of complex covariate\nInterpretable: Can understand which parts are mechanism vs data-driven\nScalable: Can handle large-scale clinical datasets"
+  },
+  {
+    "objectID": "04-complex-covariates.html#next-steps",
+    "href": "04-complex-covariates.html#next-steps",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Next Steps",
+    "text": "Next Steps\n\nComing up: Hands-on implementation\n\nWork with synthetic text data\nBuild embedding pipelines\n\nAugment NLME models\nSee the power of complex covariates in action"
+  },
+  {
+    "objectID": "05-generative-ai.html#what-is-generative-ai",
+    "href": "05-generative-ai.html#what-is-generative-ai",
+    "title": "Generative AI and NLME",
+    "section": "What is Generative AI?",
+    "text": "What is Generative AI?\nGoal: Generate synthetic data that is indistinguishable from real data\n\nExamples you’ve seen:\n\nImages (faces, artwork, medical images)\nText (ChatGPT, clinical notes)\n\nTime series (financial data, biomarkers)"
+  },
+  {
+    "objectID": "05-generative-ai.html#famous-example-fake-faces",
+    "href": "05-generative-ai.html#famous-example-fake-faces",
+    "title": "Generative AI and NLME",
+    "section": "Famous Example: Fake Faces",
+    "text": "Famous Example: Fake Faces\nhttps://www.thispersondoesnotexist.com\n\n\n\n\n\n\nThese people don’t exist - generated by AI!"
+  },
+  {
+    "objectID": "05-generative-ai.html#time-series-and-longitudinal-data",
+    "href": "05-generative-ai.html#time-series-and-longitudinal-data",
+    "title": "Generative AI and NLME",
+    "section": "Time-Series and Longitudinal Data",
+    "text": "Time-Series and Longitudinal Data\n\n\nPK concentration profiles \n\nPopulation predictions \n\nGenerative AI can create realistic longitudinal clinical data!"
+  },
+  {
+    "objectID": "05-generative-ai.html#nlme-is-generative-ai",
+    "href": "05-generative-ai.html#nlme-is-generative-ai",
+    "title": "Generative AI and NLME",
+    "section": "NLME is Generative AI!",
+    "text": "NLME is Generative AI!\nNLME objective: Maximize marginal likelihood of observations \\(y\\) given covariates \\(c\\):\n\\[\np_\\theta(y | c) = \\int p_\\theta(y | \\eta, c) \\cdot p(\\eta) d\\eta\n\\]\nVariational Autoencoder (GenAI) objective: Maximize likelihood of data \\(x\\):\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\nThey’re identical!\n\nRandom effects \\(\\eta\\) ↔︎ Latent variables \\(z\\)\nObservations \\(y\\) ↔︎ Generated data \\(x\\)\nIndividual predictions ↔︎ Generative model"
+  },
+  {
+    "objectID": "05-generative-ai.html#what-are-latent-variables",
+    "href": "05-generative-ai.html#what-are-latent-variables",
+    "title": "Generative AI and NLME",
+    "section": "What Are Latent Variables?",
+    "text": "What Are Latent Variables?\nIn Traditional NLME: Meaning is structurally engineered\n\\[\nCL = tvCL \\cdot e^{\\eta_1}\n\\]\nIn DeepNLME: More flexible, but still some structure\n\\[\n\\frac{dR}{dt} = NN\\left(\\frac{Central}{Vc}, R, \\eta_1, \\eta_2 \\right)\n\\]\nIn Pure GenAI: Meaning emerges from data and training\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\\(z\\) captures informative properties not directly observed"
+  },
+  {
+    "objectID": "05-generative-ai.html#latent-variables-as-information",
+    "href": "05-generative-ai.html#latent-variables-as-information",
+    "title": "Generative AI and NLME",
+    "section": "Latent Variables as Information",
+    "text": "Latent Variables as Information\nFor images:\n\nNot pixel-by-pixel intensity\nRather: Objects, characteristics, actions, style, lighting\n\nFor text:\n\nNot individual words\nRather: Sentiment, information content, writing style, language\n\nFor clinical data:\n\nNot individual measurements\nRather: Disease state, treatment response, patient phenotype"
+  },
+  {
+    "objectID": "05-generative-ai.html#embeddings-dense-information-vectors",
+    "href": "05-generative-ai.html#embeddings-dense-information-vectors",
+    "title": "Generative AI and NLME",
+    "section": "Embeddings: Dense Information Vectors",
+    "text": "Embeddings: Dense Information Vectors\n\nPosterior latent variables tell you how to recreate the data\nFixed, lower-dimensional representation of complex data\nInferred latent variables \\(z^*\\) are called “embeddings”\nDense, structured information about the original data\nMachine-readable format for downstream tasks\n\nThis is exactly what we used earlier with text descriptions!"
+  },
+  {
+    "objectID": "05-generative-ai.html#from-vae-theory-to-clinical-practice",
+    "href": "05-generative-ai.html#from-vae-theory-to-clinical-practice",
+    "title": "Generative AI and NLME",
+    "section": "From VAE Theory to Clinical Practice",
+    "text": "From VAE Theory to Clinical Practice\n\n\nVariational Autoencoder\n\nMathematical foundation:  \n\nDeepNLME Application\n\nEncoder: Text → Embedding → EBEs\nDecoder: EBEs → Individual predictions\nShared structure: NLME framework\nIndividual variation: Random effects\n\nPractical implementation:\n\nPre-trained text models (HuggingFace)\nPCA for dimension reduction\nNeural networks for EBE prediction\nAugmented NLME models"
+  },
+  {
+    "objectID": "05-generative-ai.html#clinical-applications",
+    "href": "05-generative-ai.html#clinical-applications",
+    "title": "Generative AI and NLME",
+    "section": "Clinical Applications",
+    "text": "Clinical Applications\n\nReal examples from clinical practice:"
+  },
+  {
+    "objectID": "05-generative-ai.html#practical-applications",
+    "href": "05-generative-ai.html#practical-applications",
+    "title": "Generative AI and NLME",
+    "section": "Practical Applications",
+    "text": "Practical Applications\n\nElectronic Health Records: Converting clinical notes to structured data\nMedical Imaging: Extracting quantitative features from scans\n\nGenomics/Proteomics: High-dimensional omics data integration\nWearables/IoT: Continuous monitoring data processing\nSocial Determinants: Free-text survey responses\nAdverse Event Reporting: Unstructured safety narratives"
+  },
+  {
+    "objectID": "05-generative-ai.html#future-directions",
+    "href": "05-generative-ai.html#future-directions",
+    "title": "Generative AI and NLME",
+    "section": "Future Directions",
+    "text": "Future Directions\n\nMultimodal embeddings: Combining text, images, and clinical data\nFoundation models: Pre-trained on large clinical datasets\nReal-time adaptation: Online learning from streaming data\nCausal embeddings: Preserving causal relationships in latent space\nUncertainty quantification: Probabilistic embeddings\nPrivacy-preserving: Federated learning approaches"
+  },
+  {
+    "objectID": "05-generative-ai.html#the-unified-view",
+    "href": "05-generative-ai.html#the-unified-view",
+    "title": "Generative AI and NLME",
+    "section": "The Unified View",
+    "text": "The Unified View\n\nNLME and GenAI share the same mathematical foundation\nRandom effects ≈ Latent variables ≈ Embeddings\nDeepNLME bridges traditional modeling with modern AI\nEmbeddings unlock complex covariate information\nScientific structure provides interpretability and data efficiency"
+  },
+  {
+    "objectID": "05-generative-ai.html#why-this-matters",
+    "href": "05-generative-ai.html#why-this-matters",
+    "title": "Generative AI and NLME",
+    "section": "Why This Matters",
+    "text": "Why This Matters\n\nLeverage decades of AI research for clinical modeling\nUse pre-trained models instead of starting from scratch\nHandle any type of complex data (text, images, omics)\nMaintain scientific interpretability while gaining flexibility\nBridge the gap between mechanism and machine learning"
+  },
+  {
+    "objectID": "05-generative-ai.html#looking-forward",
+    "href": "05-generative-ai.html#looking-forward",
+    "title": "Generative AI and NLME",
+    "section": "Looking Forward",
+    "text": "Looking Forward\n\nThe future of clinical modeling:\nMechanism + Machine Learning + Generative AI\n\nRich, complex data sources\nScientifically grounded models\n\nFlexible, data-driven components\nRobust uncertainty quantification\nPractical clinical applications"
+  },
+  {
+    "objectID": "05-generative-ai.html#questions-for-discussion",
+    "href": "05-generative-ai.html#questions-for-discussion",
+    "title": "Generative AI and NLME",
+    "section": "Questions for Discussion",
+    "text": "Questions for Discussion\n\nHow can we leverage foundation models in clinical research?\nWhat are the regulatory implications of GenAI in drug development?\nHow do we ensure interpretability while embracing complexity?\nWhat data types haven’t we considered yet?\nHow do we validate models with AI-generated components?\n\n\nLet’s discuss the future of AI-augmented clinical modeling!"
+  }
+]
