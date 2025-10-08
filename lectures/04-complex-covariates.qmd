@@ -1,6 +1,7 @@
 ---
 title: "DeepNLME with Complex Covariates"
 subtitle: "Embeddings, Text Data, and Advanced Applications"
+format: revealjs
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 title: "Generative AI and NLME"
 subtitle: "Connections, Concepts, and Future Directions"
+format: revealjs
 ---
 
 # The Connection Between NLME and Generative AI

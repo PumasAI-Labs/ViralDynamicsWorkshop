@@ -1,6 +1,7 @@
 ---
 title: "Epidemiology Demo"
 subtitle: "DeepNLME for Population-Level Viral Dynamics"
+format: revealjs
 ---
 
 ## Setup

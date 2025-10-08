@@ -1,6 +1,7 @@
 ---
 title: "Random effects"
 subtitle: "And how they interact with machine learning"
+format: revealjs
 ---
 
 

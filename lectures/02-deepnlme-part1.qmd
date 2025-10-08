@@ -1,6 +1,7 @@
 ---
 title: "DeepNLME - Part 1"  
 subtitle: "Neural Networks, SciML, and Universal Differential Equations"
+format: revealjs
 ---
 
 

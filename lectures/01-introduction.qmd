@@ -1,6 +1,7 @@
 ---
 title: "DeepPumas for Viral Dynamics"
 subtitle: "Introduction - Combining Mechanism and Machine Learning"
+format: revealjs
 ---
 
 # Welcome
