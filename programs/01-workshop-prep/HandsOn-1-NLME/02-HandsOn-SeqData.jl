@@ -26,7 +26,7 @@ using Serialization              # serialize/deserialize fits
 set_theme!(deep_light())
 
 # Define artifacts path
-ARTIFACTS_DIR = joinpath(@__DIR__, "artifacts")
+ASSESTS_DIR = joinpath(@__DIR__, "assests")
 
 
 ########################################
@@ -37,14 +37,14 @@ ARTIFACTS_DIR = joinpath(@__DIR__, "artifacts")
 DATA_PATH = joinpath(@__DIR__, "hiv-pkpd-data.csv")
 
 # Load PK dataset
-df_pk = CSV.read(DATA_PATH, DataFrame; missingstring = "", stringtype = String)
+df_pk_seq = CSV.read(DATA_PATH, DataFrame; missingstring = "", stringtype = String)
 
 df_pk_seq = @chain df_pk begin
     @rtransform(:rate = :evid == 1 ? -2 : missing)
   end
 
 # Load previously fitted PK model (FOCE method) from artifacts
-fit_pkseq_foce = deserialize(joinpath(ARTIFACTS_DIR, "fit_pkseq_foce.jls"))
+fit_pkseq_foce = deserialize(joinpath(ASSESTS_DIR, "fit_pkseq_foce.jls"))
 
 # Inspect the fit object (optional)
 fit_pkseq_foce
@@ -89,7 +89,7 @@ vscodedisplay(pd_dataframe)
 # 3) Save PKPD Dataset
 ########################################
 
-CSV.write(joinpath(ARTIFACTS_DIR, "hiv-ipp-data.csv"), pd_dataframe)
+CSV.write(joinpath(ASSESTS_DIR, "hiv-ipp-data.csv"), pd_dataframe)
 
 # =============================================================================
 # End of the Script

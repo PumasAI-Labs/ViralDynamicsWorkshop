@@ -26,15 +26,15 @@ using Serialization        # for saving/loading model fits
 set_theme!(deep_light())
 
 # Set working directory to script folder 
-ARTIFACTS_DIR = joinpath(@__DIR__, "artifacts")
+ASSESTS_DIR = joinpath(@__DIR__, "assests")
 
 
 ########################################
 # 1) Load & validate the source dataset
 ########################################
 
-# Expect a file "hiv-ipp-data.csv" in ARTIFACTS_DIR
-DATA_PATH = joinpath(ARTIFACTS_DIR, "hiv-ipp-data.csv")
+# Expect a file "hiv-ipp-data.csv" in ASSESTS_DIR
+DATA_PATH = joinpath(ASSESTS_DIR, "hiv-ipp-data.csv")
 
 df_pkpd = CSV.read(DATA_PATH, DataFrame; missingstring = "", stringtype = String)
 
@@ -71,109 +71,93 @@ plotgrid(pop_pd[1:8]; data=(; color=:blue))
 
 model_pd = @model begin
     @metadata begin
-        desc = "HIV PD Only"
-        timeu = u"d"   # time in days
+      desc = "Simple HIV PK–PD (Luo-style log10 parametrization) + explicit R0 + Kin/Kout initials"
+      timeu = u"d"
     end
-
+  
     @param begin
-        """ Viral production rate multiplier """
-        tvpro    ∈ RealDomain(lower=1, init=6.1) # if <1, won't stay infected
-        """ Death rate of actively infected cells (1/day) """
-        tvdelta  ∈ RealDomain(lower=0, init=0.63)
-        """ Source rate of uninfected cells (cells/day) """
-        tvlambda ∈ RealDomain(lower=0, init=0.46)
-        """ IC50 for drug effect (ng/mL) """
-        tvic50   ∈ RealDomain(lower=0, init=300.0)
-        """ Inter-individual variability """
-        Ω        ∈ PDiagDomain(4)
-        """ Additive residual error """
-        σ_add    ∈ RealDomain(lower=0)
+ 
+      # PD parameters (log10 biological rates)
+      log10_lambda ∈ RealDomain(init= 2.47)
+      log10_d      ∈ RealDomain(init= -0.74)
+      log10_beta   ∈ RealDomain(init= -5.41)
+      log10_a      ∈ RealDomain(init= -0.17)
+      log10_gamma  ∈ RealDomain(init= 3.77)
+      log10_omega  ∈ RealDomain(init= 1.27)
+  
+      # Drug effect parameters
+      tvec50 ∈ RealDomain(lower=0, init= 136.0)
+  
+      # Random effects
+      Ω ∈ PDiagDomain(2)
+  
+      # Residual error
+      σ ∈ RealDomain(lower=0.001, init= 0.318)
     end
-
+  
     @random begin
-        η ~ MvNormal(Ω)
+      η ~ MvNormal(Ω)
     end
-
+  
     @covariates iKa iCL iVc iQ iVp iDur
 
     @pre begin
         # PK parameters from covariates
-        Ka = iKa
+        KA = iKa
         CL = iCL
-        Vc = iVc
+        VC = iVc
         Q  = iQ
-        Vp = iVp
-
-        # PD parameters with random effects
-        RR0    = tvpro   * exp(η[1])   # Basic reproductive ratio
-        DELTA  = tvdelta * exp(η[2])   # Death rate of active infected cells
-        LAMBDA = tvlambda* exp(η[3])   # Source rate of uninfected cells
-        IC50   = tvic50  * exp(η[4])   # Drug potency
-
-        # Fixed biological constants
-        DU    = 0.006    # Death rate of uninfected cells (1/day)
-        DL    = 0.04     # Death rate of latently infected cells (1/day)
-        AL    = 0.036    # Conversion rate from latent to active (1/day)
-        POVC  = 35.4     # Ratio of production to clearance (Funk 2001)
-        DLL   = 0.01     # Death rate of long-lived infected cells (1/day)
-        PLLC  = 0.374    # Ratio of birth/death for long-lived infected cells
-        QLL   = 0.001    # Fraction of long-lived infected cells
-        QA    = 0.97     # Fraction actively infected
-        QL    = 0.029    # Fraction latently infected
+        VP = iVp 
+  
+      # PD (convert log10 to linear)
+      LAMBDA = exp(log10_lambda * log(10)) * exp(η[1])
+      D      = exp(log10_d      * log(10))
+      BETA   = exp(log10_beta   * log(10))
+      A      = exp(log10_a      * log(10))
+      GAMMA  = exp(log10_gamma  * log(10))
+      OMEGA  = exp(log10_omega  * log(10))
+  
+      # Drug effect parameters
+      EC50 = tvec50 * exp(η[2])
+  
+      # Basic reproduction number
+      R0 = BETA * LAMBDA * GAMMA / (D * A * OMEGA)
     end
-
+  
     @dosecontrol begin
         duration = (; Depot = iDur)
-    end
-
+      #sequential zero and first order abs codes
+      end
+  
     @init begin
-        # Initial conditions for cell populations
-        UNINFECTED = LAMBDA / (DU * RR0)
-        ACTIVEIC   = (QA + QL*AL/(DL+AL)) * LAMBDA/DELTA * (1 - 1/RR0)
-        LATENT     = QL * LAMBDA/(DL+AL) * (1 - 1/RR0)
-        LLIC       = QLL * LAMBDA/DLL * (1 - 1/RR0)
-        # PK/PD tracking
-        AUC        = 0
+      Depot   = 0.0
+      Central = 0.0
+      T       = LAMBDA / (D * R0)                          # x0
+      I       = LAMBDA / A * (1.0 - 1.0 / R0)              # y0
+      V       = GAMMA * LAMBDA / (A * OMEGA) * (1.0 - 1.0 / R0)  # v0
     end
-
+  
     @vars begin
-        # Fraction accounting for latent infection
-        LFAC = QA + QL*AL/(AL+DL)
-        # Infection rate constant (β)
-        BETA = RR0*DU / LAMBDA / (POVC*LFAC/DELTA + PLLC*QLL/DLL)
-        # Drug concentration (ng/mL)
-        Conc = Central / (Vc/1000)
-        # Drug inhibition function
-        INH  = Conc / (Conc + IC50)
-        # Viral load proxy (from active + long-lived infected cells)
-        V    = abs(POVC*ACTIVEIC + PLLC*LLIC)
+      CP  = 1000 * Central / VC
+      EFF = CP / (EC50 + CP)  # fractional reduction of infectivity
     end
-
+  
     @dynamics begin
-        # PK compartments
-        Depot'    = -Ka*Depot
-        Central'  = Ka*Depot + (Q/Vp)*Periph - (Q/Vc)*Central - (CL/Vc)*Central
-        Periph'   = -(Q/Vp)*Periph + (Q/Vc)*Central
-
-        # PD compartments
-        UNINFECTED' = LAMBDA - BETA*V*(1-INH)*UNINFECTED - DU*UNINFECTED
-        ACTIVEIC'   = QA*BETA*V*(1-INH)*UNINFECTED - DELTA*ACTIVEIC + AL*LATENT
-        LATENT'     = QL*BETA*V*(1-INH)*UNINFECTED - (DL+AL)*LATENT
-        LLIC'       = QLL*BETA*V*(1-INH)*UNINFECTED - DLL*LLIC
-
-        # PK exposure metric
-        AUC'       = Central / (Vc/1000)
+      Depot'   = -KA * Depot
+      Central' =  KA * Depot + (Q/VP)*Periph - (CL / VC) * Central - (Q/VC)*Central
+      Periph'  =  (Q/VC)*Central - (Q/VP)*Periph
+  
+      T' = LAMBDA - D * T - (1.0 - EFF) * BETA * T * V
+      I' = (1.0 - EFF) * BETA * T * V - A * I
+      V' = GAMMA * I - OMEGA * V
     end
-
+  
     @derived begin
-        """ Plasma concentration (ng/mL) """
-        Concentration = Conc
-        """ Viral load (log10 scale) """
-        ipred = @. log10(2*V) + 3 #double for 2 RNA copies/virion; add 3 to change log10 c/uL to log10 c/mL
-        """ Observed viral load """
-        Virus ~ @. Normal(ipred, σ_add)
+      log10V = @.log10(V + 1e-6)
+      R0_out = R0
+      Virus ~ @. Normal(log10V, σ)
     end
-end
+  end
 
 ############################################
 # 4) Fit the Model and Check Loglikelihood
@@ -191,8 +175,8 @@ fit_pd_foce = fit(
 )
 
 # Save and reload the fit for reproducibility
-serialize(joinpath(ARTIFACTS_DIR, "fit_pd_foce.jls"), fit_pd_foce)
-fit_pd_foce_loaded = deserialize(joinpath(ARTIFACTS_DIR, "fit_pd_foce.jls"))
+serialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"), fit_pd_foce)
+fit_pd_foce_loaded = deserialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"))
 
 # Infer parameter uncertainty
 infer(fit_pd_foce)
@@ -226,7 +210,7 @@ pred_pd_valid = predict(fit_pd_foce, pop_pd; obstimes=0:0.5:42)
 
 # Plot predictions for validation subjects 1 to 12
 plotgrid(
-    pred_pd_valid[1:12],
+    pred_pd_valid[21:28],
     observation = :Virus,
     pred        = (; label = "model pred", linestyle=:dash),
     ipred       = (; label = "model ipred"),

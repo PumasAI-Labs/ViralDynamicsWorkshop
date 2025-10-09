@@ -26,17 +26,17 @@ using Serialization              # serialize/deserialize fits
 set_theme!(deep_light())
 
 # All outputs (plots/tables/serialized fits) go here
-# Check if "artifacts" directory exists in the current working directory.
-artifacts_path = joinpath(@__DIR__, "artifacts")
+# Check if "ASSESTS" directory exists in the current working directory.
+ASSESTS_path = joinpath(@__DIR__, "assests/")
 
-if !isdir(artifacts_path)
-    println("Artifacts directory does not exist. Creating: $artifacts_path")
-    mkdir(artifacts_path)
+if !isdir(ASSESTS_path)
+    println("ASSESTS directory does not exist. Creating: $ASSESTS_path")
+    mkdir(ASSESTS_path)
 else
-    println("Artifacts directory already exists: $artifacts_path")
+    println("ASSESTS directory already exists: $ASSESTS_path")
 end
 
-ARTIFACTS_DIR = artifacts_path
+ASSETS_DIR = ASSESTS_path
 
 
 ########################################
@@ -60,7 +60,7 @@ pop_pk = read_pumas(
     id           = :id,
     time         = :time,
     amt          = :amt,
-    observations = [:Concentration],
+    observations = [:CP],
     cmt          = :cmt,
     evid         = :evid
 )
@@ -84,17 +84,18 @@ plotgrid(pop_pk[1:8]; data=(; color=:blue))
 # Unit convention: timeu = days; multiply *24 for hourly rates.
 model_pk2cmt = @model begin
   @metadata begin
-    description = "PK: 2-compartment, first-order absorption"
-    timeu = u"d"   # model time unit = days (data originally in hours)
+    description = "PK: 2 compartment:first-order absorption"
+    timeu = u"d"
   end
 
   @param begin
-    tvka      ∈ RealDomain(lower=0.0001, init=1.408)
-    tvcl      ∈ RealDomain(lower=0.0001, init=10.063)
-    tvvc      ∈ RealDomain(lower=0.001,  init=74.3)
-    tvq       ∈ RealDomain(lower=0.0001, init=2.0989)
-    tvvp      ∈ RealDomain(lower=0.0001, init=4.24)
-    Ω         ∈ PDiagDomain(3)  # IIV on Ka, CL, Vc
+    tvka      ∈ RealDomain(lower=0.0001, init=2.10)
+    tvcl      ∈ RealDomain(lower=0.0001, init=15.3)
+    tvvc      ∈ RealDomain(lower=0.001,  init=80.3)
+    tvq       ∈ RealDomain(lower=0.0001, init=4.9)
+    tvvp      ∈ RealDomain(lower=0.0001, init=5.5)
+
+    Ω         ∈ PDiagDomain(3)
     σ_proppk  ∈ RealDomain(lower=0, init=0.1)
     σ_addpk   ∈ RealDomain(lower=0, init=10)
   end
@@ -103,22 +104,21 @@ model_pk2cmt = @model begin
     η ~ MvNormal(Ω)
   end
 
-  # @covariates #could be added here if present (e.g., WT)
-
   @pre begin
-    Ka = tvka * exp(η[1])   # 1/day
-    CL = tvcl * exp(η[2])   # L/day
-    Vc = tvvc * exp(η[3])   # L
-    Q  = tvq                # L/day
-    Vp = tvvp               # L
+    Ka = tvka * exp(η[1])
+    CL = tvcl * exp(η[2])
+    Vc = tvvc * exp(η[3])
+    Q  = tvq  
+    Vp = tvvp
   end
+
 
   @init begin
     AUC = 0
   end
 
   @vars begin
-    Conc = (Central / (Vc / 1000))  # ng/mL if Central in ng and Vc in L
+    Conc = (Central / (Vc/1000))
   end
 
   @dynamics begin
@@ -129,7 +129,7 @@ model_pk2cmt = @model begin
   end
 
   @derived begin
-    Concentration ~ @. Normal(
+    CP ~ @. Normal(
       Conc,
       sqrt(σ_addpk^2 + (abs(Conc) * σ_proppk)^2)
     )
@@ -141,8 +141,8 @@ param_pk2cmt = (
   tvka = 1.408,
   tvcl = 15.63,
   tvvc = 74.3,
-  tvq  = 1.989,
-  tvvp = 4.24,
+  tvq = 15.0,
+  tvvp = 22.0,
   Ω         = Diagonal([0.1, 0.1, 0.1]),
   σ_proppk  = 0.2,
   σ_addpk   = 10.0
@@ -180,6 +180,7 @@ plotgrid(pred_pk2cmt_dense[1:6])
 #############################################
 # Many NONMEM workflows convey zero-order input via :rate. Here we mark dose rows
 # with -2 (a common duration-coded convention); observation rows remain missing.
+
 df_pk_seq = @chain df_pk begin
   @rtransform(:rate = :evid == 1 ? -2 : missing)
 end
@@ -191,7 +192,7 @@ pop_pk_seq = read_pumas(
   id           = :id,
   time         = :time,
   amt          = :amt,
-  observations = [:Concentration],
+  observations = [:CP],
   cmt          = :cmt,
   evid         = :evid,
   rate         = :rate
@@ -251,7 +252,7 @@ model_pkseq = @model begin
   end
 
   @derived begin
-    Concentration ~ @. Normal(
+    CP ~ @. Normal(
       Conc,
       sqrt(σ_addpk^2 + (abs(Conc) * σ_proppk)^2)
     )
@@ -324,34 +325,34 @@ vpcfig_pkseq
 infer(fit_pkseq_foce)
 
 ###########################################################
-# 10) Persist artifacts: tables, plots, and serialized fits
+# 10) Persist ASSESTS: tables, plots, and serialized fits
 ###########################################################
 # Save key tables
-# CSV.write(joinpath(ARTIFACTS_DIR, "coef_pk2cmt_foce.csv"),  coeftable(fit_pk2cmt_foce))
-# CSV.write(joinpath(ARTIFACTS_DIR, "coef_pkseq_foce.csv"),   coeftable(fit_pkseq_foce))
-# CSV.write(joinpath(ARTIFACTS_DIR, "metrics_pk2cmt_foce.csv"), tbl_metrics_pk2cmt)
-# CSV.write(joinpath(ARTIFACTS_DIR, "metrics_pkseq_foce.csv"),  tbl_metrics_pkseq)
+# CSV.write(joinpath(ASSETS_DIR, "coef_pk2cmt_foce.csv"),  coeftable(fit_pk2cmt_foce))
+# CSV.write(joinpath(ASSETS_DIR, "coef_pkseq_foce.csv"),   coeftable(fit_pkseq_foce))
+# CSV.write(joinpath(ASSETS_DIR, "metrics_pk2cmt_foce.csv"), tbl_metrics_pk2cmt)
+# CSV.write(joinpath(ASSETS_DIR, "metrics_pkseq_foce.csv"),  tbl_metrics_pkseq)
 
 # # Save figures
-# save(joinpath(ARTIFACTS_DIR, "gof_pk2cmt.png"), goffig_pk2cmt)
-# save(joinpath(ARTIFACTS_DIR, "gof_pkseq.png"),  goffig_pkseq)
-# save(joinpath(ARTIFACTS_DIR, "overlay_pred.png"), plt_overlay)
-# save(joinpath(ARTIFACTS_DIR, "vpc_pk2cmt.png"), vpcfig_pk2cmt)
-# save(joinpath(ARTIFACTS_DIR, "vpc_pkseq.png"),  vpcfig_pkseq)
+# save(joinpath(ASSETS_DIR, "gof_pk2cmt.png"), goffig_pk2cmt)
+# save(joinpath(ASSETS_DIR, "gof_pkseq.png"),  goffig_pkseq)
+# save(joinpath(ASSETS_DIR, "overlay_pred.png"), plt_overlay)
+# save(joinpath(ASSETS_DIR, "vpc_pk2cmt.png"), vpcfig_pk2cmt)
+# save(joinpath(ASSETS_DIR, "vpc_pkseq.png"),  vpcfig_pkseq)
 
 # Serialize fits (built-in Serialization; robust, no extra deps)
 
-# open(joinpath(ARTIFACTS_DIR, "fit_pkseq_foce.jls"), "w") do io
+# open(joinpath(ASSETS_DIR, "fit_pkseq_foce.jls"), "w") do io
 #     serialize(io, fit_pkseq_foce)
 # end
 
-serialize(joinpath(ARTIFACTS_DIR, "fit_pkseq_foce.jls"), fit_pkseq_foce)
+serialize(joinpath(ASSETS_DIR, "fit_pkseq_foce.jls"), fit_pkseq_foce)
 
 # Example: how to deserialize later
-# deserialize(joinpath(ARTIFACTS_DIR, "fit_pkseq_foce.jls"))
+# deserialize(joinpath(ASSETS_DIR, "fit_pkseq_foce.jls"))
 
 
-@info "Artifacts saved in" ARTIFACTS_DIR
+@info "Assets saved in" ASSETS_DIR
 # =============================================================================
 # End of the script
 # =============================================================================
