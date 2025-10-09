@@ -116,13 +116,11 @@ plt
 
 ## The Challenge
 
-::: {.incremental}
 - **Multi-country seroprevalence data** across age groups
 - **Unknown force of infection** λ(age) patterns  
 - **Heterogeneous data quality**: Some countries well-sampled, others sparse
 - **Need to share information** between populations
 - **Discover age-specific transmission patterns**
-:::
 
 **Traditional approaches:** Pre-specify parametric forms for λ(age)
 
@@ -266,18 +264,15 @@ plt
 
 ## What DeepNLME Achieved
 
-::: {.incremental}
 - **Data-driven discovery** of force of infection λ(age)
 - **Automatic pattern recognition** without pre-specifying functional forms  
 - **Information sharing** between populations via shared neural network
 - **Individual adaptation** through random effects
 - **Robust extrapolation** to poorly sampled regions/countries
 - **Mechanistically interpretable** results
-:::
 
 ## Epidemiological Applications
 
-::: {.incremental}
 - **Infectious disease surveillance**: Age-stratified transmission patterns
 - **Vaccine impact assessment**: Changes in force of infection over time
 - **Cross-population studies**: Sharing information between countries/regions
@@ -290,25 +285,21 @@ plt
 
 **The same principles apply to:**
 
-::: {.incremental}
 - **Dose-response relationships**: Unknown functional forms
 - **Biomarker dynamics**: Complex temporal patterns
 - **Population pharmacokinetics**: Covariate effects discovery  
 - **Disease progression**: Natural history modeling
 - **Treatment response**: Personalized medicine applications
-:::
 
 ## Summary
 
 **DeepNLME enables:**
 
-::: {.incremental}
 - **Flexible function discovery** while preserving scientific structure
 - **Population-level insights** from individual-level data
 - **Robust handling** of heterogeneous data quality  
 - **Mechanistic interpretation** of discovered patterns
 - **Principled uncertainty quantification**
-:::
 
 ::: {.center}
 **The future of epidemiological modeling:** Mechanism + Machine Learning
