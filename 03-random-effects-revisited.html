@@ -289,7 +289,7 @@ p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
       
 ## Let's incrementally break this
 
-```gwuocdw
+```xkeobke
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -328,7 +328,7 @@ plotgrid(sims)
 ```
 
 
-```gwuocdw
+```xkeobke
 model1 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -351,7 +351,7 @@ fpm = fit(model1, pop, init_params(model1), FOCE())
 ```
 
 
-```gwuocdw
+```xkeobke
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -390,7 +390,7 @@ plotgrid(sims)
 ```
 
 
-```gwuocdw
+```xkeobke
 model2 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -409,7 +409,7 @@ model2 = @model begin
 end
 ```
 
-```gwuocdw
+```xkeobke
 model3 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -429,12 +429,12 @@ model3 = @model begin
 end
 ```
 
-```gwuocdw
+```xkeobke
 fpm1 = fit(model1, pop, init_params(model1), FOCE())
 fpm2 = fit(model2, pop, init_params(model2), FOCE())
 fpm3 = fit(model3, pop, init_params(model3), FOCE())
 ```
-```gwuocdw
+```xkeobke
 coef(fpm3).c
 ```
 
