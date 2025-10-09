@@ -6,7 +6,10 @@
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
@@ -211,8 +214,17 @@ Niklas Korsbo
 </section>
 <section id="section" class="slide level2 center">
 <h2></h2>
-
-<img data-src="images/image.png" style="width:50.0%" class="r-stretch quarto-figure-center"><p class="caption">&nbsp;</p><div class="columns" style="font-size: 70%">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="images/image.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="&nbsp;"><img data-src="images/image.png" class="quarto-figure quarto-figure-center" style="width:50.0%" alt="&nbsp;"></a></p>
+</figure>
+</div>
+<figcaption>&nbsp;</figcaption>
+</figure>
+</div>
+<div class="columns" style="font-size: 70%">
 <div class="column" style="width:0.4;">
 <p>Machine learning</p>
 <div class="callout callout-tip no-icon callout-style-simple">
@@ -265,12 +277,12 @@ Niklas Korsbo
 </section>
 <section id="data-knowledge" class="slide level2 center">
 <h2>Data + Knowledge</h2>
-
-<img data-src="images/good_preds.svg" class="r-stretch"></section>
+<p><a href="images/good_preds.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="images/good_preds.svg"></a></p>
+</section>
 <section id="vision-spanning-pharma" class="slide level2 center">
 <h2>Vision Spanning Pharma</h2>
-
-<img data-src="images/across_pharma.svg" class="r-stretch"></section>
+<p><a href="images/across_pharma.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="images/across_pharma.svg"></a></p>
+</section>
 <section id="what-well-build-today" class="slide level2 center">
 <h2>What We’ll Build Today</h2>
 <p>Starting with traditional NLME models…</p>
@@ -282,12 +294,12 @@ Niklas Korsbo
 <p><strong><span style="font-size: 170%">Nonlinear Mixed Effects</span></strong></p>
 <div class="fragment fade-out" data-fragment-index="3">
 <div class="absolute" style="top: 300,; right: 10,; width: 600px; ">
-<p><img data-src="assets/single_traj.png"></p>
+<p><a href="assets/single_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/single_traj.png"></a></p>
 </div>
 </div>
 <div class="fragment" data-fragment-index="3">
 <div class="absolute" style="top: 500,; right: 100,; width: 600px; ">
-<p><img data-src="assets/multi_traj.png"></p>
+<p><a href="assets/multi_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="assets/multi_traj.png"></a></p>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
@@ -729,6 +741,38 @@ dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\rig
         }
       });
       </script>
+    <script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"bottom","loop":false,"openEffect":"fade","selector":".lightbox"});
+    (function() {
+      let previousOnload = window.onload;
+      window.onload = () => {
+        if (previousOnload) {
+          previousOnload();
+        }
+        lightboxQuarto.on('slide_before_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          const href = trigger.getAttribute('href');
+          if (href !== null) {
+            const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+            if (imgEl !== null) {
+              const srcAttr = imgEl.getAttribute("src");
+              if (srcAttr && srcAttr.startsWith("data:")) {
+                slideConfig.href = srcAttr;
+              }
+            }
+          } 
+        });
+      
+        lightboxQuarto.on('slide_after_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(slideNode);
+          }
+        });
+      
+      };
+      
+    })();
+              </script>
     
 
 </body></html>

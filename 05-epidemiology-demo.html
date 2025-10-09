@@ -6,7 +6,10 @@
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
@@ -221,8 +224,8 @@ Niklas Korsbo
 </section>
 <section id="the-problem-age-stratified-seroprevalence" class="slide level2 center">
 <h2>The Problem: Age-Stratified Seroprevalence</h2>
-
-<img data-src="assets/epi_data.png" class="r-stretch"></section>
+<p><a href="assets/epi_data.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="assets/epi_data.png"></a></p>
+</section>
 <section id="the-challenge" class="slide level2 center">
 <h2>The Challenge</h2>
 <ul>
@@ -230,10 +233,9 @@ Niklas Korsbo
 <li><strong>Unknown force of infection</strong> λ(age) patterns<br>
 </li>
 <li><strong>Heterogeneous data quality</strong>: Some countries well-sampled, others sparse</li>
-<li><strong>Need to share information</strong> between populations</li>
+<li><strong>Need to share information</strong> between heterogeneous countries</li>
 <li><strong>Discover age-specific transmission patterns</strong></li>
 </ul>
-<p><strong>Traditional approaches:</strong> Pre-specify parametric forms for λ(age)</p>
 <p><strong>DeepNLME approach:</strong> Let data discover the functional form!</p>
 </section>
 <section id="deepnlme-epidemiological-model" class="slide level2 smaller center">
@@ -252,6 +254,7 @@ Niklas Korsbo
 <span id="cb1-11"><a></a>  <span class="pp">@derived</span> PosFrac <span class="op">~</span> @. <span class="fu">Beta</span>(<span class="fu">abs</span>(<span class="fu">N*</span>(<span class="fl">1</span><span class="op">-</span><span class="fl">0.99</span>S)), <span class="fu">abs</span>(<span class="fu">N*</span>(<span class="fl">0.99</span>S)))</span>
 <span id="cb1-12"><a></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>SIR model, except that we don’t need the I or R here.</p>
 <p><strong>Key features:</strong></p>
 <ul>
 <li><strong>Neural network λ</strong> discovers age-specific force of infection</li>
@@ -267,23 +270,23 @@ Niklas Korsbo
 </section>
 <section id="model-predictions" class="slide level2 center">
 <h2>Model Predictions</h2>
-
-<img data-src="assets/epi_ipred.png" class="r-stretch"><p><strong>Excellent fit across all countries</strong>, including sparsely sampled test data!</p>
+<p><a href="assets/epi_ipred.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/epi_ipred.png"></a></p>
+<p><strong>Excellent fit across all countries</strong>, including sparsely sampled test data!</p>
 </section>
 <section id="comparison-with-truth" class="slide level2 center">
 <h2>Comparison with Truth</h2>
-
-<img data-src="assets/epi_ipred_truth.png" class="r-stretch"><p><strong>Neural network accurately recovers</strong> the true underlying force of infection!</p>
+<p><a href="assets/epi_ipred_truth.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/epi_ipred_truth.png"></a></p>
+<p><strong>Neural network accurately recovers</strong> the true underlying force of infection!</p>
 </section>
 <section id="discovered-force-of-infection-pattern" class="slide level2 center">
 <h2>Discovered Force of Infection Pattern</h2>
-
-<img data-src="assets/epi_foi.png" class="r-stretch"><p><strong>Complex multi-modal pattern</strong> discovered automatically from data!</p>
+<p><a href="assets/epi_foi.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/epi_foi.png"></a></p>
+<p><strong>Complex multi-modal pattern</strong> discovered automatically from data!</p>
 </section>
 <section id="information-sharing-across-populations" class="slide level2 center">
 <h2>Information Sharing Across Populations</h2>
-
-<img data-src="assets/epi_comparison.png" class="r-stretch"><p><strong>Dense data informs sparse data</strong> through shared neural network function!</p>
+<p><a href="assets/epi_comparison.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="assets/epi_comparison.png"></a></p>
+<p><strong>Dense data informs sparse data</strong> through shared neural network function!</p>
 </section></section>
 <section>
 <section id="key-insights" class="title-slide slide level1 center">
@@ -296,49 +299,10 @@ Niklas Korsbo
 <li><strong>Data-driven discovery</strong> of force of infection λ(age)</li>
 <li><strong>Automatic pattern recognition</strong> without pre-specifying functional forms<br>
 </li>
-<li><strong>Information sharing</strong> between populations via shared neural network</li>
-<li><strong>Individual adaptation</strong> through random effects</li>
+<li><strong>Information sharing</strong></li>
+<li><strong>Individual adaptation / posterior predictions</strong></li>
 <li><strong>Robust extrapolation</strong> to poorly sampled regions/countries</li>
-<li><strong>Mechanistically interpretable</strong> results</li>
 </ul>
-</section>
-<section id="epidemiological-applications" class="slide level2 center">
-<h2>Epidemiological Applications</h2>
-<ul>
-<li><strong>Infectious disease surveillance</strong>: Age-stratified transmission patterns</li>
-<li><strong>Vaccine impact assessment</strong>: Changes in force of infection over time</li>
-<li><strong>Cross-population studies</strong>: Sharing information between countries/regions</li>
-<li><strong>Sparse data settings</strong>: Leveraging information from well-studied populations</li>
-<li><strong>Outbreak investigation</strong>: Discovering transmission hotspots</li>
-<li><strong>Public health planning</strong>: Age-specific intervention strategies</li>
-</ul>
-</section>
-<section id="beyond-epidemiology" class="slide level2 center">
-<h2>Beyond Epidemiology</h2>
-<p><strong>The same principles apply to:</strong></p>
-<ul>
-<li><strong>Dose-response relationships</strong>: Unknown functional forms</li>
-<li><strong>Biomarker dynamics</strong>: Complex temporal patterns</li>
-<li><strong>Population pharmacokinetics</strong>: Covariate effects discovery<br>
-</li>
-<li><strong>Disease progression</strong>: Natural history modeling</li>
-<li><strong>Treatment response</strong>: Personalized medicine applications</li>
-</ul>
-</section>
-<section id="summary" class="slide level2 center">
-<h2>Summary</h2>
-<p><strong>DeepNLME enables:</strong></p>
-<ul>
-<li><strong>Flexible function discovery</strong> while preserving scientific structure</li>
-<li><strong>Population-level insights</strong> from individual-level data</li>
-<li><strong>Robust handling</strong> of heterogeneous data quality<br>
-</li>
-<li><strong>Mechanistic interpretation</strong> of discovered patterns</li>
-<li><strong>Principled uncertainty quantification</strong></li>
-</ul>
-<div class="center">
-<p><strong>The future of epidemiological modeling:</strong> Mechanism + Machine Learning</p>
-</div>
 
 
 </section></section>
@@ -733,6 +697,38 @@ Niklas Korsbo
         }
       });
       </script>
+    <script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"bottom","loop":false,"openEffect":"fade","selector":".lightbox"});
+    (function() {
+      let previousOnload = window.onload;
+      window.onload = () => {
+        if (previousOnload) {
+          previousOnload();
+        }
+        lightboxQuarto.on('slide_before_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          const href = trigger.getAttribute('href');
+          if (href !== null) {
+            const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+            if (imgEl !== null) {
+              const srcAttr = imgEl.getAttribute("src");
+              if (srcAttr && srcAttr.startsWith("data:")) {
+                slideConfig.href = srcAttr;
+              }
+            }
+          } 
+        });
+      
+        lightboxQuarto.on('slide_after_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(slideNode);
+          }
+        });
+      
+      };
+      
+    })();
+              </script>
     
 
 </body></html>

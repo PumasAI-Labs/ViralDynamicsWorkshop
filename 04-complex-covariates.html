@@ -6,7 +6,10 @@
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
@@ -218,13 +221,13 @@ Niklas Korsbo
 </section>
 <section id="the-data-challenge" class="slide level2 center">
 <h2>The Data Challenge</h2>
-
-<img data-src="assets/data_example.png" style="width:80.0%" class="r-stretch"><p><strong>Challenge:</strong> How do we use rich text descriptions as covariates in NLME models?</p>
+<p><a href="assets/data_example.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="assets/data_example.png" style="width:80.0%"></a></p>
+<p><strong>Challenge:</strong> How do we use rich text descriptions as covariates in NLME models?</p>
 </section>
 <section id="traditional-nlme-with-simple-covariates" class="slide level2 center">
 <h2>Traditional NLME with Simple Covariates</h2>
-
-<img data-src="assets/ipred_traj.png" class="r-stretch"><p>Good predictions, but <strong>missing information from complex covariates</strong></p>
+<p><a href="assets/ipred_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/ipred_traj.png"></a></p>
+<p>Good predictions, but <strong>missing information from complex covariates</strong></p>
 </section></section>
 <section>
 <section id="patient-embeddings" class="title-slide slide level1 center">
@@ -237,7 +240,7 @@ Niklas Korsbo
 <div class="quarto-layout-row quarto-layout-valign-center">
 <div id="first-column" class="center-h quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
 <p><strong>Data</strong></p>
-<p><img data-src="assets/encoder_1.png"></p>
+<p><a href="assets/encoder_1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/encoder_1.png"></a></p>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 5.0%;justify-content: flex-start;">
 
@@ -286,7 +289,7 @@ Niklas Korsbo
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
 <p><strong>Generated</strong></p>
-<p><img data-src="assets/encoder_2.png"></p>
+<p><a href="assets/encoder_2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/encoder_2.png"></a></p>
 </div>
 </div>
 </div>
@@ -294,8 +297,12 @@ Niklas Korsbo
 </section>
 <section id="validation-known-relationships" class="slide level2 center">
 <h2>Validation: Known Relationships</h2>
-
-<img data-src="assets/ebe_vs_latent.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p>EBEs capture the underlying patient characteristics!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="assets/ebe_vs_latent.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="assets/ebe_vs_latent.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></a></p>
+</figure>
+</div>
+<p>EBEs capture the underlying patient characteristics!</p>
 </section></section>
 <section>
 <section id="text-embeddings" class="title-slide slide level1 center">
@@ -341,13 +348,17 @@ Niklas Korsbo
 </section>
 <section id="embedding-space-structure" class="slide level2 center">
 <h2>Embedding Space Structure</h2>
-
-<img data-src="assets/wellness_vs_latent.png" class="quarto-figure quarto-figure-center r-stretch" style="width:60.0%"><p>Text embeddings capture meaningful clinical information!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="assets/wellness_vs_latent.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img data-src="assets/wellness_vs_latent.png" class="quarto-figure quarto-figure-center" style="width:60.0%"></a></p>
+</figure>
+</div>
+<p>Text embeddings capture meaningful clinical information!</p>
 </section>
 <section id="connecting-embeddings-to-ebes" class="slide level2 center">
 <h2>Connecting Embeddings to EBEs</h2>
-
-<img data-src="assets/ebe_vs_embedding.png" class="r-stretch"><p><strong>Strong correlations</strong> between text embeddings and patient-specific parameters!</p>
+<p><a href="assets/ebe_vs_embedding.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img data-src="assets/ebe_vs_embedding.png"></a></p>
+<p><strong>Strong correlations</strong> between text embeddings and patient-specific parameters!</p>
 </section></section>
 <section>
 <section id="predicting-patient-parameters" class="title-slide slide level1 center">
@@ -361,12 +372,12 @@ Niklas Korsbo
 <div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="assets/nn.png" class="quarto-figure quarto-figure-center"></p>
+<p><a href="assets/nn.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img data-src="assets/nn.png" class="quarto-figure quarto-figure-center"></a></p>
 </figure>
 </div>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 66.7%;justify-content: center;">
-<p><img data-src="assets/predicted_ebes.png"></p>
+<p><a href="assets/predicted_ebes.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img data-src="assets/predicted_ebes.png"></a></p>
 </div>
 </div>
 </div>
@@ -432,7 +443,7 @@ Niklas Korsbo
 </table>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 80.0%;justify-content: center;">
-<p><img data-src="assets/aug_traj.png"></p>
+<p><a href="assets/aug_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img data-src="assets/aug_traj.png"></a></p>
 </div>
 </div>
 </div>
@@ -905,6 +916,38 @@ z_i^* = \text{Embed}(x_i) \quad \text{where } x_i \text{ is complex covariate da
         }
       });
       </script>
+    <script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"bottom","loop":false,"openEffect":"fade","selector":".lightbox"});
+    (function() {
+      let previousOnload = window.onload;
+      window.onload = () => {
+        if (previousOnload) {
+          previousOnload();
+        }
+        lightboxQuarto.on('slide_before_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          const href = trigger.getAttribute('href');
+          if (href !== null) {
+            const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+            if (imgEl !== null) {
+              const srcAttr = imgEl.getAttribute("src");
+              if (srcAttr && srcAttr.startsWith("data:")) {
+                slideConfig.href = srcAttr;
+              }
+            }
+          } 
+        });
+      
+        lightboxQuarto.on('slide_after_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(slideNode);
+          }
+        });
+      
+      };
+      
+    })();
+              </script>
     
 
 </body></html>

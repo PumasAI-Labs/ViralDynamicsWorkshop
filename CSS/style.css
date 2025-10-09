@@ -159,3 +159,13 @@ html[data-bs-theme="dark"] .table a:hover,
 html[data-bs-theme="dark"] a:not(.nav-link):hover {
   color: #8155ba !important; /* Lighter purple on hover in dark mode */
 }
+
+/* Lightbox background styling */
+.lightbox-backdrop {
+  background-color: white !important;
+}
+
+/* Alternative approach for GLightbox (which Quarto uses) */
+.glightbox-container .goverlay {
+  background: white !important;
+}

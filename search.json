@@ -67,14 +67,14 @@
     "href": "05-epidemiology-demo.html#the-challenge",
     "title": "Epidemiology Demo",
     "section": "The Challenge",
-    "text": "The Challenge\n\nMulti-country seroprevalence data across age groups\nUnknown force of infection λ(age) patterns\n\nHeterogeneous data quality: Some countries well-sampled, others sparse\nNeed to share information between populations\nDiscover age-specific transmission patterns\n\nTraditional approaches: Pre-specify parametric forms for λ(age)\nDeepNLME approach: Let data discover the functional form!"
+    "text": "The Challenge\n\nMulti-country seroprevalence data across age groups\nUnknown force of infection λ(age) patterns\n\nHeterogeneous data quality: Some countries well-sampled, others sparse\nNeed to share information between heterogeneous countries\nDiscover age-specific transmission patterns\n\nDeepNLME approach: Let data discover the functional form!"
   },
   {
     "objectID": "05-epidemiology-demo.html#deepnlme-epidemiological-model",
     "href": "05-epidemiology-demo.html#deepnlme-epidemiological-model",
     "title": "Epidemiology Demo",
     "section": "DeepNLME Epidemiological Model",
-    "text": "DeepNLME Epidemiological Model\n\nepi_model = @model begin\n  @param begin\n    N ∈ RealDomain(; lower=0, init=1000)\n    λ ∈ MLPDomain(2, 5, 5, (1, softplus); reg=L2(1e-2))\n  end\n  @random η ~ Normal(0, 0.1)\n  @init S = 1\n  @dynamics begin\n    S' = - λ(t/100, η)[1] * S\n  end\n  @derived PosFrac ~ @. Beta(abs(N*(1-0.99S)), abs(N*(0.99S)))\nend\n\nKey features:\n\nNeural network λ discovers age-specific force of infection\nIndividual random effects η allow country-specific scaling\nShared function across populations with individual tuning\nMechanistic structure preserves epidemiological interpretation"
+    "text": "DeepNLME Epidemiological Model\n\nepi_model = @model begin\n  @param begin\n    N ∈ RealDomain(; lower=0, init=1000)\n    λ ∈ MLPDomain(2, 5, 5, (1, softplus); reg=L2(1e-2))\n  end\n  @random η ~ Normal(0, 0.1)\n  @init S = 1\n  @dynamics begin\n    S' = - λ(t/100, η)[1] * S\n  end\n  @derived PosFrac ~ @. Beta(abs(N*(1-0.99S)), abs(N*(0.99S)))\nend\n\nSIR model, except that we don’t need the I or R here.\nKey features:\n\nNeural network λ discovers age-specific force of infection\nIndividual random effects η allow country-specific scaling\nShared function across populations with individual tuning\nMechanistic structure preserves epidemiological interpretation"
   },
   {
     "objectID": "05-epidemiology-demo.html#model-predictions",
@@ -109,28 +109,7 @@
     "href": "05-epidemiology-demo.html#what-deepnlme-achieved",
     "title": "Epidemiology Demo",
     "section": "What DeepNLME Achieved",
-    "text": "What DeepNLME Achieved\n\nData-driven discovery of force of infection λ(age)\nAutomatic pattern recognition without pre-specifying functional forms\n\nInformation sharing between populations via shared neural network\nIndividual adaptation through random effects\nRobust extrapolation to poorly sampled regions/countries\nMechanistically interpretable results"
-  },
-  {
-    "objectID": "05-epidemiology-demo.html#epidemiological-applications",
-    "href": "05-epidemiology-demo.html#epidemiological-applications",
-    "title": "Epidemiology Demo",
-    "section": "Epidemiological Applications",
-    "text": "Epidemiological Applications\n\nInfectious disease surveillance: Age-stratified transmission patterns\nVaccine impact assessment: Changes in force of infection over time\nCross-population studies: Sharing information between countries/regions\nSparse data settings: Leveraging information from well-studied populations\nOutbreak investigation: Discovering transmission hotspots\nPublic health planning: Age-specific intervention strategies"
-  },
-  {
-    "objectID": "05-epidemiology-demo.html#beyond-epidemiology",
-    "href": "05-epidemiology-demo.html#beyond-epidemiology",
-    "title": "Epidemiology Demo",
-    "section": "Beyond Epidemiology",
-    "text": "Beyond Epidemiology\nThe same principles apply to:\n\nDose-response relationships: Unknown functional forms\nBiomarker dynamics: Complex temporal patterns\nPopulation pharmacokinetics: Covariate effects discovery\n\nDisease progression: Natural history modeling\nTreatment response: Personalized medicine applications"
-  },
-  {
-    "objectID": "05-epidemiology-demo.html#summary",
-    "href": "05-epidemiology-demo.html#summary",
-    "title": "Epidemiology Demo",
-    "section": "Summary",
-    "text": "Summary\nDeepNLME enables:\n\nFlexible function discovery while preserving scientific structure\nPopulation-level insights from individual-level data\nRobust handling of heterogeneous data quality\n\nMechanistic interpretation of discovered patterns\nPrincipled uncertainty quantification\n\n\nThe future of epidemiological modeling: Mechanism + Machine Learning"
+    "text": "What DeepNLME Achieved\n\nData-driven discovery of force of infection λ(age)\nAutomatic pattern recognition without pre-specifying functional forms\n\nInformation sharing\nIndividual adaptation / posterior predictions\nRobust extrapolation to poorly sampled regions/countries"
   },
   {
     "objectID": "03-random-effects-revisited.html#what-are-mixed-effects-models",
@@ -186,7 +165,14 @@
     "href": "03-random-effects-revisited.html#smoothness",
     "title": "Random effects",
     "section": "“Smoothness”?",
-    "text": "“Smoothness”?\nClassical NLME\n\\[\nEFF = \\left(1 + Smax \\cdot \\frac{C}{tvSC50 \\cdot exp\\left(\\mathbf{\\eta}\\right) + C}\\right)\n\\]\n\n\n\nThis function is somewhat smooth in \\(η\\) by structural definition.\nVery little flexibility to affect the smoothness by tuning fixed effects.\n\n\n\n\nDeepNLME\n\\[\nEFF = \\left(1 + NN(C, η)\\right)\n\\]\n\nThis function can be very non-smooth in \\(η\\).\nLots of flexibility to affect the smoothness by tuning fixed effects.\nIncentivizing smoothness by marginalization in the fit really helps here!"
+    "text": "“Smoothness”?\n\n\nClassical NLME \\[\nEFF = \\left(1 + Smax \\cdot \\frac{C}{tvSC50 \\cdot exp\\left(\\mathbf{\\eta}\\right) + C}\\right)\n\\]\n\nThis function is somewhat smooth in \\(η\\) by structural definition.\nVery little flexibility to affect the smoothness by tuning fixed effects.\n\n\n\n\nDeepNLME\n\\[\nEFF = \\left(1 + NN(C, η)\\right)\n\\]\n\nThis function can be very non-smooth in \\(η\\).\nLots of flexibility to affect the smoothness by tuning fixed effects.\nIncentivizing smoothness by marginalization in the fit really helps here!"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#smoothness-in-deepnlme",
+    "href": "03-random-effects-revisited.html#smoothness-in-deepnlme",
+    "title": "Random effects",
+    "section": "Smoothness in DeepNLME",
+    "text": "Smoothness in DeepNLME\n\n\nData-generating function: \\[\nY = \\frac{E_{max} \\cdot x}{EC_{50} + x} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\n\\]\nwhere \\[\n\\begin{align}\nE_{max} &\\sim \\mathcal{U}(0.5, 1.5) \\\\\nEC_{50} &\\sim \\mathrm{LogNormal}(-2, 1.0)\n\\end{align}\n\\]\nDeepNLME model: \\[\n\\begin{align}\nY &= {\\color{orange}NN(x, η₁, η₂)} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\\\\\nη &\\sim \\mathcal{N}(0, I)\n\\end{align}\n\\]"
   },
   {
     "objectID": "01-introduction.html#workshop-overview",
@@ -240,56 +226,56 @@
   {
     "objectID": "02-deepnlme-part1.html#traditional-nlme",
     "href": "02-deepnlme-part1.html#traditional-nlme",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "Traditional NLME",
     "text": "Traditional NLME\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\frac{CL}{Vc} \\cdot Central(t)\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
   },
   {
     "objectID": "02-deepnlme-part1.html#what-if-components-are-unknown",
     "href": "02-deepnlme-part1.html#what-if-components-are-unknown",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "What if components are unknown?",
-    "text": "What if components are unknown?\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight, \\; \\color{red}{???}\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\cdot \\color{red}{NN(...)} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{NN(...)}\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+    "text": "What if components are unknown?\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight, \\; \\color{red}{???}\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\cdot \\color{red}{???} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{???}\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
   },
   {
     "objectID": "02-deepnlme-part1.html#neural-networks",
     "href": "02-deepnlme-part1.html#neural-networks",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "Neural networks",
-    "text": "Neural networks\n\n\nInformation processing mechanism\n\nLoosely based on neurons\n\n\n\n\n\n \n\n\n\nMathematically just a function!\nUsable anywhere you’d use a function!\n\n\nUniversal approximators!\nVideo\n\nApproximate any function\nFunctional form tuned by parameters"
+    "text": "Neural networks\n\n\nInformation processing mechanism\n\nLoosely based on neurons\n\n\n\n\n\n\n\n\n\n \n\n\n\nMathematically just a function!\nUsable anywhere you’d use a function!\n\n\nUniversal approximators!\nVideo\n\nApproximate any function\nFunctional form tuned by parameters"
   },
   {
     "objectID": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
     "href": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "Neural networks in NLME dynamics",
     "text": "Neural networks in NLME dynamics\n\n\nFocus: Neural Networks in Dynamics\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics ← This lecture focuses here \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{NN(...)}\n\\end{align*}\n\\]\nError model \\[\nDV(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
   },
   {
     "objectID": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
     "href": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "Neural-embedded dynamical systems",
     "text": "Neural-embedded dynamical systems\n2018 - “Neural Ordinary Differential Equations”, Chen et al.\n\n2020 - “Universal Differential Equations for Scientific Machine Learning”, Rackauckas et al.\n\n\n\nNeural ODE\n\\[\n\\frac{d\\mathbf{X}}{dt} = NN(\\mathbf{X}(t), t)\n\\]\n\n\nODE solver as scaffold for neural networks\nSimilar to recurrent neural networks and ResNets\nPure machine learning approach\n\n\n\n\nUniversal Differential Equations (UDE)\n\\[\\begin{align*}\n\\frac{dx}{dt} &= x \\cdot y - NN(x)\\\\\n\\frac{dy}{dt} &= p - x \\cdot y\n\\end{align*}\\]\n\n\nInsert universal approximators (NNs) to capture unknown terms\nCombine scientific knowledge with machine learning\nMore data-efficient than pure ML approaches\n\n\n\n\n\nScientific Machine Learning (SciML)\n\n\nAbstract idea: mixing science and machine learning\nUmbrella term for hybrid approaches\nIncludes UDEs, Physics-Informed NNs, etc.\nGoal: leverage domain knowledge to improve ML"
   },
   {
     "objectID": "02-deepnlme-part1.html#encoding-knowledge",
     "href": "02-deepnlme-part1.html#encoding-knowledge",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "Encoding Knowledge",
     "text": "Encoding Knowledge\n\n\nPure Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= NN(Depot, Central, R)[1]\\\\\n\\frac{dCentral}{dt} &= NN(Depot, Central, R)[2]\\\\\n\\frac{dR}{dt} &= NN(Depot, Central, R)[3]\n\\end{aligned}\n\\]\n\nNumber of states\n\n\nGraph Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - NN_1(Depot)\\\\\n\\frac{dCentral}{dt} &= NN_1(Depot) - NN_2(Central)\\\\\n\\frac{dR}{dt} &= NN_3(Central, R)\n\\end{aligned}\n\\]\n\nNumber of states\nDependencies\n\nConservation principles\n\n\n\n\nUDE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= NN_3\\left(\\frac{Central}{V_c}, R\\right)\n\\end{aligned}\n\\]\n\nExplicit knowledge of some terms\nNeural networks only where needed\n\n\n\nTargeted Neural Enhancement (still a UDE) \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= k_{in} \\cdot \\left(1 + NN\\left(\\frac{Central}{V_c}\\right)\\right) - k_{out} \\cdot R\n\\end{aligned}\n\\]\n\nMost knowledge encoded!\nNeural network captures unknown drug effect\nPrecise positioning and inputs"
   },
   {
     "objectID": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
     "href": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "Extending for longitudinal data with DeepNLME",
-    "text": "Extending for longitudinal data with DeepNLME\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]\nNeural network captures unknown drug effect mechanism"
+    "text": "Extending for longitudinal data with DeepNLME\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]"
   },
   {
     "objectID": "02-deepnlme-part1.html#individual-level-neural-networks",
     "href": "02-deepnlme-part1.html#individual-level-neural-networks",
-    "title": "DeepNLME - Part 1",
+    "title": "DeepNLME",
     "section": "Individual-level neural networks",
     "text": "Individual-level neural networks\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c}, {\\color{orange} η₁} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]"
   },
@@ -319,7 +305,7 @@
     "href": "04-complex-covariates.html#validation-known-relationships",
     "title": "DeepNLME with Complex Covariates",
     "section": "Validation: Known Relationships",
-    "text": "Validation: Known Relationships\n\nEBEs capture the underlying patient characteristics!"
+    "text": "Validation: Known Relationships\n\n\n\n\n\nEBEs capture the underlying patient characteristics!"
   },
   {
     "objectID": "04-complex-covariates.html#the-ease-of-creating-embeddings",
@@ -340,7 +326,7 @@
     "href": "04-complex-covariates.html#embedding-space-structure",
     "title": "DeepNLME with Complex Covariates",
     "section": "Embedding Space Structure",
-    "text": "Embedding Space Structure\n\nText embeddings capture meaningful clinical information!"
+    "text": "Embedding Space Structure\n\n\n\n\n\nText embeddings capture meaningful clinical information!"
   },
   {
     "objectID": "04-complex-covariates.html#connecting-embeddings-to-ebes",
@@ -417,7 +403,7 @@
     "href": "05-generative-ai.html#what-is-generative-ai",
     "title": "Generative AI and NLME",
     "section": "What is Generative AI?",
-    "text": "What is Generative AI?\nGoal: Generate synthetic data that is indistinguishable from real data\n\nExamples you’ve seen:\n\nImages (faces, artwork, medical images)\nText (ChatGPT, clinical notes)\n\nTime series (financial data, biomarkers)"
+    "text": "What is Generative AI?\nGoal: Generate synthetic data that is indistinguishable from real data\n\n\n\n\n\nExamples you’ve seen:\n\nImages (faces, artwork, medical images)\nText (ChatGPT, clinical notes)\n\nTime series (financial data, biomarkers)"
   },
   {
     "objectID": "05-generative-ai.html#famous-example-fake-faces",

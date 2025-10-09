@@ -6,12 +6,15 @@
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
   <meta name="dcterms.date" content="2025-10-09">
-  <title>DeepPumas for Viral Dynamics Workshop – DeepNLME - Part 1</title>
+  <title>DeepPumas for Viral Dynamics Workshop – DeepNLME</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -132,7 +135,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">DeepNLME - Part 1</h1>
+  <h1 class="title">DeepNLME</h1>
   <p class="subtitle">Neural Networks, SciML, and Universal Differential Equations</p>
 
 <div class="quarto-title-authors">
@@ -156,7 +159,7 @@ Niklas Korsbo
 <div class="column" style="width:50%;">
 <p><strong><span style="font-size: 170%">Nonlinear Mixed Effects</span></strong></p>
 <div class="absolute" style="top: 500,; right: 100,; width: 600px; ">
-<p><img data-src="assets/multi_traj.png"></p>
+<p><a href="assets/multi_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="assets/multi_traj.png"></a></p>
 </div>
 </div><div class="column" style="width:50%;">
 <p>Typical values <span class="math display">\[
@@ -190,7 +193,7 @@ dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\rig
 <div class="column" style="width:50%;">
 <p><strong><span style="font-size: 170%">Nonlinear Mixed Effects</span></strong></p>
 <div class="absolute" style="top: 500,; right: 100,; width: 600px; ">
-<p><img data-src="assets/multi_traj.png"></p>
+<p><a href="assets/multi_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/multi_traj.png"></a></p>
 </div>
 </div><div class="column" style="width:50%;">
 <p>Typical values <span class="math display">\[
@@ -204,13 +207,13 @@ Age, \; Weight, \; \color{red}{???}
 \]</span></p>
 <p>Individual parameters <span class="math display">\[\begin{align*}
 Ka_i &amp;= tvKa \cdot e^{η_{i,1}} \\
-CL_i &amp;= tvCL \cdot e^{η_{i,2}} \cdot \color{red}{NN(...)} \\
+CL_i &amp;= tvCL \cdot e^{η_{i,2}} \cdot \color{red}{???} \\
 Vc_i &amp;= tvVc \cdot e^{η_{i,3}}
 \end{align*}\]</span></p>
 <p>Dynamics <span class="math display">\[
 \begin{align*}
 \frac{dDepot(t)}{dt} =&amp;  - Ka \cdot Depot(t) \\
-\frac{dCentral(t)}{dt} =&amp; Ka \cdot Depot(t) - \color{red}{NN(...)}
+\frac{dCentral(t)}{dt} =&amp; Ka \cdot Depot(t) - \color{red}{???}
 \end{align*}
 \]</span></p>
 <p>Error model <span class="math display">\[
@@ -229,7 +232,11 @@ dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\rig
 <!-- ![&nbsp;](image-4.png){fig-align="center"} -->
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="assets/nn_small_back_transparent.png"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="assets/nn_small_back_transparent.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="&nbsp;"><img data-src="assets/nn_small_back_transparent.png" class="quarto-figure quarto-figure-center" alt="&nbsp;"></a></p>
+</figure>
+</div>
 <figcaption>&nbsp;</figcaption>
 </figure>
 </div>
@@ -239,7 +246,7 @@ dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\rig
 </ul>
 </div><div class="column" style="width:50%;">
 <p><span class="att">Universal approximators!</span></p>
-<p><video data-src="assets/nn_demo_test.mp4" loop="true" autoplay="true" muted="true" controls=""><a href="assets/nn_demo_test.mp4">Video</a></video></p>
+<p><a href="assets/nn_demo_test.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><video data-src="assets/nn_demo_test.mp4" loop="true" autoplay="true" muted="true" controls=""></video></a><a href="assets/nn_demo_test.mp4">Video</a></p>
 <ul>
 <li>Approximate <em>any</em> function</li>
 <li>Functional form tuned by parameters</li>
@@ -252,7 +259,7 @@ dv(t) \sim Normal\left(\frac{Central(t)}{Vc}, \frac{Central(t)}{Vc} \cdot σ\rig
 <div class="column" style="width:50%;">
 <p><strong><span style="font-size: 150%">Focus: Neural Networks in Dynamics</span></strong></p>
 <div class="absolute" style="top: 500,; right: 100,; width: 600px; ">
-<p><img data-src="assets/multi_traj.png"></p>
+<p><a href="assets/multi_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="assets/multi_traj.png"></a></p>
 </div>
 </div><div class="column" style="width:50%;">
 <p>Typical values <span class="math display">\[
@@ -415,7 +422,6 @@ Kout &amp;= tvKout \cdot e^{η_{4}}
 yPK &amp;\sim \mathrm{Normal}\left( \frac{Central}{V_c}, σ_{pk} \right) \\
 yPD &amp;\sim \mathrm{Normal}\left( R, σ_{pd} \right)
 \end{align*}\]</span></p>
-<p><strong>Neural network captures unknown drug effect mechanism</strong></p>
 </section>
 <section id="individual-level-neural-networks" class="slide level2 smaller center">
 <h2>Individual-level neural networks</h2>
@@ -832,6 +838,38 @@ yPD &amp;\sim \mathrm{Normal}\left( R, σ_{pd} \right)
         }
       });
       </script>
+    <script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"bottom","loop":false,"openEffect":"fade","selector":".lightbox"});
+    (function() {
+      let previousOnload = window.onload;
+      window.onload = () => {
+        if (previousOnload) {
+          previousOnload();
+        }
+        lightboxQuarto.on('slide_before_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          const href = trigger.getAttribute('href');
+          if (href !== null) {
+            const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+            if (imgEl !== null) {
+              const srcAttr = imgEl.getAttribute("src");
+              if (srcAttr && srcAttr.startsWith("data:")) {
+                slideConfig.href = srcAttr;
+              }
+            }
+          } 
+        });
+      
+        lightboxQuarto.on('slide_after_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(slideNode);
+          }
+        });
+      
+      };
+      
+    })();
+              </script>
     
 
 </body></html>

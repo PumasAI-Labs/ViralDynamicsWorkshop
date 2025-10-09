@@ -6,7 +6,10 @@
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
@@ -207,8 +210,13 @@ p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
 </section>
 <section id="fitting-with-random-effects-2" class="slide level2 center">
 <h2>Fitting with random effects</h2>
-
-<img data-src="assets/random_effects_marginal_likelihood.png" class="r-stretch quarto-figure-center"><p class="caption">&nbsp;</p></section>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="assets/random_effects_marginal_likelihood.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="&nbsp;"><img data-src="assets/random_effects_marginal_likelihood.png" alt="&nbsp;"></a></p>
+<figcaption>&nbsp;</figcaption>
+</figure>
+</div>
+</section>
 <section id="one-dimension-per-random-effect" class="slide level2 center">
 <h2>One dimension per random effect</h2>
 <ul>
@@ -223,20 +231,19 @@ p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
 <li><p>Marginalization incentivizes that each random effect controls a single <span class="att">smooth</span> dimension between-subject variability.</p></li>
 </ul>
 </section>
-<section id="smoothness" class="slide level2 center">
+<section id="smoothness" class="slide level2 smaller center">
 <h2>“Smoothness”?</h2>
-<p><span class="att">Classical NLME</span></p>
-<p><span class="math display">\[
+<div class="columns">
+<div class="column" style="width:55%;">
+<p><span class="att">Classical NLME</span> <span class="math display">\[
 EFF = \left(1 + Smax \cdot \frac{C}{tvSC50 \cdot exp\left(\mathbf{\eta}\right) + C}\right)
 \]</span></p>
-<div class="columns">
-<div class="column" style="width:50%;">
 <ul>
 <li>This function is somewhat smooth in <span class="math inline">\(η\)</span> by structural definition.</li>
 <li>Very little flexibility to affect the smoothness by tuning fixed effects.</li>
 </ul>
-</div><div class="column" style="width:50%;">
-<p><img data-src="assets/eff_classical.png"></p>
+</div><div class="column" style="width:45%;">
+<p><a href="assets/eff_classical.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/eff_classical.png"></a></p>
 </div></div>
 <p><span class="att">DeepNLME</span></p>
 <p><span class="math display">\[
@@ -247,6 +254,33 @@ EFF = \left(1 + NN(C, η)\right)
 <li>Lots of flexibility to affect the smoothness by tuning fixed effects.</li>
 <li>Incentivizing smoothness by marginalization in the fit really helps here!</li>
 </ul>
+</section>
+<section id="smoothness-in-deepnlme" class="slide level2 smaller center">
+<h2>Smoothness in DeepNLME</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="att">Data-generating function:</span> <span class="math display">\[
+Y = \frac{E_{max} \cdot x}{EC_{50} + x} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)
+\]</span></p>
+<p>where <span class="math display">\[
+\begin{align}
+E_{max} &amp;\sim \mathcal{U}(0.5, 1.5) \\
+EC_{50} &amp;\sim \mathrm{LogNormal}(-2, 1.0)
+\end{align}
+\]</span></p>
+<p><span class="att">DeepNLME model:</span> <span class="math display">\[
+\begin{align}
+Y &amp;= {\color{orange}NN(x, η₁, η₂)} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)\\
+η &amp;\sim \mathcal{N}(0, I)
+\end{align}
+\]</span></p>
+</div><div class="column" style="width:50%;">
+<p><a href="assets/me_ipred.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/me_ipred.png"></a></p>
+</div></div>
+</section>
+<section id="section" class="slide level2 center">
+<h2></h2>
+<p><a href="assets/eff_deepnlme.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/eff_deepnlme.png"></a></p>
 </section></section>
 <section id="maximizing-the-marginal-likelihood" class="title-slide slide level1 center">
 <h1>Maximizing the marginal likelihood</h1>
@@ -289,7 +323,7 @@ p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
       
 ## Let's incrementally break this
 
-```xkeobke
+```kvsaegl
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -328,7 +362,7 @@ plotgrid(sims)
 ```
 
 
-```xkeobke
+```kvsaegl
 model1 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -351,7 +385,7 @@ fpm = fit(model1, pop, init_params(model1), FOCE())
 ```
 
 
-```xkeobke
+```kvsaegl
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -390,7 +424,7 @@ plotgrid(sims)
 ```
 
 
-```xkeobke
+```kvsaegl
 model2 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -409,7 +443,7 @@ model2 = @model begin
 end
 ```
 
-```xkeobke
+```kvsaegl
 model3 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -429,12 +463,12 @@ model3 = @model begin
 end
 ```
 
-```xkeobke
+```kvsaegl
 fpm1 = fit(model1, pop, init_params(model1), FOCE())
 fpm2 = fit(model2, pop, init_params(model2), FOCE())
 fpm3 = fit(model3, pop, init_params(model3), FOCE())
 ```
-```xkeobke
+```kvsaegl
 coef(fpm3).c
 ```
 
@@ -837,6 +871,38 @@ coef(fpm3).c
         }
       });
       </script>
+    <script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"bottom","loop":false,"openEffect":"fade","selector":".lightbox"});
+    (function() {
+      let previousOnload = window.onload;
+      window.onload = () => {
+        if (previousOnload) {
+          previousOnload();
+        }
+        lightboxQuarto.on('slide_before_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          const href = trigger.getAttribute('href');
+          if (href !== null) {
+            const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+            if (imgEl !== null) {
+              const srcAttr = imgEl.getAttribute("src");
+              if (srcAttr && srcAttr.startsWith("data:")) {
+                slideConfig.href = srcAttr;
+              }
+            }
+          } 
+        });
+      
+        lightboxQuarto.on('slide_after_load', (data) => {
+          const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(slideNode);
+          }
+        });
+      
+      };
+      
+    })();
+              </script>
     
 
 </body></html>
