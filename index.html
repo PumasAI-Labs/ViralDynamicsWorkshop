@@ -7,7 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Niklas Korsbo">
-<meta name="dcterms.date" content="2025-10-08">
+<meta name="author" content="Sreenath Krishnan">
+<meta name="dcterms.date" content="2025-10-09">
 
 <title>DeepPumas for Viral Dynamics Workshop</title>
 <style>
@@ -45,7 +46,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-820616c10bd8c27f5be7c6a713df3dc3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-9533738fdd2ce145b311c4138190b239.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dark-312f200cc6001b679a2ef5693b9b2fe7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="site_libs/bootstrap/bootstrap-820616c10bd8c27f5be7c6a713df3dc3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
@@ -313,7 +314,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#workshop-materials" id="toc-workshop-materials" class="nav-link active" data-scroll-target="#workshop-materials"><span class="header-section-number">1</span> Workshop Materials</a></li>
+  <li><a href="#workshop-materials" id="toc-workshop-materials" class="nav-link active" data-scroll-target="#workshop-materials"><span class="header-section-number">1</span> Workshop Materials</a>
+  <ul class="collapse">
+  <li><a href="#getting-the-code-to-run-the-hands-on-exercises" id="toc-getting-the-code-to-run-the-hands-on-exercises" class="nav-link" data-scroll-target="#getting-the-code-to-run-the-hands-on-exercises"><span class="header-section-number">1.1</span> Getting the code to run the hands-on exercises</a></li>
+  </ul></li>
   <li><a href="#schedule-and-materials" id="toc-schedule-and-materials" class="nav-link" data-scroll-target="#schedule-and-materials"><span class="header-section-number">2</span> Schedule and Materials</a></li>
   <li><a href="#key-concepts-covered" id="toc-key-concepts-covered" class="nav-link" data-scroll-target="#key-concepts-covered"><span class="header-section-number">3</span> Key Concepts Covered</a>
   <ul class="collapse">
@@ -348,16 +352,17 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 
     <div>
-    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-heading">Authors</div>
     <div class="quarto-title-meta-contents">
              <p>Niklas Korsbo </p>
+             <p>Sreenath Krishnan </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 8, 2025</p>
+      <p class="date">October 9, 2025</p>
     </div>
   </div>
   
@@ -372,6 +377,33 @@ ul.task-list li input[type="checkbox"] {
 <section id="workshop-materials" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="workshop-materials"><span class="header-section-number">1</span> Workshop Materials</h2>
 <p>This workshop explores how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics applications.</p>
+<p>To follow along in the presentations, just navigate to any relevant bits from here.</p>
+<section id="getting-the-code-to-run-the-hands-on-exercises" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="getting-the-code-to-run-the-hands-on-exercises"><span class="header-section-number">1.1</span> Getting the code to run the hands-on exercises</h3>
+<ul>
+<li>Fire up a DeepPumas app in <a href="https://juliahub.com/">juliahub.com</a>
+<ul>
+<li>You should have received a coupon code in your email. This code will give you credits and access to the DeepPumas app.</li>
+<li>When launching the DeepPumas app, use “launch custom instance” and select 16vCPU and a 9h time limit.</li>
+</ul></li>
+<li>Wait a minute for the VSCode view to pop up in your browser.</li>
+<li>Clone this repository either
+<ul>
+<li>In the <strong>GUI</strong>
+<ol type="1">
+<li>Bring up the command pallette (<code>Ctrl+shift+p</code>, or from the cogwheel in the bottom left corner)</li>
+<li>Search for <code>git clone</code></li>
+<li>clone <code>https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git</code></li>
+</ol></li>
+<li>or, in the terminal <strong>terminal</strong>
+<ol type="1">
+<li>If you don’t have a terminal, open one by searching for <code>Terminal: focus on terminal view</code> in the command pallette.</li>
+<li>Navigate to <code>~/data/code</code></li>
+<li>Clone using <code>git clone https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git</code></li>
+</ol></li>
+</ul></li>
+</ul>
+</section>
 </section>
 <section id="schedule-and-materials" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="schedule-and-materials"><span class="header-section-number">2</span> Schedule and Materials</h2>
@@ -522,7 +554,6 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="https://github.com/PumasAI-Labs/ViralDynamicsWorkshop">Workshop GitHub Repository</a></li>
 </ul>
 <hr>
-<p><em>Workshop developed by Niklas Korsbo, Pumas-AI</em></p>
 
 
 </section>
