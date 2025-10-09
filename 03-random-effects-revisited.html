@@ -323,7 +323,7 @@ p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
       
 ## Let's incrementally break this
 
-```xwjnifm
+```bwiprva
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -362,7 +362,7 @@ plotgrid(sims)
 ```
 
 
-```xwjnifm
+```bwiprva
 model1 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -385,7 +385,7 @@ fpm = fit(model1, pop, init_params(model1), FOCE())
 ```
 
 
-```xwjnifm
+```bwiprva
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -424,7 +424,7 @@ plotgrid(sims)
 ```
 
 
-```xwjnifm
+```bwiprva
 model2 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -443,7 +443,7 @@ model2 = @model begin
 end
 ```
 
-```xwjnifm
+```bwiprva
 model3 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -463,12 +463,12 @@ model3 = @model begin
 end
 ```
 
-```xwjnifm
+```bwiprva
 fpm1 = fit(model1, pop, init_params(model1), FOCE())
 fpm2 = fit(model2, pop, init_params(model2), FOCE())
 fpm3 = fit(model3, pop, init_params(model3), FOCE())
 ```
-```xwjnifm
+```bwiprva
 coef(fpm3).c
 ```
 
@@ -484,7 +484,7 @@ coef(fpm3).c
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg" class="slide-logo"></p>
 <div class="footer footer-default">
-<p><a href="index.html">DeepPumas Workshop 2025</a></p>
+<p><a href="../ViralDynamicsWorkshop/index.html">DeepPumas Workshop 2025</a></p>
 </div>
 </div></div>
 
