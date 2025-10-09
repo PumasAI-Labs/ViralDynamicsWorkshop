@@ -151,29 +151,29 @@ $$
 - Marginalization incentivizes that each random effect controls a single [smooth]{.att} dimension between-subject variability.
 
 
-## "Smoothness"?
+## "Smoothness"? {.smaller}
 
+
+
+:::: {.columns}
+::: {.column width="55%"}
 [Classical NLME]{.att}
-
 $$
 EFF = \left(1 + Smax \cdot \frac{C}{tvSC50 \cdot exp\left(\mathbf{\eta}\right) + C}\right)
 $$
-
-:::: {.columns}
-::: {.column width="50%"}
 
 - This function is somewhat smooth in $η$ by structural definition.
 - Very little flexibility to affect the smoothness by tuning fixed effects.
   
 :::
-::: {.column width="50%"}
+::: {.column width="45%"}
 ```{julia}
 eff(c, η; Smax=2.0, tvSC50=0.3) = 1 .+ Smax .* c ./ (tvSC50 * exp(η) .+ c)
 crange = 0:0.01:2
 ηrange = -2:0.2:2
 
 df = map(Iterators.product(crange, ηrange)) do (c, η)
-  (; c, η, EFF = eff(c, η))
+  (; x, η, EFF = eff(c, η))
 end |> vec |> DataFrame
 
 spec = data(df) * mapping(:c, :EFF; color=:η, group=:η=>string) * visual(Lines, linewidth=3)  
@@ -197,6 +197,107 @@ $$
 - This function _can_ be very non-smooth in $η$.
 - Lots of flexibility to affect the smoothness by tuning fixed effects.
 - Incentivizing smoothness by marginalization in the fit really helps here!
+
+
+## Smoothness in DeepNLME {.smaller}
+
+```{julia}
+datamodel_me = @model begin
+  @param σ ∈ RealDomain(; lower=0., init=0.05)
+  @random begin
+    Emax ~ Uniform(0.5, 1.5)
+    EC50 ~ LogNormal(-2, 1.0)
+  end
+  @pre X = Emax * t / (t + (EC50))
+  @derived Y ~ @. Normal(X, σ)
+end
+
+p_data = (; σ = 0.05)
+sims = simobs(datamodel_me, [Subject(; id) for id in 1:200], p_data; obstimes=0:0.05:1)
+trainpop_me = Subject.(sims[1:100])
+testpop_me = Subject.(sims[101:end])
+
+fig = plotgrid(trainpop_me[1:12])
+save(assets * "trainpop_me.png", fig; px_per_unit=4)
+```
+
+```{julia}
+## Mixed-effects neural network
+model_me = @model begin
+  @param begin
+    NN ∈ MLPDomain(3, 6, 6, (1, identity); reg=L2(1.))
+    σ ∈ RealDomain(; lower=0.)
+  end
+  @random η ~ MvNormal(2,1)
+  @pre X = NN(t, η)[1]
+  @derived Y ~ @. Normal(X, σ)
+end
+
+fpm_me = fit(
+  model_me,
+  trainpop_me,
+  init_params(model_me),
+  MAP(FOCE()); 
+  optim_options=(; iterations=200),
+)
+
+# Plot training performance
+pred_train = predict(fpm_me; obstimes=0:0.01:1)[1:12] 
+plt = plotgrid(pred_train)
+
+save(assets * "me_ipred.png", plt; px_per_unit=4)
+# # Plot test performance
+# pred_test = predict(fpm_me, testpop_me[1:12]; obstimes=0:0.01:1)
+# plotgrid(pred_test ; ylabel="Y (Test data)")
+
+nn = only ∘ coef(fpm_me).NN
+xrange = 0:0.01:1
+ηrange = -2:0.2:2
+
+df_nn = map(Iterators.product(xrange, ηrange)) do (x, η)
+  (; x = c, η₁ = η, EFF = nn(x, 0, η))
+end |> vec |> DataFrame
+
+spec = data(df_nn) * mapping(:x, :EFF; color=:η₁, group=:η₁=>string) * visual(Lines, linewidth=3) 
+plt = draw(spec; figure=(; size=(400, 300)))
+save(assets * "eff_deepnlme.png", plt; px_per_unit=4)
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+[Data-generating function:]{.att}
+$$
+Y = \frac{E_{max} \cdot x}{EC_{50} + x} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)
+$$
+
+where
+$$
+\begin{align}
+E_{max} &\sim \mathcal{U}(0.5, 1.5) \\
+EC_{50} &\sim \mathrm{LogNormal}(-2, 1.0)
+\end{align}
+$$
+
+
+[DeepNLME model:]{.att}
+$$
+\begin{align}
+Y &= {\color{orange}NN(x, η₁, η₂)} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)\\
+η &\sim \mathcal{N}(0, I)
+\end{align}
+$$
+
+
+:::
+::: {.column width="50%"}
+![](assets/me_ipred.png)
+:::
+::::
+
+## 
+
+
+![](assets/eff_deepnlme.png)
 
 
 # Maximizing the marginal likelihood
