@@ -119,10 +119,8 @@ plt
 - **Multi-country seroprevalence data** across age groups
 - **Unknown force of infection** λ(age) patterns  
 - **Heterogeneous data quality**: Some countries well-sampled, others sparse
-- **Need to share information** between populations
+- **Need to share information** between heterogeneous countries
 - **Discover age-specific transmission patterns**
-
-**Traditional approaches:** Pre-specify parametric forms for λ(age)
 
 **DeepNLME approach:** Let data discover the functional form!
 
@@ -144,6 +142,8 @@ epi_model = @model begin
   @derived PosFrac ~ @. Beta(abs(N*(1-0.99S)), abs(N*(0.99S)))
 end
 ```
+
+SIR model, except that we don't need the I or R here.
 
 **Key features:**
 
@@ -266,41 +266,7 @@ plt
 
 - **Data-driven discovery** of force of infection λ(age)
 - **Automatic pattern recognition** without pre-specifying functional forms  
-- **Information sharing** between populations via shared neural network
-- **Individual adaptation** through random effects
+- **Information sharing** 
+- **Individual adaptation / posterior predictions**
 - **Robust extrapolation** to poorly sampled regions/countries
-- **Mechanistically interpretable** results
 
-## Epidemiological Applications
-
-- **Infectious disease surveillance**: Age-stratified transmission patterns
-- **Vaccine impact assessment**: Changes in force of infection over time
-- **Cross-population studies**: Sharing information between countries/regions
-- **Sparse data settings**: Leveraging information from well-studied populations
-- **Outbreak investigation**: Discovering transmission hotspots
-- **Public health planning**: Age-specific intervention strategies
-:::
-
-## Beyond Epidemiology
-
-**The same principles apply to:**
-
-- **Dose-response relationships**: Unknown functional forms
-- **Biomarker dynamics**: Complex temporal patterns
-- **Population pharmacokinetics**: Covariate effects discovery  
-- **Disease progression**: Natural history modeling
-- **Treatment response**: Personalized medicine applications
-
-## Summary
-
-**DeepNLME enables:**
-
-- **Flexible function discovery** while preserving scientific structure
-- **Population-level insights** from individual-level data
-- **Robust handling** of heterogeneous data quality  
-- **Mechanistic interpretation** of discovered patterns
-- **Principled uncertainty quantification**
-
-::: {.center}
-**The future of epidemiological modeling:** Mechanism + Machine Learning
-:::
