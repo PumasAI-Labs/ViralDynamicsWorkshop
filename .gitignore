@@ -1,0 +1,10 @@
+_output
+*_files/
+*.html
+*-html/
+clipboard/*
+_freeze/
+.cache/
+_site/
+_freeze/
+*.code-workspace
