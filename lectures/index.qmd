@@ -1,6 +1,10 @@
 ---
 title: "DeepPumas for Viral Dynamics Workshop"
 subtitle: "Combining Mechanism and Machine Learning"
+author:
+  - Niklas Korsbo
+  - Sreenath Krishnan
+affiliation: Pumas-AI
 format:
   html:
     toc: true
@@ -23,6 +27,25 @@ format:
 ## Workshop Materials
 
 This workshop explores how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics applications.
+
+To follow along in the presentations, just navigate to any relevant bits from here.
+
+### Getting the code to run the hands-on exercises
+
+- Fire up a DeepPumas app in [juliahub.com](https://juliahub.com/)
+  - You should have received a coupon code in your email. This code will give you credits and access to the DeepPumas app.
+  - When launching the DeepPumas app, use "launch custom instance" and select 16vCPU and a 9h time limit.
+- Wait a minute for the VSCode view to pop up in your browser.
+- Clone this repository either
+  - In the **GUI**
+    1. Bring up the command pallette (`Ctrl+shift+p`, or from the cogwheel in the bottom left corner)
+    1. Search for `git clone`
+    1. clone `https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git`
+  - or, in the terminal **terminal**
+    1. If you don't have a terminal, open one by searching for `Terminal: focus on terminal view` in the command pallette.
+    1. Navigate to `~/data/code`
+    1. Clone using `git clone https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git` 
+
 
 ## Schedule and Materials
 
@@ -95,5 +118,3 @@ By the end of this workshop, participants will be able to:
 - [Workshop GitHub Repository](https://github.com/PumasAI-Labs/ViralDynamicsWorkshop)
 
 ---
-
-*Workshop developed by Niklas Korsbo, Pumas-AI*

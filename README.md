@@ -1,6 +1,24 @@
-[Get to the website](https://pumasai-labs.github.io/ViralDynamicsWorkshop/)
+# [DeepPumas for viral dynamics workshop](https://pumasai-labs.github.io/ViralDynamicsWorkshop/)
 
-# DeepPumas for viral dynamics workshop
+This repository holds everything we need for the PumasAI workshop in Bordeaux 2026.
+
+To see the course introduction and slides, head to [**the workshop website**](https://pumasai-labs.github.io/ViralDynamicsWorkshop/).
+
+To run the hands-on exercises,
+
+- Fire up a DeepPumas app in [juliahub.com](https://juliahub.com/)
+  - You should have received a coupon code in your email. This code will give you credits and access to the DeepPumas app.
+  - When launching the DeepPumas app, use "launch custom instance" and select 16vCPU and a 9h time limit.
+- Wait a minute for the VSCode view to pop up in your browser.
+- Clone this repository either
+  - In the **GUI**
+    1. Bring up the command pallette (`Ctrl+shift+p`, or from the cogwheel in the bottom left corner)
+    1. Search for `git clone`
+    1. clone `https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git`
+  - or, in the terminal **terminal**
+    1. If you don't have a terminal, open one by searching for `Terminal: focus on terminal view` in the command pallette.
+    1. Navigate to `~/data/code`
+    1. Clone using `git clone https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git` 
 
 ## Schedule
 
@@ -21,39 +39,3 @@
 
 **Total Workshop Time:** 09:00 - 17:00 (8 hours including breaks)  
 **Total Session Time:** 6h 30min
-
-
-- Introduction
-  - greet
-  - table-of-contnents
-- NLME modeling in Pumas.
-  - JuliaHub - Pumas enterprise
-  - Dataset -> wrangling -> read_pumas -> handle the population object
-  - sequential PKPD modelling (simple viral dynamics model): 1-cmt PK model -> ebes -> sequential model
-  - Fitting (different LL approx)
-  - Plotting
-- DeepNLME - part 1
-  - lecture (30min)
-    - NLME modelling
-    - SciML and UDEs
-      - Neural networks
-      - SciML vs UDEs vs Neural ODEs
-      - Encoded knowledge
-      - States matter! Limitations of the ODE itself.
-    - DeepNLME
-      - UDEs for longitudinal data (?)
-      - Individualizability through covariates and random effects
-  - Hands on: 
-    - Simple DeepNLME viral dynamics model
-- DeepNLME - part 2
-  - Lecture (45 min)
-      - Marginal likelihood
-      - NLME and Generative AI
-      - Between subject variability and covariates
-  - Hands on:
-    - Complex viral dynamics
-    - Complex covariates
-- Short demos
-  - Epidemiology
-  - Bridging information (causality or correlation)
-- Discussions and conclusion    
