@@ -143,6 +143,13 @@ a:hover {
   color: #8155ba !important; /* Lighter purple on hover in dark mode */
 }
 
+/* Navbar background override for dark mode */
+.navbar,
+.navbar-expand-lg,
+#quarto-header .navbar {
+  background-color: #251543 !important; /* Use darker grey instead of purple */
+}
+
 /* Responsive table for mobile */
 @media (max-width: 768px) {
   .table-responsive {
