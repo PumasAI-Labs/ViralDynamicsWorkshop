@@ -1,5 +1,5 @@
 ---
-title: "DeepNLME - Part 1"  
+title: "DeepNLME"  
 subtitle: "Neural Networks, SciML, and Universal Differential Equations"
 format: revealjs
 ---
@@ -132,7 +132,7 @@ $$
 Individual parameters
 \begin{align*}
 Ka_i &= tvKa \cdot e^{η_{i,1}} \\
-CL_i &= tvCL \cdot e^{η_{i,2}} \cdot \color{red}{NN(...)} \\
+CL_i &= tvCL \cdot e^{η_{i,2}} \cdot \color{red}{???} \\
 Vc_i &= tvVc \cdot e^{η_{i,3}}
 \end{align*}
 
@@ -140,7 +140,7 @@ Dynamics
 $$
 \begin{align*}
 \frac{dDepot(t)}{dt} =&  - Ka \cdot Depot(t) \\
-\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \color{red}{NN(...)}
+\frac{dCentral(t)}{dt} =& Ka \cdot Depot(t) - \color{red}{???}
 \end{align*}
 $$
 
@@ -438,7 +438,6 @@ yPK &\sim \mathrm{Normal}\left( \frac{Central}{V_c}, σ_{pk} \right) \\
 yPD &\sim \mathrm{Normal}\left( R, σ_{pd} \right)
 \end{align*}
 
-**Neural network captures unknown drug effect mechanism**
 
 ## Individual-level neural networks {.smaller}
 

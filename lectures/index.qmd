@@ -61,7 +61,7 @@ To follow along in the presentations, just navigate to any relevant bits from he
 | 13:30 - 14:15 | **Random effects, fitting NLME, and Generative AI** | [Slides](03-random-effects-revisited.html) |
 | 14:15 - 15:30 | **DeepNLME with Complex Covariates** | [Slides](04-complex-covariates.html) and hands-on |
 | 15:30 - 15:45 | ☕ **Coffee Break** | |
-| 15:45 - 16:15 | **Epidemiology Demo** | [Slides](04-epidemiology-demo.html) |
+| 15:45 - 16:15 | **Epidemiology Demo** | [Slides](05-epidemiology-demo.html) |
 | 16:15 - 17:00 | **Discussions and Conclusions** |  |
 
 ## Key Concepts Covered

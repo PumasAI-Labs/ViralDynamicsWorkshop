@@ -102,3 +102,9 @@ format:
     fig-align: center
     resources:
       - "fonts/AmplitudeBook.otf"
+      
+lightbox: 
+  match: auto
+  effect: fade
+  desc-position: bottom
+  loop: false
