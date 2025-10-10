@@ -58,10 +58,11 @@ To follow along in the presentations, just navigate to any relevant bits from he
 | | *Neural networks, SciML, UDEs and NeuralODEs* | |
 | 11:15 - 12:30 | **DeepNLME (hands-on)** | *Hands-on* |
 | 12:30 - 13:30 | 🍽️ **Lunch Break** | |
-| 13:30 - 14:15 | **Random effects, fitting NLME, and Generative AI** | [Slides](03-random-effects-revisited.html) |
-| 14:15 - 15:30 | **DeepNLME with Complex Covariates** | [Slides](04-complex-covariates.html) and hands-on |
+| 13:30 - 13:55 | **Random effects, fitting NLME, and Generative AI** | [Slides](03-random-effects-revisited.html) |
+| 13:55 - 14:25 | **NLME and Generative AI** | [Slides](04-generative-ai.html) |
+| 14:25 - 15:30 | **DeepNLME with Complex Covariates** | [Slides](05-complex-covariates.html) and hands-on |
 | 15:30 - 15:45 | ☕ **Coffee Break** | |
-| 15:45 - 16:15 | **Epidemiology Demo** | [Slides](05-epidemiology-demo.html) |
+| 15:45 - 16:15 | **Epidemiology Demo** | [Slides](06-epidemiology-demo.html) |
 | 16:15 - 17:00 | **Discussions and Conclusions** |  |
 
 ## Key Concepts Covered
