@@ -8,6 +8,7 @@
 # 0) Environment & Packages
 ############################
 
+using AlgebraOfGraphics
 using DeepPumas            # Neural-embedded NLME modeling
 using Pumas                # Core NLME functionality
 using PumasUtilities       # Utilities for Pumas workflows
@@ -22,6 +23,11 @@ using MultivariateStats    # For PCA dimensionality reduction
 using LinearAlgebra        # For matrix operations
 using StableRNGs           # Stable RNG for reproducibility
 using PumasPlots           # Plotting utilities
+
+const AoG = AlgebraOfGraphics
+
+# Load utility functions
+include("utils.jl")
 
 # Set neural network backend and plotting theme
 set_mlp_backend(:staticflux)
@@ -65,6 +71,12 @@ test_pop = pop[101:200]
 
 # Visualize a few subjects
 plotgrid(train_pop[1:8]; observation = :yPD)
+
+@chain DataFrame(pop[1:8]) begin
+    # Get the first row for each patient (as identified by :id)
+    @by :id $first
+    @select :id :Description
+end
 
 ############################################################################################
 # 2) Define and fit a baseline NLME model (without text embeddings)
@@ -145,7 +157,7 @@ fitted_nlme = fit(
 )
 
 # Get empirical Bayes estimates (EBEs) - these are the individual η values
-η_train = empirical_bayes(model, train_pop, coef(fitted_nlme), FOCE())
+η_train = empirical_bayes(fitted_nlme)
 
 # EBEs capture patient-specific deviations from population parameters
 # We'll now see if we can predict these from the text descriptions!
@@ -207,20 +219,33 @@ X_test_pc = predict(trained_pca, X_test)
 println("Reduced embedding dimension: $(size(X_train_pc, 1))")
 
 # Optional: Visualize relationship between embeddings and wellness scores
-let
-    scores = [subj.covariates(0).Score for subj in train_pop]
-    
-    # Plot first 4 principal components vs wellness score
-    fig = Figure(; size = (800, 600))
-    for i in 1:4
-        ax = Axis(fig[div(i-1, 2)+1, mod(i-1, 2)+1]; 
-                  xlabel = "Wellness Score", 
-                  ylabel = "PC $i")
-        scatter!(ax, scores, X_train_pc[i, :])
-    end
-    save(joinpath(ASSETS_DIR, "embeddings_vs_wellness.png"), fig)
-    display(fig)
+
+# Create dataframe with first 4 principal components
+npc = 4
+pc_labels = ["PC$i" for i in 1:npc]
+df_pc = DataFrame(X_train_pc[1:npc, :]', pc_labels)
+df_pc.id = [subj.id for subj in train_pop]
+
+# Get wellness scores from training population
+df_scores = @chain DataFrame(train_pop) begin
+    @by :id $first
+    @select :id :Score
 end
+
+# Join PC embeddings with wellness scores
+df = innerjoin(df_pc, df_scores; on = :id)
+
+# Convert to long format for faceted plotting
+df_long = stack(df, pc_labels; variable_name = :PC, value_name = :PC_value)
+
+# Create faceted plot using AlgebraOfGraphics
+plt = data(df_long) * 
+      mapping(:Score => "Wellness Score", 
+              :PC_value => "Principal Component Value"; 
+              layout = :PC) * 
+      visual(Scatter)
+
+fig = draw(plt; figure = (; size = (800, 600)))
 
 ############################################################################################
 # 5) Learn the relationship between embeddings and patient parameters (EBEs)
@@ -230,11 +255,15 @@ end
 # This learns which aspects of the text are predictive of pharmacological parameters
 
 # Create a convenience function to get PC embeddings for any subject
-pc_embedder(subj::Pumas.Subject) = vec(predict(trained_pca, get_embedding(subj)))
+pc_embedder(subj::Pumas.Subject) = (; 
+    id = subj.id,
+    embeddings = vec(predict(trained_pca, get_embedding(subj))),
+)
 
 # Create a population with embeddings as covariates
 _df = DataFrame(vcat(train_pop, test_pop))
-_df.embeddings = pc_embedder.(vcat(train_pop, test_pop))
+embeddings = pc_embedder.(vcat(train_pop, test_pop))
+_df = innerjoin(_df, DataFrame(embeddings); on = :id)
 
 embedding_pop = read_pumas(
     _df; 
@@ -266,41 +295,30 @@ println("Training neural network to predict patient parameters from embeddings..
 fnn = fit(
     nn, 
     target; 
-    optim_options = (; loss = DeepPumas.l2),
+    optim_options = (; loss = l2),
     training_fraction = 0.8  # Use 80% for training, 20% for validation
 )
 
 # Evaluate predictions on test set
 vη = empirical_bayes(model, vpope, coef(fitted_nlme), FOCE())
 
-# Compare predictions to true EBEs
-let
-    predicted = [fnn(vpope[i]) for i in 1:length(vpope)]
-    actual = [vη[i] for i in 1:length(vpope)]
-    
-    fig = Figure(; size = (1000, 600))
-    η_names = [:η₁, :η₂, :η₃, :η₄, :η₅]
-    
-    for i in 1:5
-        row = div(i-1, 3) + 1
-        col = mod(i-1, 3) + 1
-        ax = Axis(fig[row, col]; 
-                  xlabel = "Predicted $(η_names[i])", 
-                  ylabel = "Actual $(η_names[i])",
-                  title = string(η_names[i]))
-        
-        pred_vals = [p[i] for p in predicted]
-        actual_vals = [a[i] for a in actual]
-        
-        scatter!(ax, pred_vals, actual_vals)
-        # Add diagonal reference line
-        lims = extrema([pred_vals; actual_vals])
-        lines!(ax, lims, lims, color = :red, linestyle = :dash)
-    end
-    
-    save(joinpath(ASSETS_DIR, "predicted_vs_actual_etas.png"), fig)
-    display(fig)
-end
+# Compare predictions to computed, "true", EBEs on the validation data
+pred_etas = mapreduce(vcat, vpope) do subj
+    predicted_ebe = fnn(subj)[1]
+    (; id = subj.id,  unroll(predicted_ebe)...)
+end |> DataFrame
+
+computed_etas = mapreduce(vcat, vpope) do subj
+    ebe = empirical_bayes(model, subj, coef(fitted_nlme), FOCE())
+    (; id = subj.id,  unroll(ebe)...)
+end |> DataFrame
+
+stacked_preds = stack(pred_etas, Not(:id), value_name = "prediction")
+stacked_ebes = stack(computed_etas, Not(:id), value_name = "EBE")
+_df = innerjoin(stacked_ebes, stacked_preds; on = [:id, :variable])
+
+spec = data(_df) * mapping(:EBE, :prediction, layout=:variable)
+draw(spec)
 
 ############################################################################################
 # 6) Augment the NLME model with embedding-based predictions
@@ -314,7 +332,7 @@ using Setfield
 @set! fitted_nlme.data = tpope
 
 # Create augmented model
-deep_fpm = augment(fitted_nlme, fnn)
+@time deep_fpm = augment(fitted_nlme, fnn)
 
 # Refit to estimate residual Ω (now smaller because embeddings explain some variability)
 fit_deep = fit(
