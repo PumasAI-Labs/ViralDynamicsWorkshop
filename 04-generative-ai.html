@@ -13,7 +13,7 @@
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
-  <meta name="dcterms.date" content="2025-10-09">
+  <meta name="dcterms.date" content="2025-10-10">
   <title>DeepPumas for Viral Dynamics Workshop – Generative AI and NLME</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -136,7 +136,6 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Generative AI and NLME</h1>
-  <p class="subtitle">Connections, Concepts, and Future Directions</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -146,56 +145,97 @@ Niklas Korsbo
 </div>
 </div>
 
-  <p class="date">2025-10-09</p>
+  <p class="date">2025-10-10</p>
 </section>
 <section>
 <section id="the-connection-between-nlme-and-generative-ai" class="title-slide slide level1 center">
 <h1>The Connection Between NLME and Generative AI</h1>
 
 </section>
-<section id="what-is-generative-ai" class="slide level2 center">
-<h2>What is Generative AI?</h2>
-<p><strong>Goal:</strong> Generate synthetic data that is indistinguishable from real data</p>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><a href="images/observed_synthetic_contour.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="images/observed_synthetic_contour.png" class="quarto-figure quarto-figure-center" style="width:60.0%"></a></p>
-</figure>
-</div>
-<p><strong>Examples you’ve seen:</strong></p>
+<section id="generative-ai" class="slide level2 center">
+<h2>Generative AI</h2>
+<p><span class="att">Goal</span>: Generate data indistinguishable in distribution to real data</p>
+<p><a href="images/observed_synthetic_contour.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="images/observed_synthetic_contour.png"></a></p>
+</section>
+<section id="section" class="slide level2 center">
+<h2></h2>
+<p><img data-src="images/people_1.jpeg">~ <img data-src="images/people_2.jpeg"></p>
+<p><span class="centering">www.thispersondoesnotexist.com</span></p>
+</section>
+<section id="how-is-that-done" class="slide level2 center">
+<h2>How is that done?</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
+<p>Data is a mix of</p>
 <ul>
-<li>Images (faces, artwork, medical images)</li>
-<li>Text (ChatGPT, clinical notes)<br>
-</li>
-<li>Time series (financial data, biomarkers)</li>
+<li>Observed quantities (pixel intensities)</li>
+<li>Unobserved quantities (faces, smiling, …)</li>
+</ul>
+<p>We humans learn to extract the unobserved quantities</p>
+<p>GenAI needs to do that too.</p>
+</div><div class="column" style="width:35%;">
+<p><a href="images/people_1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="images/people_1.jpeg"></a></p>
+</div></div>
+</section>
+<section id="how-is-that-done-1" class="slide level2 center">
+<h2>How is that done?</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
+<p>Data is a mix of</p>
+<ul>
+<li>Observed quantities (<span class="att"><span class="math inline">\(y\)</span></span>)</li>
+<li>Unobserved quantities (<span class="att"><span class="math inline">\(z\)</span></span> - “latent variables”)</li>
+</ul>
+</div><div class="column" style="width:35%;">
+<p><a href="images/people_1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="images/people_1.jpeg"></a></p>
+</div></div>
+</section>
+<section id="generative-models" class="slide level2 center">
+<h2>Generative models</h2>
+<ul>
+<li>Definitions
+<ul>
+<li><span class="math inline">\(z\)</span>: latent variables of dimension <span class="math inline">\(d\)</span></li>
+<li><span class="math inline">\(y\)</span>: observed data</li>
+<li><span class="math inline">\(y_g\)</span>: generated/simulated/synthetic data</li>
+</ul></li>
+<li>Model</li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+y_g &amp;= f(z) + \epsilon \\
+z &amp;\sim Normal(0, I_{d\times d}) \\
+\epsilon &amp;\sim Normal(0, \sigma^2)
+\end{aligned}
+\]</span></p>
+<ul>
+<li>Objective: find <span class="math inline">\(f\)</span> such that the distribution of <span class="math inline">\(y_g\)</span> is close to the distribution of the observed data <span class="math inline">\(y\)</span></li>
 </ul>
 </section>
-<section id="famous-example-fake-faces" class="slide level2 center">
-<h2>Famous Example: Fake Faces</h2>
-<p><a href="https://www.thispersondoesnotexist.com" class="uri">https://www.thispersondoesnotexist.com</a></p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><a href="images/people_1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="images/people_1.jpeg" style="width:90.0%"></a></p>
-</div><div class="column" style="width:50%;">
-<p><a href="images/people_2.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="images/people_2.jpeg" style="width:90.0%"></a></p>
-</div></div>
-<p><strong>These people don’t exist</strong> - generated by AI!</p>
+<section id="nlme-is-generative-ai" class="slide level2 center">
+<h2>NLME is Generative AI!</h2>
+<ul>
+<li>Definitions
+<ul>
+<li><span class="math inline">\(\eta\)</span>: latent variables of dimension <span class="math inline">\(d\)</span> and covariance matrix <span class="math inline">\(\Omega\)</span></li>
+<li><span class="math inline">\(x\)</span>: observed covariates</li>
+<li><span class="math inline">\(dv\)</span>: observed data/response</li>
+<li><span class="math inline">\(dv_g\)</span>: generated/simulated/synthetic data</li>
+</ul></li>
+<li>Model</li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+dv_g &amp;= f_\theta(\eta, x) + \epsilon \\
+\eta &amp;\sim Normal(0, \Omega) \\
+\epsilon &amp;\sim Normal(0, \sigma^2)
+\end{aligned}
+\]</span></p>
+<ul>
+<li>Objective: find <span class="math inline">\(f\)</span> such that the conditional distribution of <span class="math inline">\(dv_g | x\)</span> is close to the distribution of the observed data <span class="math inline">\(dv\)</span></li>
+</ul>
 </section>
-<section id="time-series-and-longitudinal-data" class="slide level2 center">
-<h2>Time-Series and Longitudinal Data</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>PK concentration profiles</strong> <img data-src="images/pk_dist.png" style="width:100.0%"></p>
-</div><div class="column" style="width:50%;">
-<p><strong>Population predictions</strong> <img data-src="images/overview_vpc.png" style="width:100.0%"></p>
-</div></div>
-<p><strong>Generative AI can create realistic longitudinal clinical data!</strong></p>
-</section></section>
-<section>
-<section id="the-deep-connection" class="title-slide slide level1 center">
-<h1>The Deep Connection</h1>
-
-</section>
-<section id="nlme-is-generative-ai" class="slide level2 smaller center">
+<section id="nlme-is-generative-ai-1" class="slide level2 center">
 <h2>NLME is Generative AI!</h2>
 <p><strong>NLME objective:</strong> Maximize marginal likelihood of observations <span class="math inline">\(y\)</span> given covariates <span class="math inline">\(c\)</span>:</p>
 <p><span class="math display">\[
@@ -205,16 +245,38 @@ p_\theta(y | c) = \int p_\theta(y | \eta, c) \cdot p(\eta) d\eta
 <p><span class="math display">\[
 p_\theta(x) = \int p_\theta(x | z) \cdot p(z) dz
 \]</span></p>
-<div class="fragment">
+<!-- ![](images/vae_tutorial_arxiv.png) -->
 <p><strong>They’re identical!</strong></p>
 <ul>
 <li>Random effects <span class="math inline">\(\eta\)</span> ↔︎ Latent variables <span class="math inline">\(z\)</span></li>
 <li>Observations <span class="math inline">\(y\)</span> ↔︎ Generated data <span class="math inline">\(x\)</span></li>
 <li>Individual predictions ↔︎ Generative model</li>
 </ul>
-</div>
+<!-- ![](images/vae_tutorial_eq_1.png) -->
+<!-- ![](images/vae_tutorial_eq_2.png) -->
+<!-- [Marginal likelihood at the heart of generative AI and NLME!]{.att} -->
 </section>
-
+<section id="generative-ai-typical-anatomy" class="slide level2 center">
+<h2>Generative AI – Typical anatomy</h2>
+<p><a href="images/vae_architecture.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="images/vae_architecture.png"></a></p>
+</section>
+<section id="nlme-as-genai" class="slide level2 center">
+<h2>NLME as GenAI</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Input: Time series</li>
+<li>Output: Time series</li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li>Decoder: The “structural” NLME model</li>
+<li>Encoder: an inverse problem of the decoder</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><a href="images/vae_architecture.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="images/vae_architecture.png"></a></p>
+</div></div>
+</section>
 <section id="what-are-latent-variables" class="slide level2 smaller center">
 <h2>What Are Latent Variables?</h2>
 <p><strong>In Traditional NLME:</strong> Meaning is structurally engineered</p>
@@ -248,150 +310,6 @@ p_\theta(x) = \int p_\theta(x | z) \cdot p(z) dz
 <li>Not individual measurements</li>
 <li><strong>Rather:</strong> Disease state, treatment response, patient phenotype</li>
 </ul>
-</section></section>
-<section>
-<section id="embeddings-as-latent-representations" class="title-slide slide level1 center">
-<h1>Embeddings as Latent Representations</h1>
-
-</section>
-<section id="embeddings-dense-information-vectors" class="slide level2 center">
-<h2>Embeddings: Dense Information Vectors</h2>
-<ul>
-<li class="fragment"><strong>Posterior latent variables</strong> tell you how to recreate the data</li>
-<li class="fragment"><strong>Fixed, lower-dimensional</strong> representation of complex data</li>
-<li class="fragment"><strong>Inferred latent variables</strong> <span class="math inline">\(z^*\)</span> are called “embeddings”</li>
-<li class="fragment"><strong>Dense, structured information</strong> about the original data</li>
-<li class="fragment"><strong>Machine-readable format</strong> for downstream tasks</li>
-</ul>
-<p><strong>This is exactly what we used earlier with text descriptions!</strong></p>
-</section>
-<section id="from-vae-theory-to-clinical-practice" class="slide level2 center">
-<h2>From VAE Theory to Clinical Practice</h2>
-<div class="columns" style="font-size: 85%">
-<div class="column" style="width:50%;">
-<p><strong>Variational Autoencoder</strong></p>
-<p><a href="images/vae_tutorial_arxiv.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="images/vae_tutorial_arxiv.png" class="img-border" style="width:100.0%"></a></p>
-<p><strong>Mathematical foundation:</strong> <img data-src="images/vae_tutorial_eq_1.png" class="img-border"> <img data-src="images/vae_tutorial_eq_2.png" class="img-border"></p>
-</div><div class="column" style="width:50%;">
-<p><strong>DeepNLME Application</strong></p>
-<ul>
-<li><strong>Encoder:</strong> Text → Embedding → EBEs</li>
-<li><strong>Decoder:</strong> EBEs → Individual predictions</li>
-<li><strong>Shared structure:</strong> NLME framework</li>
-<li><strong>Individual variation:</strong> Random effects</li>
-</ul>
-<p><strong>Practical implementation:</strong></p>
-<ul>
-<li>Pre-trained text models (HuggingFace)</li>
-<li>PCA for dimension reduction</li>
-<li>Neural networks for EBE prediction</li>
-<li>Augmented NLME models</li>
-</ul>
-</div></div>
-</section></section>
-<section>
-<section id="use-cases-and-applications" class="title-slide slide level1 center">
-<h1>Use Cases and Applications</h1>
-
-</section>
-<section id="clinical-applications" class="slide level2 center">
-<h2>Clinical Applications</h2>
-<p><a href="images/bi_pics.png-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="images/bi_pics.png-1.png"></a></p>
-<p>Real examples from clinical practice:</p>
-<div class="quarto-layout-panel" data-layout="[[2,2], [1,3]]">
-<div class="quarto-layout-row quarto-layout-valign-center">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><a href="images/bi_pic_1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img data-src="images/bi_pic_1.png"></a></p>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><a href="images/bi_pics.png-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img data-src="images/bi_pics.png-3.png"></a></p>
-</div>
-</div>
-<div class="quarto-layout-row quarto-layout-valign-center">
-<div class="quarto-layout-cell" style="flex-basis: 25.0%;justify-content: center;">
-<p><a href="images/bi_pics.png-5.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img data-src="images/bi_pics.png-5.png"></a></p>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 75.0%;justify-content: center;">
-<p><a href="images/bi_pics.png-4.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img data-src="images/bi_pics.png-4.png"></a></p>
-</div>
-</div>
-</div>
-</section>
-<section id="practical-applications" class="slide level2 center">
-<h2>Practical Applications</h2>
-<ul>
-<li class="fragment"><strong>Electronic Health Records:</strong> Converting clinical notes to structured data</li>
-<li class="fragment"><strong>Medical Imaging:</strong> Extracting quantitative features from scans<br>
-</li>
-<li class="fragment"><strong>Genomics/Proteomics:</strong> High-dimensional omics data integration</li>
-<li class="fragment"><strong>Wearables/IoT:</strong> Continuous monitoring data processing</li>
-<li class="fragment"><strong>Social Determinants:</strong> Free-text survey responses</li>
-<li class="fragment"><strong>Adverse Event Reporting:</strong> Unstructured safety narratives</li>
-</ul>
-</section>
-<section id="future-directions" class="slide level2 center">
-<h2>Future Directions</h2>
-<ul>
-<li class="fragment"><strong>Multimodal embeddings:</strong> Combining text, images, and clinical data</li>
-<li class="fragment"><strong>Foundation models:</strong> Pre-trained on large clinical datasets</li>
-<li class="fragment"><strong>Real-time adaptation:</strong> Online learning from streaming data</li>
-<li class="fragment"><strong>Causal embeddings:</strong> Preserving causal relationships in latent space</li>
-<li class="fragment"><strong>Uncertainty quantification:</strong> Probabilistic embeddings</li>
-<li class="fragment"><strong>Privacy-preserving:</strong> Federated learning approaches</li>
-</ul>
-</section></section>
-<section>
-<section id="key-takeaways" class="title-slide slide level1 center">
-<h1>Key Takeaways</h1>
-
-</section>
-<section id="the-unified-view" class="slide level2 center">
-<h2>The Unified View</h2>
-<ul>
-<li class="fragment"><strong>NLME and GenAI share the same mathematical foundation</strong></li>
-<li class="fragment"><strong>Random effects ≈ Latent variables ≈ Embeddings</strong></li>
-<li class="fragment"><strong>DeepNLME bridges traditional modeling with modern AI</strong></li>
-<li class="fragment"><strong>Embeddings unlock complex covariate information</strong></li>
-<li class="fragment"><strong>Scientific structure provides interpretability and data efficiency</strong></li>
-</ul>
-</section>
-<section id="why-this-matters" class="slide level2 center">
-<h2>Why This Matters</h2>
-<ul>
-<li class="fragment"><strong>Leverage decades of AI research</strong> for clinical modeling</li>
-<li class="fragment"><strong>Use pre-trained models</strong> instead of starting from scratch</li>
-<li class="fragment"><strong>Handle any type of complex data</strong> (text, images, omics)</li>
-<li class="fragment"><strong>Maintain scientific interpretability</strong> while gaining flexibility</li>
-<li class="fragment"><strong>Bridge the gap</strong> between mechanism and machine learning</li>
-</ul>
-</section>
-<section id="looking-forward" class="slide level2 center">
-<h2>Looking Forward</h2>
-<div class="center">
-<p><strong>The future of clinical modeling:</strong></p>
-<p><strong>Mechanism + Machine Learning + Generative AI</strong></p>
-<ul>
-<li>Rich, complex data sources</li>
-<li>Scientifically grounded models<br>
-</li>
-<li>Flexible, data-driven components</li>
-<li>Robust uncertainty quantification</li>
-<li>Practical clinical applications</li>
-</ul>
-</div>
-</section>
-<section id="questions-for-discussion" class="slide level2 center">
-<h2>Questions for Discussion</h2>
-<ul>
-<li class="fragment">How can we leverage foundation models in clinical research?</li>
-<li class="fragment">What are the regulatory implications of GenAI in drug development?</li>
-<li class="fragment">How do we ensure interpretability while embracing complexity?</li>
-<li class="fragment">What data types haven’t we considered yet?</li>
-<li class="fragment">How do we validate models with AI-generated components?</li>
-</ul>
-<div class="center">
-<p><strong>Let’s discuss the future of AI-augmented clinical modeling!</strong></p>
-</div>
 
 
 </section></section>

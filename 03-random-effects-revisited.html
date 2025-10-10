@@ -13,7 +13,7 @@
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
-  <meta name="dcterms.date" content="2025-10-09">
+  <meta name="dcterms.date" content="2025-10-10">
   <title>DeepPumas for Viral Dynamics Workshop – Random effects</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -146,7 +146,7 @@ Niklas Korsbo
 </div>
 </div>
 
-  <p class="date">2025-10-09</p>
+  <p class="date">2025-10-10</p>
 </section>
 <section>
 <section id="mixed-effects" class="title-slide slide level1 center">
@@ -319,167 +319,174 @@ p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
 </ul>
 </div></div>
 <p>Many can be wrapped in <code>MAP()</code> to do maximum a-posteriori estimation of fixed effects.</p>
-<!-- 
-      
-## Let's incrementally break this
+</section>
 
-```bwiprva
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=3.,
-  tvVc=1.,
-  Ω = Diagonal([0.1]),
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.1:1)
-end
-pop = Subject.(sims)
-
-latexify(pkmodel, :dynamics)
-plotgrid(sims)
-```
-
-
-```bwiprva
-model1 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc #* exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-
-
-fpm = fit(model1, pop, init_params(model1), FOCE())
-```
-
-
-```bwiprva
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PSDDomain(2)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc * exp(η[2])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=0.7,
-  tvVc=1.,
-  Ω = [0.1 0.0
-       0.0 0.1],
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.4:2)
-end
-pop = Subject.(sims)
-
-plotgrid(sims)
-```
-
-
-```bwiprva
-model2 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```bwiprva
-model3 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    c in RealDomain(; lower=0, upper=1, init=0.5)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(c * η[1])
-    Vc = tvVc * exp((1 - c) * η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```bwiprva
-fpm1 = fit(model1, pop, init_params(model1), FOCE())
-fpm2 = fit(model2, pop, init_params(model2), FOCE())
-fpm3 = fit(model3, pop, init_params(model3), FOCE())
-```
-```bwiprva
-coef(fpm3).c
-```
-
-@show loglikelihood(pkmodel, pop, param, FOCE())
-@show loglikelihood(fpm1)
-@show loglikelihood(fpm2)
-@show loglikelihood(fpm3)
-``` -->
-
+<section>
+<section id="generative-ai" class="title-slide slide level1 center">
+<h1>Generative AI</h1>
 
 </section>
+<section id="generative-ai-1" class="slide level2 center">
+<h2>Generative AI</h2>
+<p><span class="att">Goal</span>: Generate data indistinguishable in distribution to real data</p>
+<p><a href="images/observed_synthetic_contour.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="images/observed_synthetic_contour.png"></a></p>
+</section>
+<section id="section-1" class="slide level2 center">
+<h2></h2>
+<p><img data-src="images/people_1.jpeg">~ <img data-src="images/people_2.jpeg"></p>
+<p><span class="centering">www.thispersondoesnotexist.com</span></p>
+</section>
+<section id="how-is-that-done" class="slide level2 center">
+<h2>How is that done?</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
+<p>Data is a mix of</p>
+<ul>
+<li>Observed quantities (pixel intensities)</li>
+<li>Unobserved quantities (faces, smiling, …)</li>
+</ul>
+<p>We humans learn to extract the unobserved quantities</p>
+<p>GenAI needs to do that too.</p>
+</div><div class="column" style="width:35%;">
+<p><a href="images/people_1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img data-src="images/people_1.jpeg"></a></p>
+</div></div>
+</section>
+<section id="how-is-that-done-1" class="slide level2 center">
+<h2>How is that done?</h2>
+<div class="columns">
+<div class="column" style="width:65%;">
+<p>Data is a mix of</p>
+<ul>
+<li>Observed quantities (<span class="att"><span class="math inline">\(y\)</span></span>)</li>
+<li>Unobserved quantities (<span class="att"><span class="math inline">\(z\)</span></span> - “latent variables”)</li>
+</ul>
+</div><div class="column" style="width:35%;">
+<p><a href="images/people_1.jpeg" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img data-src="images/people_1.jpeg"></a></p>
+</div></div>
+</section>
+<section id="generative-models" class="slide level2 center">
+<h2>Generative models</h2>
+<ul>
+<li>Definitions
+<ul>
+<li><span class="math inline">\(z\)</span>: latent variables of dimension <span class="math inline">\(d\)</span></li>
+<li><span class="math inline">\(y\)</span>: observed data</li>
+<li><span class="math inline">\(y_g\)</span>: generated/simulated/synthetic data</li>
+</ul></li>
+<li>Model</li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+y_g &amp;= f(z) + \epsilon \\
+z &amp;\sim Normal(0, I_{d\times d}) \\
+\epsilon &amp;\sim Normal(0, \sigma^2)
+\end{aligned}
+\]</span></p>
+<ul>
+<li>Objective: find <span class="math inline">\(f\)</span> such that the distribution of <span class="math inline">\(y_g\)</span> is close to the distribution of the observed data <span class="math inline">\(y\)</span></li>
+</ul>
+</section>
+<section id="nlme-is-generative-ai" class="slide level2 center">
+<h2>NLME is Generative AI!</h2>
+<ul>
+<li>Definitions
+<ul>
+<li><span class="math inline">\(\eta\)</span>: latent variables of dimension <span class="math inline">\(d\)</span> and covariance matrix <span class="math inline">\(\Omega\)</span></li>
+<li><span class="math inline">\(x\)</span>: observed covariates</li>
+<li><span class="math inline">\(dv\)</span>: observed data/response</li>
+<li><span class="math inline">\(dv_g\)</span>: generated/simulated/synthetic data</li>
+</ul></li>
+<li>Model</li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+dv_g &amp;= f_\theta(\eta, x) + \epsilon \\
+\eta &amp;\sim Normal(0, \Omega) \\
+\epsilon &amp;\sim Normal(0, \sigma^2)
+\end{aligned}
+\]</span></p>
+<ul>
+<li>Objective: find <span class="math inline">\(f\)</span> such that the conditional distribution of <span class="math inline">\(dv_g | x\)</span> is close to the distribution of the observed data <span class="math inline">\(dv\)</span></li>
+</ul>
+</section>
+<section id="nlme-is-generative-ai-1" class="slide level2 center">
+<h2>NLME is Generative AI!</h2>
+<p><strong>NLME objective:</strong> Maximize marginal likelihood of observations <span class="math inline">\(y\)</span> given covariates <span class="math inline">\(c\)</span>:</p>
+<p><span class="math display">\[
+p_\theta(y | c) = \int p_\theta(y | \eta, c) \cdot p(\eta) d\eta
+\]</span></p>
+<p><strong>Variational Autoencoder (GenAI) objective:</strong> Maximize likelihood of data <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[
+p_\theta(x) = \int p_\theta(x | z) \cdot p(z) dz
+\]</span></p>
+<!-- ![](images/vae_tutorial_arxiv.png) -->
+<p><strong>They’re identical!</strong></p>
+<ul>
+<li>Random effects <span class="math inline">\(\eta\)</span> ↔︎ Latent variables <span class="math inline">\(z\)</span></li>
+<li>Observations <span class="math inline">\(y\)</span> ↔︎ Generated data <span class="math inline">\(x\)</span></li>
+<li>Individual predictions ↔︎ Generative model</li>
+</ul>
+<!-- ![](images/vae_tutorial_eq_1.png) -->
+<!-- ![](images/vae_tutorial_eq_2.png) -->
+<!-- [Marginal likelihood at the heart of generative AI and NLME!]{.att} -->
+</section>
+<section id="generative-ai-typical-anatomy" class="slide level2 center">
+<h2>Generative AI – Typical anatomy</h2>
+<p><a href="images/vae_architecture.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img data-src="images/vae_architecture.png"></a></p>
+</section>
+<section id="nlme-as-genai" class="slide level2 center">
+<h2>NLME as GenAI</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Input: Time series</li>
+<li>Output: Time series</li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li>Decoder: The “structural” NLME model</li>
+<li>Encoder: an inverse problem of the decoder</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><a href="images/vae_architecture.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img data-src="images/vae_architecture.png"></a></p>
+</div></div>
+</section>
+<section id="what-are-latent-variables" class="slide level2 smaller center">
+<h2>What Are Latent Variables?</h2>
+<p><strong>In Traditional NLME:</strong> Meaning is structurally engineered</p>
+<p><span class="math display">\[
+CL = tvCL \cdot e^{\eta_1}
+\]</span></p>
+<p><strong>In DeepNLME:</strong> More flexible, but still some structure</p>
+<p><span class="math display">\[
+\frac{dR}{dt} = NN\left(\frac{Central}{Vc}, R, \eta_1, \eta_2 \right)
+\]</span></p>
+<p><strong>In Pure GenAI:</strong> Meaning emerges from data and training</p>
+<p><span class="math display">\[
+p_\theta(x) = \int p_\theta(x | z) \cdot p(z) dz
+\]</span></p>
+<p><span class="math inline">\(z\)</span> captures informative properties not directly observed</p>
+</section>
+<section id="latent-variables-as-information" class="slide level2 center">
+<h2>Latent Variables as Information</h2>
+<p><strong>For images:</strong></p>
+<ul>
+<li>Not pixel-by-pixel intensity</li>
+<li><strong>Rather:</strong> Objects, characteristics, actions, style, lighting</li>
+</ul>
+<p><strong>For text:</strong></p>
+<ul>
+<li>Not individual words</li>
+<li><strong>Rather:</strong> Sentiment, information content, writing style, language</li>
+</ul>
+<p><strong>For clinical data:</strong></p>
+<ul>
+<li>Not individual measurements</li>
+<li><strong>Rather:</strong> Disease state, treatment response, patient phenotype</li>
+</ul>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg" class="slide-logo"></p>
