@@ -95,7 +95,8 @@ model_hiv = @model begin
         tvec50 ∈ RealDomain(lower = 0.001, init = 100.0)
 
         # Random effects
-        Ω ∈ PDiagDomain(2)
+        Ω ∈ PDiagDomain(1)
+        ωR0  ∈ RealDomain(; lower = 0)
 
         # Residual error
         σ ∈ RealDomain(lower = 0.001, init = 0.1)
@@ -117,10 +118,10 @@ model_hiv = @model begin
         VP = iVp
 
         # Baseline viral RNA
-        R0 = tvr0 * exp(η[1] * η_nn[1])
+        R0 = tvr0 * exp(ωR0 * η_nn[1])
 
         # Individual EC50 value
-        EC50 = tvec50 * exp(η[2])
+        EC50 = tvec50 * exp(η[1])
 
         # Fix random effects as non-dynamic inputs to the NN and return an "individual" NN
         iNN = fix(NN, η_nn)
@@ -143,12 +144,6 @@ model_hiv = @model begin
         EFF  = CP / (EC50 + CP)
         INH  = 1.0 - EFF
 
-        # Neural infection term
-        viralDynamics = iNN(R / 10, EFF)[1]
-
-        # For the concentration effect input to the NN, we could use Conc, EFF, or INH.
-        # These will give a similar description of the data.
-
         V = 10 * R
     end
 
@@ -157,7 +152,7 @@ model_hiv = @model begin
         Central' = KA * Depot - (CL / VC) * Central - (Q / VC) * Central + (Q / VP) * Periph
         Periph'  = (Q / VC) * Central - (Q / VP) * Periph
 
-        R' = viralDynamics
+        R' = iNN(R / 10, EFF)[1]
     end
 
     @derived begin
@@ -220,6 +215,63 @@ vpcfig_hiv = vpc_plot(
 
 figurelegend(vpcfig_hiv, position = :b, orientation = :horizontal, nbanks = 3, tellwidth = true);
 vpcfig_hiv
+
+########################################################################################################################
+# External Validation
+########################################################################################################################
+
+# mdl_fit = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME_nn.jls"))
+
+########################################
+# 7) Validation dataset
+########################################
+# Instead of single 500mg dose
+## 300 mg dose given every 2 weeks
+## 4 doses
+## Obervation window instead of 28days, here 84 days
+
+
+# Read HIV IPP dataset
+df_mDos = CSV.read("hiv-ipp-multiple-dose.csv", DataFrame; missingstring = "", stringtype = String);
+
+#############################################################
+# 2) Create Pumas Population Object from DataFrame
+#############################################################
+
+pop_mDos= read_pumas(
+    df_pd;
+    id           = :id,
+    time         = :time,
+    observations = [:Virus],
+    evid         = :evid,
+    amt          = :amt,
+    cmt          = :cmt,
+    rate         = :rate,
+    covariates   = [:iKa, :iCL, :iVc, :iQ, :iVp, :iDur]
+)
+
+# For tests lets use a first 150 subjects from the validation populations
+testpop = pop_mDos[1:150]    # Test set: first 150 subjects
+
+# Visualize the first 8 training subjects
+plotgrid(testpop[1:8]; data = (; color = :blue))
+
+
+########################################
+# 5) Prediction using developed NN model
+########################################
+
+# Predict on validation population for days 0 to 30
+model_pred = predict(mdl_fit, testpop; obstimes = 0:0.1:90)
+
+# Plot predictions for validation subjects 11 to 22
+plotgrid(
+    model_pred[1:12];
+    observation = :Virus,
+    pred        = (; label = "model pred", linestyle = :dash),
+    ipred       = (; label = "model ipred"),
+    axis        = (; limits = ((0., 90.), nothing))
+)
 
 ########################################################################################################################
 # End of the Script

@@ -19,6 +19,10 @@ using PumasUtilities        # Utilities for Pumas workflows
 set_mlp_backend(:staticflux)
 set_theme!(deep_light())
 
+# Set working directory and artifacts folder
+cd(@__DIR__)
+ASSETS_DIR = joinpath(@__DIR__, "assets")
+
 ############################################################################################
 ## Generate synthetic data from an indirect response model (IDR) with complicated covariates
 ############################################################################################
@@ -190,8 +194,8 @@ fpm = fit(
 )
 
 # Save and reload fit for reproducibility
-serialize(joinpath(@__DIR__, "deep_pumas_fpm.jls"), fpm)
-fpm = deserialize(joinpath(@__DIR__, "deep_pumas_fpm.jls"))
+serialize(joinpath(ASSETS_DIR, "deep_pumas_fpm.jls"), fpm)
+# fpm = deserialize(joinpath(ASSETS_DIR, "deep_pumas_fpm.jls"))
 
 # Predict on test population
 pred = predict(fpm, testpop; obstimes=0:0.1:24)
@@ -257,8 +261,8 @@ fnn_large = fit(nn_large, target_large; training_fraction=0.9, optim_options = (
 augmented_fpm_large = augment(fpm, fnn_large)
 
 
-pred_augment_large =
-  predict(augmented_fpm_large.model, testpop, coef(augmented_fpm_large); obstimes=0:0.1:24);
+pred_augment_large = predict(augmented_fpm_large.model, testpop, coef(augmented_fpm_large); obstimes=0:0.1:24);
+
 plotgrid(
   pred_datamodel;
   ipred=false,
@@ -293,14 +297,20 @@ fpm_refit_Ω = fit(
   optim_options = (; time_limit=3*60)
 )
 
+# Save and reload fit for reproducibility
+serialize(joinpath(ASSETS_DIR, "deep_pumas_fpm-refit.jls"), fpm_refit_Ω)
+# fpm_refit_Ω = deserialize(joinpath(ASSETS_DIR, "deep_pumas_fpm-refit.jls"))
+
 # Compare Ω before and after refit
 coef(fpm_refit_Ω).Ω_nn ./ coef(augmented_fpm).Ω_nn
 coef(fpm_refit_Ω).Ω ./ coef(augmented_fpm).Ω
 
 # Visual predictive check
 _vpc = vpc(fpm_refit_Ω; observations = [:dv])
-vplt = vpc_plot(_vpc, include_legend = false)
-figurelegend(vplt, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true)
+
+vplt = vpc_plot(_vpc, include_legend = false);
+figurelegend(vplt, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true);
+
 vplt
 
 
@@ -321,6 +331,12 @@ fpm_deep = fit(
   MAP(FOCE());
   optim_options=(; time_limit= 5 * 60), # Note that this will take 5 minutes.
 )
+
+
+# Save and reload fit for reproducibility
+serialize(joinpath(ASSETS_DIR, "deep_pumas_fpm-deep.jls"), fpm_deep)
+# fpm_deep = deserialize(joinpath(ASSETS_DIR, "deep_pumas_fpm-deep.jls"))
+
 
 pred_deep = predict(fpm_deep.model, testpop, coef(fpm_deep); obstimes=0:0.1:24);
 plotgrid(

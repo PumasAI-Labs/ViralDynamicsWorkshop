@@ -80,7 +80,7 @@ plotgrid(trainpop[1:8]; data = (; color = :blue))
 
 model_hiv = @model begin
     @metadata begin
-      desc = "Simple HIV PK–PD (Luo-style log10 parametrization) + explicit R0 + Kin/Kout initials"
+      desc = "DeepNLME for HIV Dynamics with Target and Infection compartments"
       timeu = u"d"
     end
   
@@ -89,7 +89,7 @@ model_hiv = @model begin
       tvλ ∈ RealDomain(lower=0)
       d ∈ RealDomain(lower=0)
       a ∈ RealDomain(lower=0)
-    #   γ ∈ RealDomain(lower=0, init=1e5)
+      γ ∈ RealDomain(lower=0, init=1.0)
       x0 ∈ RealDomain(lower=0)
     #   ω ∈ RealDomain(lower=0)
 
@@ -137,7 +137,7 @@ model_hiv = @model begin
     @vars begin
     CP   = 1000 * Central / iVc
     EFF  = CP / (EC50 + CP)
-    V = I * 1e5
+    V = γ * I * 1e5
     infect_term = iNN_INF(V / 1e5, EFF)[1]
     end
   
@@ -166,12 +166,12 @@ fit_hiv = fit(
     trainpop,
     init_params(model_hiv),
     MAP(FOCE());
-    optim_options = (; iterations = 50, f_tol = 1e-6) #<---- only 50 iterations, could be increased to 100 ~ 12mins
+    optim_options = (; iterations = 100, f_tol = 1e-6) 
 )
 
 # Save and reload the fit for reproducibility
 # serialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"), fit_hiv)
-mdl_fit = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
+# mdl_fit = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
 
 ########################################
 # 5) Predict on Validation Set and Plot
@@ -209,6 +209,63 @@ vpcfig_hiv = vpc_plot(
 
 figurelegend(vpcfig_hiv, position = :b, orientation = :horizontal, nbanks = 3, tellwidth = true);
 vpcfig_hiv
+
+########################################################################################################################
+# External Validation
+########################################################################################################################
+
+mdl_fit = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
+
+########################################
+# 7) Validation dataset
+########################################
+# Instead of single 500mg dose
+## 300 mg dose given every 2 weeks
+## 4 doses
+## Obervation window instead of 28days, here 84 days
+
+
+# Read HIV IPP dataset
+df_mDos = CSV.read("hiv-ipp-multiple-dose.csv", DataFrame; missingstring = "", stringtype = String);
+
+#############################################################
+# 2) Create Pumas Population Object from DataFrame
+#############################################################
+
+pop_mDos= read_pumas(
+    df_pd;
+    id           = :id,
+    time         = :time,
+    observations = [:Virus],
+    evid         = :evid,
+    amt          = :amt,
+    cmt          = :cmt,
+    rate         = :rate,
+    covariates   = [:iKa, :iCL, :iVc, :iQ, :iVp, :iDur]
+)
+
+# For tests lets use a first 150 subjects from the validation populations
+testpop = pop_mDos[1:150]    # Test set: first 150 subjects
+
+# Visualize the first 8 training subjects
+plotgrid(testpop[1:8]; data = (; color = :blue))
+
+
+########################################
+# 5) Prediction using developed NN model
+########################################
+
+# Predict on validation population for days 0 to 30
+model_pred = predict(mdl_fit, testpop; obstimes = 0:0.1:90)
+
+# Plot predictions for validation subjects 11 to 22
+plotgrid(
+    model_pred[1:12];
+    observation = :Virus,
+    pred        = (; label = "model pred", linestyle = :dash),
+    ipred       = (; label = "model ipred"),
+    axis        = (; limits = ((0., 90.), nothing))
+)
 
 ########################################################################################################################
 # End of the Script

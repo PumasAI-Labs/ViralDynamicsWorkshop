@@ -29,7 +29,7 @@ ASSETS_DIR = joinpath(@__DIR__, "assets")
 ## Load covariate data
 ############################################################################################
 
-df_cov = CSV.read("hiv-ipp-cov.csv", DataFrame; missingstring = "", stringtype = String)
+df_cov = CSV.read("hiv-ipp-cov2.csv", DataFrame; missingstring = "", stringtype = String)
 
 pop = read_pumas(
   df_cov;
@@ -83,10 +83,11 @@ model = @model begin
       tvr0 ∈ RealDomain(lower = 0.001, init = 0.5)
 
       # Drug effect parameters
-      tvec50 ∈ RealDomain(lower = 0.001, init = 150.0)
+      tvec50 ∈ RealDomain(lower = 0.001, init = 100.0)
 
       # Random effects
-      Ω ∈ PDiagDomain(2)
+      Ω ∈ PDiagDomain(1)
+      ωR0  ∈ RealDomain(; lower = 0)
 
       # Residual error
       σ ∈ RealDomain(lower = 0.001, init = 0.1)
@@ -100,59 +101,53 @@ model = @model begin
   @covariates iKa iCL iVc iQ iVp iDur R_eq c1 c2 c3 c4 c5 c6
 
   @pre begin
-      # PK parameters from covariates
-      KA = iKa
-      CL = iCL
-      VC = iVc
-      Q  = iQ
-      VP = iVp
+    # PK parameters from covariates
+    KA = iKa
+    CL = iCL
+    VC = iVc
+    Q  = iQ
+    VP = iVp
 
-      # Baseline viral RNA
-      R0 = tvr0 * exp(η[1] * η_nn[1])
+    # Baseline viral RNA
+    R0 = tvr0 * exp(ωR0 * η_nn[1])
 
-      # Individual EC50 value
-      EC50 = tvec50 * exp(η[2])
+    # Individual EC50 value
+    EC50 = tvec50 * exp(η[1])
 
-      # Fix random effects as non-dynamic inputs to the NN and return an "individual" NN
-      iNN = fix(NN, η_nn)
+    # Fix random effects as non-dynamic inputs to the NN and return an "individual" NN
+    iNN = fix(NN, η_nn)
   end
 
   @dosecontrol begin
-      duration = (; Depot = iDur)
-      # Sequential zero and first-order absorption codes
+    duration = (; Depot = iDur)
+    # Sequential zero and first-order absorption codes
   end
 
   @init begin
-      Depot   = 0.0
-      Central = 0.0
-      R       = R0
+    Depot   = 0.0
+    Central = 0.0
+    R       = R0
   end
 
   @vars begin
-      CP   = 1000 * Central / VC
-      Conc = Central / VC / 10
-      EFF  = CP / (EC50 + CP)
-      INH  = 1.0 - EFF
+    CP   = 1000 * Central / VC
+    Conc = Central / VC / 10
+    EFF  = CP / (EC50 + CP)
+    INH  = 1.0 - EFF
 
-      # Neural infection term
-      viralDynamics = iNN(R / 10, EFF)[1]
-
-      # For the concentration effect input to the NN, we could use Conc, EFF, or INH.
-      # These will give a similar description of the data.
-
-      V = 10 * R
+    V = 10 * R
   end
 
   @dynamics begin
-      Depot'   = -KA * Depot
-      Central' = KA * Depot - (CL / VC) * Central - (Q / VC) * Central + (Q / VP) * Periph
-      Periph'  = (Q / VC) * Central - (Q / VP) * Periph
+    Depot'   = -KA * Depot
+    Central' = KA * Depot - (CL / VC) * Central - (Q / VC) * Central + (Q / VP) * Periph
+    Periph'  = (Q / VC) * Central - (Q / VP) * Periph
 
-      R' = viralDynamics
+    R' = iNN(R / 10, EFF)[1]
   end
 
   @derived begin
-      Virus ~ @. Normal(V, σ)
+    Virus ~ @. Normal(V, σ)
   end
 end
 
