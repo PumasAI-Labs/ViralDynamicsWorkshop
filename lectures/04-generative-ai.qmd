@@ -1,0 +1,184 @@
+---
+title: "Generative AI and NLME"
+# subtitle: "Connections, Concepts, and Future Directions"
+format: revealjs
+---
+
+# The Connection Between NLME and Generative AI
+
+
+## Generative AI
+[Goal]{.att}: 
+Generate data indistinguishable in distribution to real data
+
+
+![](images/observed_synthetic_contour.png)
+
+##
+
+![](images/people_1.jpeg)~
+![](images/people_2.jpeg)
+
+[www.thispersondoesnotexist.com]{.centering}
+
+## How is that done?
+
+:::: {.columns}
+
+::: {.column width="65%"}
+Data is a mix of
+
+- Observed quantities (pixel intensities)
+- Unobserved quantities (faces, smiling, ...)
+  
+We humans learn to extract the unobserved quantities 
+
+GenAI needs to do that too.
+
+:::
+::: {.column width="35%"}
+![](images/people_1.jpeg)
+:::
+::::
+
+## How is that done?
+
+:::: {.columns}
+
+::: {.column width="65%"}
+Data is a mix of
+
+- Observed quantities ([$y$]{.att})
+- Unobserved quantities ([$z$]{.att} - "latent variables")
+  
+:::
+::: {.column width="35%"}
+![](images/people_1.jpeg)
+:::
+::::
+
+## Generative models
+
+- Definitions
+  - $z$: latent variables of dimension $d$
+  - $y$: observed data
+  - $y_g$: generated/simulated/synthetic data
+- Model
+
+$$
+\begin{aligned}
+y_g &= f(z) + \epsilon \\
+z &\sim Normal(0, I_{d\times d}) \\
+\epsilon &\sim Normal(0, \sigma^2)
+\end{aligned}
+$$
+
+- Objective: find $f$ such that the distribution of $y_g$ is close to the distribution of the observed data $y$
+
+## NLME is Generative AI!
+
+- Definitions
+  - $\eta$: latent variables of dimension $d$ and covariance matrix $\Omega$
+  - $x$: observed covariates
+  - $dv$: observed data/response
+  - $dv_g$: generated/simulated/synthetic data
+- Model
+
+$$
+\begin{aligned}
+dv_g &= f_\theta(\eta, x) + \epsilon \\
+\eta &\sim Normal(0, \Omega) \\
+\epsilon &\sim Normal(0, \sigma^2)
+\end{aligned}
+$$
+
+- Objective: find $f$ such that the conditional distribution of $dv_g | x$ is close to the distribution of the observed data $dv$
+  
+
+## NLME is Generative AI!
+
+**NLME objective:** Maximize marginal likelihood of observations $y$ given covariates $c$:
+
+$$
+p_\theta(y | c) = \int p_\theta(y | \eta, c) \cdot p(\eta) d\eta
+$$
+
+**Variational Autoencoder (GenAI) objective:** Maximize likelihood of data $x$:
+
+$$
+p_\theta(x) = \int p_\theta(x | z) \cdot p(z) dz
+$$
+
+<!-- ![](images/vae_tutorial_arxiv.png) -->
+
+**They're identical!**
+
+- Random effects $\eta$ ↔ Latent variables $z$
+- Observations $y$ ↔ Generated data $x$ 
+- Individual predictions ↔ Generative model
+
+<!-- ![](images/vae_tutorial_eq_1.png) -->
+<!-- ![](images/vae_tutorial_eq_2.png) -->
+
+<!-- [Marginal likelihood at the heart of generative AI and NLME!]{.att} -->
+
+## Generative AI -- Typical anatomy
+
+![](images/vae_architecture.png)
+
+## NLME as GenAI
+
+:::: {.columns}
+::: {.column width="50%"}
+- Input: Time series
+- Output: Time series
+
+&nbsp;
+
+- Decoder: The "structural" NLME model
+- Encoder: an inverse problem of the decoder
+:::
+::: {.column width="50%"}
+![](images/vae_architecture.png)
+:::
+::::
+
+
+## What Are Latent Variables? {.smaller}
+
+**In Traditional NLME:** Meaning is structurally engineered
+
+$$
+CL = tvCL \cdot e^{\eta_1}
+$$
+
+**In DeepNLME:** More flexible, but still some structure
+
+$$
+\frac{dR}{dt} = NN\left(\frac{Central}{Vc}, R, \eta_1, \eta_2 \right)
+$$
+
+**In Pure GenAI:** Meaning emerges from data and training
+
+$$
+p_\theta(x) = \int p_\theta(x | z) \cdot p(z) dz
+$$
+
+$z$ captures informative properties not directly observed
+
+## Latent Variables as Information
+
+**For images:**
+
+- Not pixel-by-pixel intensity
+- **Rather:** Objects, characteristics, actions, style, lighting
+
+**For text:**  
+
+- Not individual words
+- **Rather:** Sentiment, information content, writing style, language
+
+**For clinical data:**
+
+- Not individual measurements
+- **Rather:** Disease state, treatment response, patient phenotype
