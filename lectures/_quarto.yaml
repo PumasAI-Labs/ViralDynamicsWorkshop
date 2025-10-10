@@ -82,7 +82,7 @@ format:
     progress: true
     slide-number: true
     smaller: false
-    footer: '<a href="../index.html">DeepPumas Workshop 2025</a>'
+    footer: '<a href="../ViralDynamicsWorkshop/index.html">DeepPumas Workshop 2025</a>'
     chalkboard: true
     theme: 
       - default
