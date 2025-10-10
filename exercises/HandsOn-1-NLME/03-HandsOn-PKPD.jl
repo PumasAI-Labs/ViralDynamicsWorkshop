@@ -71,7 +71,7 @@ plotgrid(pop_pd[1:8]; data=(; color=:blue))
 
 model_pd = @model begin
     @metadata begin
-      desc = "Simple HIV PK–PD (Luo-style log10 parametrization) + explicit R0 + Kin/Kout initials"
+      desc = "HIV PK–PD Model"
       timeu = u"d"
     end
   
@@ -175,8 +175,8 @@ fit_pd_foce = fit(
 )
 
 # Save and reload the fit for reproducibility
-serialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"), fit_pd_foce)
-fit_pd_foce_loaded = deserialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"))
+# serialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"), fit_pd_foce)
+# fit_pd_foce_loaded = deserialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"))
 
 # Infer parameter uncertainty
 infer(fit_pd_foce)
@@ -205,8 +205,8 @@ observations_vs_ipredictions(insp_pd)
 # 6) Predict on Validation Set and Plot
 ############################################
 
-# Predict on validation population for days 0 to 42
-pred_pd_valid = predict(fit_pd_foce, pop_pd; obstimes=0:0.5:42)
+# Predict on validation population for days 0 to 30
+pred_pd_valid = predict(fit_pd_foce, pop_pd; obstimes=0:0.5:30)
 
 # Plot predictions for validation subjects 1 to 12
 plotgrid(
@@ -214,9 +214,22 @@ plotgrid(
     observation = :Virus,
     pred        = (; label = "model pred", linestyle=:dash),
     ipred       = (; label = "model ipred"),
-    axis        = (; limits = ((0., 45.), nothing))
+    axis        = (; limits = ((0., 30.), nothing))
 )
 
+
+# VPC
+vpc_pd    = vpc(fit_pd_foce)
+
+vpcfig_pd = vpc_plot(
+  vpc_pd;
+  simquantile_medians = true, observations = false, include_legend = false,
+  axis = (xlabel = "Time (h)", ylabel = "Log10 Viral RNA", xticks = 0:50:200)
+);
+
+figurelegend(vpcfig_pd, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true);
+
+vpcfig_pd
 # =============================================================================
 # End of the script
 # =============================================================================

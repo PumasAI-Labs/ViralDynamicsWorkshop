@@ -297,8 +297,8 @@ plotgrid!(
 #########################################
 # 9) Visual Predictive Checks (VPC)
 #########################################
+# Model 1
 vpc_pk2cmt   = vpc(fit_pk2cmt_foce)
-vpc_pkseq    = vpc(fit_pkseq_foce)
 
 vpcfig_pk2cmt = vpc_plot(
   vpc_pk2cmt;
@@ -309,6 +309,9 @@ vpcfig_pk2cmt = vpc_plot(
 figurelegend(vpcfig_pk2cmt, position=:b, orientation=:horizontal, nbanks=3, tellwidth=true);
 
 vpcfig_pk2cmt
+
+# Model 2
+vpc_pkseq    = vpc(fit_pkseq_foce)
 
 vpcfig_pkseq = vpc_plot(
   vpc_pkseq;
@@ -351,8 +354,6 @@ serialize(joinpath(ASSETS_DIR, "fit_pkseq_foce.jls"), fit_pkseq_foce)
 # Example: how to deserialize later
 # deserialize(joinpath(ASSETS_DIR, "fit_pkseq_foce.jls"))
 
-
-@info "Assets saved in" ASSETS_DIR
 # =============================================================================
 # End of the script
 # =============================================================================

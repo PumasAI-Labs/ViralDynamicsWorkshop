@@ -44,7 +44,7 @@ df_pk_seq = @chain df_pk begin
   end
 
 # Load previously fitted PK model (FOCE method) from artifacts
-fit_pkseq_foce = deserialize(joinpath(ASSESTS_DIR, "fit_pkseq_foce.jls"))
+fit_pkseq_foce = deserialize(joinpath(ASSESTS_DIR, "fit_pkseq_foce.jls"));
 
 # Inspect the fit object (optional)
 fit_pkseq_foce
@@ -54,8 +54,8 @@ fit_pkseq_foce
 ########################################
 
 # Inspect the fit to extract individual-level estimates
-insp_pkseq = inspect(fit_pkseq_foce)
-df_inspect = DataFrame(insp_pkseq)
+insp_pkseq = inspect(fit_pkseq_foce);
+df_inspect = DataFrame(insp_pkseq);
 
 # Visualize the inspect object
 vscodedisplay(df_inspect)
