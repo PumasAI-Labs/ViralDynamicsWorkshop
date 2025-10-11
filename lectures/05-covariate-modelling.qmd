@@ -54,5 +54,12 @@ Can we predict the values of the random effect from the covariates?
     - We can weight with sensitivity of the loglikelihood
 - We could use the "full" posterior distribution
 
+## What we're really after
 
-    
+$$
+\eta_i \sim p(\eta | \text{covariates})
+$$
+
+A rich description of how covariate information affects the prior distribution of the random effects.
+
+To be presented at ACoP in two weeks
