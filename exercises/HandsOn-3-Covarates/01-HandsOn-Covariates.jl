@@ -190,7 +190,7 @@ fpm = fit(
   init_params(model),
   MAP(FOCE());
   optim_options=(; iterations=200),
-  constantcoef = (; Ω_nn = I(3))
+  constantcoef = (:Ω_nn,)
 )
 
 # Save and reload fit for reproducibility
