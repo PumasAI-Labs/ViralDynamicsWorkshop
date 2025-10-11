@@ -46,9 +46,6 @@ df_pd = @chain df_pkpd begin
     @rsubset((:evid == 1) | (!ismissing(:Virus)))
 end;
 
-# Inspect basic structure (first few rows)
-vscodedisplay(df_pd)
-
 
 #############################################################
 # 2) Create Pumas Population Object from DataFrame
@@ -85,26 +82,20 @@ model_hiv = @model begin
     end
   
     @param begin
-      NN1 ∈ MLPDomain(2 + 1, 7, 7, (1, softplus); reg=L2(1.0, input=false, output=false))
+      NN1 ∈ MLPDomain(2 + 2, 5, 5, (1, softplus); reg=L2(1.0))
       tvλ ∈ RealDomain(lower=0)
       d ∈ RealDomain(lower=0)
       a ∈ RealDomain(lower=0)
-      γ ∈ RealDomain(lower=0, init=1.0)
+      γ ∈ RealDomain(lower=0, init=1e5)
       x0 ∈ RealDomain(lower=0)
-    #   ω ∈ RealDomain(lower=0)
-
-    # Drug effect parameters
-    tvec50 ∈ RealDomain(lower = 0.001, init = 150.0)
 
       Ω ∈ PSDDomain(2)
-      EC50_Ω  ∈ PDiagDomain(1)
       σ ∈ RealDomain(lower=0.)
     end
   
     @random begin
       η ~ MvNormal(Ω)
-      EC50_η ~ MvNormal(EC50_Ω) 
-      η_nn ~ Normal()
+      η_nn ~ MvNormal(I(2))
     end
   
     @covariates iKa iCL iVc iQ iVp iDur
@@ -115,11 +106,8 @@ model_hiv = @model begin
       totcells = λ / d
       T0 = totcells * logistic(x0 + η[2])
       I0 = totcells * (1 - logistic(x0 + η[2]))
-    #   V0 = I0 * γ / ω # assume quasi-equilibirum
 
-    EC50 = tvec50 * exp(EC50_η[1])
-  
-    iNN_INF = fix(NN1, η_nn)
+      iNN_INF = fix(NN1, η_nn)
     end
   
     @dosecontrol begin
@@ -131,14 +119,11 @@ model_hiv = @model begin
       Central = 0.0
       T = T0
       I = I0
-    #   V = V0
     end
   
     @vars begin
-    CP   = 1000 * Central / iVc
-    EFF  = CP / (EC50 + CP)
-    V = γ * I * 1e5
-    infect_term = iNN_INF(V / 1e5, EFF)[1]
+      V = γ * I 
+      infect_term = iNN_INF(V / 1e5, Central/iVc)[1]
     end
   
     @dynamics begin
@@ -148,11 +133,10 @@ model_hiv = @model begin
   
       T' = λ - d * T - infect_term * T
       I' = infect_term * T - a * I
-    #   V' = γ * I - ω * V
     end
   
     @derived begin
-      log10V = @.log10(abs(V))
+      log10V = @.log10(V) 
       Virus ~ @. Normal(log10V, σ)
     end
   end
@@ -166,7 +150,7 @@ fit_hiv = fit(
     trainpop,
     init_params(model_hiv),
     MAP(FOCE());
-    optim_options = (; iterations = 100, f_tol = 1e-6) 
+    optim_options = (; iterations = 60, f_tol = 1e-6) 
 )
 
 # Save and reload the fit for reproducibility
@@ -178,11 +162,11 @@ fit_hiv = fit(
 ########################################
 
 # Predict on validation population for days 0 to 30
-model_pred = predict(mdl_fit, validpop; obstimes = 0:0.5:30)
+model_pred = predict(fit_hiv, validpop; obstimes = 0:0.5:30)
 
 # Plot predictions for validation subjects 11 to 22
 plotgrid(
-    model_pred[11:22];
+    model_pred[1:12];
     observation = :Virus,
     pred        = (; label = "model pred", linestyle = :dash),
     ipred       = (; label = "model ipred"),
