@@ -89,22 +89,18 @@ model_hiv = @model begin
         NN ∈ MLPDomain(4, 8, 8, (1, identity); reg = L2(1.0))
 
         # PD parameters
-        tvr0 ∈ RealDomain(lower = 0.001, init = 0.5)
-
-        # Drug effect parameters
-        tvec50 ∈ RealDomain(lower = 0.001, init = 100.0)
+        tvV0 ∈ RealDomain(lower = 0.001, init = 0.5)
 
         # Random effects
-        Ω ∈ PDiagDomain(1)
-        ωR0  ∈ RealDomain(; lower = 0)
+        # ω ∈ RealDomain(; lower = 0)
+        ωV0  ∈ RealDomain(; lower = 0)
 
         # Residual error
         σ ∈ RealDomain(lower = 0.001, init = 0.1)
     end
 
     @random begin
-        η ~ MvNormal(Ω)
-        η_nn ~ MvNormal(2, 0.1)
+        η ~ MvNormal(I(2))
     end
 
     @covariates iKa iCL iVc iQ iVp iDur
@@ -118,13 +114,10 @@ model_hiv = @model begin
         VP = iVp
 
         # Baseline viral RNA
-        R0 = tvr0 * exp(ωR0 * η_nn[1])
-
-        # Individual EC50 value
-        EC50 = tvec50 * exp(η[1])
+        V0 = tvV0 * exp(ωV0 * η[1])
 
         # Fix random effects as non-dynamic inputs to the NN and return an "individual" NN
-        iNN = fix(NN, η_nn)
+        iNN = fix(NN, η)
     end
 
     @dosecontrol begin
@@ -135,16 +128,7 @@ model_hiv = @model begin
     @init begin
         Depot   = 0.0
         Central = 0.0
-        R       = R0
-    end
-
-    @vars begin
-        CP   = 1000 * Central / VC
-        Conc = Central / VC / 10
-        EFF  = CP / (EC50 + CP)
-        INH  = 1.0 - EFF
-
-        V = 10 * R
+        V       = V0
     end
 
     @dynamics begin
@@ -152,11 +136,11 @@ model_hiv = @model begin
         Central' = KA * Depot - (CL / VC) * Central - (Q / VC) * Central + (Q / VP) * Periph
         Periph'  = (Q / VC) * Central - (Q / VP) * Periph
 
-        R' = iNN(R / 10, EFF)[1]
+        V' = iNN(V, Central/VC)[1] * V
     end
 
     @derived begin
-        Virus ~ @. Normal(V, σ)
+        Virus ~ @. Normal(log10(V) + 4, σ)
     end
 end
 
@@ -170,7 +154,7 @@ fit_hiv = fit(
     trainpop,
     init_params(model_hiv),
     MAP(FOCE());
-    optim_options = (; iterations = 100, f_tol = 1e-6)
+    optim_options = (; iterations = 200, f_tol = 1e-6)
 )
 
 # Save and reload the fit for reproducibility
@@ -262,11 +246,11 @@ plotgrid(testpop[1:8]; data = (; color = :blue))
 ########################################
 
 # Predict on validation population for days 0 to 30
-model_pred = predict(mdl_fit, testpop; obstimes = 0:0.1:90)
+model_pred = predict(fit_hiv, testpop; obstimes = 0:0.1:90)
 
 # Plot predictions for validation subjects 11 to 22
 plotgrid(
-    model_pred[1:12];
+    model_pred[1:24];
     observation = :Virus,
     pred        = (; label = "model pred", linestyle = :dash),
     ipred       = (; label = "model ipred"),
