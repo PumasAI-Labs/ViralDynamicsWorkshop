@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/index.html</loc>
-    <lastmod>2025-10-11T15:03:02.039Z</lastmod>
+    <lastmod>2025-10-11T15:06:20.686Z</lastmod>
   </url>
   <url>
-    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/05-covariate-modelling.html</loc>
-    <lastmod>2025-10-11T15:00:12.450Z</lastmod>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/06-embeddings.html</loc>
+    <lastmod>2025-10-11T14:00:12.675Z</lastmod>
   </url>
   <url>
     <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/04-generative-ai.html</loc>
@@ -25,11 +25,11 @@
     <lastmod>2025-10-11T13:57:13.909Z</lastmod>
   </url>
   <url>
-    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/05-complex-covariates.html</loc>
-    <lastmod>2025-10-11T14:00:12.675Z</lastmod>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/05-covariate-modelling.html</loc>
+    <lastmod>2025-10-11T15:00:12.450Z</lastmod>
   </url>
   <url>
-    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/06-epidemiology-demo.html</loc>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/07-epidemiology-demo.html</loc>
     <lastmod>2025-10-09T12:46:26.755Z</lastmod>
   </url>
 </urlset>

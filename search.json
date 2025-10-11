@@ -49,46 +49,123 @@
     "text": "6 Resources\n\nDeepPumas Documentation\nPumas Documentation\nWorkshop GitHub Repository"
   },
   {
-    "objectID": "05-covariate-modelling.html#augment-workflow",
-    "href": "05-covariate-modelling.html#augment-workflow",
-    "title": "Complex covariates",
-    "section": "Augment workflow",
-    "text": "Augment workflow\n\n\nGreen: observed quantities\nBlue: Fixed effects\nRed: Random effects"
+    "objectID": "06-embeddings.html#the-data-challenge",
+    "href": "06-embeddings.html#the-data-challenge",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "The Data Challenge",
+    "text": "The Data Challenge\n\nChallenge: How do we use rich text descriptions as covariates in NLME models?"
   },
   {
-    "objectID": "05-covariate-modelling.html#covariate-free-model",
-    "href": "05-covariate-modelling.html#covariate-free-model",
-    "title": "Complex covariates",
-    "section": "Covariate-free model",
-    "text": "Covariate-free model\n\n\nSo far, our models have been covariate-free\nThey cannot exploit known heterogeneity in the patients to give better predictions\n\nCan we predict the values of the random effect from the covariates?"
+    "objectID": "06-embeddings.html#traditional-nlme-with-simple-covariates",
+    "href": "06-embeddings.html#traditional-nlme-with-simple-covariates",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Traditional NLME with Simple Covariates",
+    "text": "Traditional NLME with Simple Covariates\n\nGood predictions, but missing information from complex covariates"
   },
   {
-    "objectID": "05-covariate-modelling.html#supervised-learning",
-    "href": "05-covariate-modelling.html#supervised-learning",
-    "title": "Complex covariates",
-    "section": "Supervised learning",
-    "text": "Supervised learning"
+    "objectID": "06-embeddings.html#ebes-as-patient-embeddings",
+    "href": "06-embeddings.html#ebes-as-patient-embeddings",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "EBEs as Patient Embeddings",
+    "text": "EBEs as Patient Embeddings\n\n\n\nData\n\n\n\n\n\n\nEmbedding\n\n\n\n\npatient\nη₁\nη₂\nη₃\nη₄\n\n\n\n\nPatient 1\n0.42\n0.1\n-0.26\n0.28\n\n\nPatient 2\n0.66\n0.08\n-0.92\n0.23\n\n\nPatient 3\n-0.43\n-0.03\n0.23\n-0.28\n\n\n\n\n\n\n\n\n\nGenerated\n\n\n\n\nKey insight: EBEs encode patient-specific information as low-dimensional vectors!"
   },
   {
-    "objectID": "05-covariate-modelling.html#augmented-model",
-    "href": "05-covariate-modelling.html#augmented-model",
-    "title": "Complex covariates",
-    "section": "Augmented model",
-    "text": "Augmented model"
+    "objectID": "06-embeddings.html#validation-known-relationships",
+    "href": "06-embeddings.html#validation-known-relationships",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Validation: Known Relationships",
+    "text": "Validation: Known Relationships\n\n\n\n\n\nEBEs capture the underlying patient characteristics!"
   },
   {
-    "objectID": "05-covariate-modelling.html#to-make-it-harder",
-    "href": "05-covariate-modelling.html#to-make-it-harder",
-    "title": "Complex covariates",
-    "section": "To make it harder…",
-    "text": "To make it harder…\n\nWe could use EBEs directly - in DeepPumas, we don’t\nWe can use transformed EBEs - that we do\n\northogonalized MvNormals\nstandardized to similar absolute values\nunconstrained values\ninvertible\nWe can weight with sensitivity of the loglikelihood\n\nWe could use the “full” posterior distribution"
+    "objectID": "06-embeddings.html#the-ease-of-creating-embeddings",
+    "href": "06-embeddings.html#the-ease-of-creating-embeddings",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "The Ease of Creating Embeddings",
+    "text": "The Ease of Creating Embeddings\n\n# Load a pre-trained text embedding model from HuggingFace\nloaded_model = hgf\"avsolatorio/NoInstruct-small-Embedding-v0\"\n\nconst encoder = loaded_model[1]\nconst llm = loaded_model[2];\n\n# Define how to get a patient's embedding\nget_embedding(subj::DeepPumas.Pumas.Subject) = get_embedding(subj.covariates(0).Description)\nfunction get_embedding(context)\n    enc = encode(encoder, context)\n    out = llm(enc)\n    return out.pooled\nend\n\n# Get the embeddings for all patients and put it in a matrix\nX_train = mapreduce(get_embedding, hcat, train_pop)\nX_test = mapreduce(get_embedding, hcat, test_pop)"
   },
   {
-    "objectID": "05-covariate-modelling.html#what-were-really-after",
-    "href": "05-covariate-modelling.html#what-were-really-after",
-    "title": "Complex covariates",
-    "section": "What we’re really after",
-    "text": "What we’re really after\n\\[\n\\eta_i \\sim p(\\eta | \\text{covariates})\n\\]\nA rich description of how covariate information affects the prior distribution of the random effects.\nTo be presented at ACoP in two weeks"
+    "objectID": "06-embeddings.html#embedding-subspacing",
+    "href": "06-embeddings.html#embedding-subspacing",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embedding Subspacing",
+    "text": "Embedding Subspacing\n\nConsider the embedding space as a “meaning space”\nThe original model had Shakespeare and Twitter in its training\nOur data are all about describing wellness\nOur data should be on a low-dimensional manifold of the embedding space\n\nSolution: Use PCA for dimension reduction\n\ntrained_pca = fit(PCA, X_train; maxoutdim = 10)\nX_train_pc = predict(trained_pca, X_train)\nX_test_pc = predict(trained_pca, X_test)"
+  },
+  {
+    "objectID": "06-embeddings.html#embedding-space-structure",
+    "href": "06-embeddings.html#embedding-space-structure",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embedding Space Structure",
+    "text": "Embedding Space Structure\n\n\n\n\n\nText embeddings capture meaningful clinical information!"
+  },
+  {
+    "objectID": "06-embeddings.html#connecting-embeddings-to-ebes",
+    "href": "06-embeddings.html#connecting-embeddings-to-ebes",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Connecting Embeddings to EBEs",
+    "text": "Connecting Embeddings to EBEs\n\nStrong correlations between text embeddings and patient-specific parameters!"
+  },
+  {
+    "objectID": "06-embeddings.html#neural-network-architecture",
+    "href": "06-embeddings.html#neural-network-architecture",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Neural Network Architecture",
+    "text": "Neural Network Architecture\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nText → Embeddings → Neural Network → Patient Parameters"
+  },
+  {
+    "objectID": "06-embeddings.html#usage-with-nlme",
+    "href": "06-embeddings.html#usage-with-nlme",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Usage with NLME",
+    "text": "Usage with NLME\nMultiple approaches available:\n\nUse embeddings as NLME covariates\n\nStraightforward integration\nLimited by traditional covariate modeling\n\nJointly model NLME and embeddings\n\nMore sophisticated approach\nAccounts for uncertainty in embeddings\n\nAugment existing models\n\nAdd predicted EBEs to trained models\nPreserve existing model structure"
+  },
+  {
+    "objectID": "06-embeddings.html#embedding-augmented-predictions",
+    "href": "06-embeddings.html#embedding-augmented-predictions",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embedding-Augmented Predictions",
+    "text": "Embedding-Augmented Predictions\n\n\n\nPerformance on test data\n\n\n\nsource\nMAE\nr2\n\n\n\n\nOriginal\n0.361\n0.712\n\n\nAugmented\n0.27\n0.82\n\n\nDataModel\n0.229\n0.865\n\n\n\n\n\n\n\n\n\nSignificant improvement using text embeddings!"
+  },
+  {
+    "objectID": "06-embeddings.html#improved-population-modeling",
+    "href": "06-embeddings.html#improved-population-modeling",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Improved Population Modeling",
+    "text": "Improved Population Modeling\nBefore (traditional NLME) \nAfter (embedding-augmented) \nBetter population-level predictions and reduced unexplained variability!"
+  },
+  {
+    "objectID": "06-embeddings.html#embeddings-from-any-data",
+    "href": "06-embeddings.html#embeddings-from-any-data",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Embeddings from Any Data",
+    "text": "Embeddings from Any Data\n\nText (clinical notes, patient descriptions)\n2D Images (X-rays, histology, photos)\n3D Images (CT scans, MRI - limited model availability)\n\nOmics data (genomics, proteomics - specialized models)\nTime series (ECG, continuous monitoring)\nMixed modalities (combining multiple data types)"
+  },
+  {
+    "objectID": "06-embeddings.html#simple-conceptual-pipeline",
+    "href": "06-embeddings.html#simple-conceptual-pipeline",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Simple Conceptual Pipeline",
+    "text": "Simple Conceptual Pipeline\n\nModel longitudinal data with traditional NLME\nConvert complex covariates to embeddings using pre-trained models\nFind relevant subspace using dimensionality reduction (PCA)\nRegress embeddings to EBEs using neural networks\nPredict patient parameters for new subjects: \\(η_{pred}\\)\nAugment NLME model: \\(η \\rightarrow η + η_{pred}\\)\nRefit residual distribution to reflect reduced unexplained variability\nApply standard NLME methods (VPC, simulations, etc.)\n\nClose to trivial to implement!"
+  },
+  {
+    "objectID": "06-embeddings.html#generalized-framework",
+    "href": "06-embeddings.html#generalized-framework",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Generalized Framework",
+    "text": "Generalized Framework\nTraining Phase: \\[\n\\max_θ \\log p(y | θ) = \\sum_i^N \\log \\int p(y_i | θ, η_i) \\cdot p(η_i | θ) dη_i\n\\]\nEmbedding Phase:\n\\[\nz_i^* = \\text{Embed}(x_i) \\quad \\text{where } x_i \\text{ is complex covariate data}\n\\]\nJoint Modeling: \\[\n\\max_{θ,w} \\log p(y | θ, z^*) = \\sum_i^N \\log \\int p(y_i | θ, η_i, z_i^*) \\cdot p(η_i | θ) dη_i\n\\]"
+  },
+  {
+    "objectID": "06-embeddings.html#key-advantages",
+    "href": "06-embeddings.html#key-advantages",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Key Advantages",
+    "text": "Key Advantages\n\nLeverages existing models: Use pre-trained embeddings (GPT, BERT, vision models)\nData efficient: Much less data needed than training from scratch\nScientifically grounded: Preserves mechanistic understanding in NLME\nFlexible: Works with any type of complex covariate\nInterpretable: Can understand which parts are mechanism vs data-driven\nScalable: Can handle large-scale clinical datasets"
+  },
+  {
+    "objectID": "06-embeddings.html#next-steps",
+    "href": "06-embeddings.html#next-steps",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Next Steps",
+    "text": "Next Steps\n\nComing up: Hands-on implementation\n\nWork with synthetic text data\nBuild embedding pipelines\n\nAugment NLME models\nSee the power of complex covariates in action"
   },
   {
     "objectID": "04-generative-ai.html#generative-ai",
@@ -336,183 +413,106 @@
     "text": "Smoothness in DeepNLME\n\n\nData-generating function: \\[\nY = \\frac{E_{max} \\cdot x}{EC_{50} + x} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\n\\]\nwhere \\[\n\\begin{align}\nE_{max} &\\sim \\mathcal{U}(0.5, 1.5) \\\\\nEC_{50} &\\sim \\mathrm{LogNormal}(-2, 1.0)\n\\end{align}\n\\]\nDeepNLME model: \\[\n\\begin{align}\nY &= {\\color{orange}NN(x, η₁, η₂)} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\\\\\nη &\\sim \\mathcal{N}(0, I)\n\\end{align}\n\\]"
   },
   {
-    "objectID": "05-complex-covariates.html#the-data-challenge",
-    "href": "05-complex-covariates.html#the-data-challenge",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "The Data Challenge",
-    "text": "The Data Challenge\n\nChallenge: How do we use rich text descriptions as covariates in NLME models?"
+    "objectID": "05-covariate-modelling.html#augment-workflow",
+    "href": "05-covariate-modelling.html#augment-workflow",
+    "title": "Complex covariates",
+    "section": "Augment workflow",
+    "text": "Augment workflow\n\n\nGreen: observed quantities\nBlue: Fixed effects\nRed: Random effects"
   },
   {
-    "objectID": "05-complex-covariates.html#traditional-nlme-with-simple-covariates",
-    "href": "05-complex-covariates.html#traditional-nlme-with-simple-covariates",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Traditional NLME with Simple Covariates",
-    "text": "Traditional NLME with Simple Covariates\n\nGood predictions, but missing information from complex covariates"
+    "objectID": "05-covariate-modelling.html#covariate-free-model",
+    "href": "05-covariate-modelling.html#covariate-free-model",
+    "title": "Complex covariates",
+    "section": "Covariate-free model",
+    "text": "Covariate-free model\n\n\nSo far, our models have been covariate-free\nThey cannot exploit known heterogeneity in the patients to give better predictions\n\nCan we predict the values of the random effect from the covariates?"
   },
   {
-    "objectID": "05-complex-covariates.html#ebes-as-patient-embeddings",
-    "href": "05-complex-covariates.html#ebes-as-patient-embeddings",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "EBEs as Patient Embeddings",
-    "text": "EBEs as Patient Embeddings\n\n\n\nData\n\n\n\n\n\n\nEmbedding\n\n\n\n\npatient\nη₁\nη₂\nη₃\nη₄\n\n\n\n\nPatient 1\n0.42\n0.1\n-0.26\n0.28\n\n\nPatient 2\n0.66\n0.08\n-0.92\n0.23\n\n\nPatient 3\n-0.43\n-0.03\n0.23\n-0.28\n\n\n\n\n\n\n\n\n\nGenerated\n\n\n\n\nKey insight: EBEs encode patient-specific information as low-dimensional vectors!"
+    "objectID": "05-covariate-modelling.html#supervised-learning",
+    "href": "05-covariate-modelling.html#supervised-learning",
+    "title": "Complex covariates",
+    "section": "Supervised learning",
+    "text": "Supervised learning"
   },
   {
-    "objectID": "05-complex-covariates.html#validation-known-relationships",
-    "href": "05-complex-covariates.html#validation-known-relationships",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Validation: Known Relationships",
-    "text": "Validation: Known Relationships\n\n\n\n\n\nEBEs capture the underlying patient characteristics!"
+    "objectID": "05-covariate-modelling.html#augmented-model",
+    "href": "05-covariate-modelling.html#augmented-model",
+    "title": "Complex covariates",
+    "section": "Augmented model",
+    "text": "Augmented model"
   },
   {
-    "objectID": "05-complex-covariates.html#the-ease-of-creating-embeddings",
-    "href": "05-complex-covariates.html#the-ease-of-creating-embeddings",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "The Ease of Creating Embeddings",
-    "text": "The Ease of Creating Embeddings\n\n# Load a pre-trained text embedding model from HuggingFace\nloaded_model = hgf\"avsolatorio/NoInstruct-small-Embedding-v0\"\n\nconst encoder = loaded_model[1]\nconst llm = loaded_model[2];\n\n# Define how to get a patient's embedding\nget_embedding(subj::DeepPumas.Pumas.Subject) = get_embedding(subj.covariates(0).Description)\nfunction get_embedding(context)\n    enc = encode(encoder, context)\n    out = llm(enc)\n    return out.pooled\nend\n\n# Get the embeddings for all patients and put it in a matrix\nX_train = mapreduce(get_embedding, hcat, train_pop)\nX_test = mapreduce(get_embedding, hcat, test_pop)"
+    "objectID": "05-covariate-modelling.html#to-make-it-harder",
+    "href": "05-covariate-modelling.html#to-make-it-harder",
+    "title": "Complex covariates",
+    "section": "To make it harder…",
+    "text": "To make it harder…\n\nWe could use EBEs directly - in DeepPumas, we don’t\nWe can use transformed EBEs - that we do\n\northogonalized MvNormals\nstandardized to similar absolute values\nunconstrained values\ninvertible\nWe can weight with sensitivity of the loglikelihood\n\nWe could use the “full” posterior distribution"
   },
   {
-    "objectID": "05-complex-covariates.html#embedding-subspacing",
-    "href": "05-complex-covariates.html#embedding-subspacing",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Embedding Subspacing",
-    "text": "Embedding Subspacing\n\nConsider the embedding space as a “meaning space”\nThe original model had Shakespeare and Twitter in its training\nOur data are all about describing wellness\nOur data should be on a low-dimensional manifold of the embedding space\n\nSolution: Use PCA for dimension reduction\n\ntrained_pca = fit(PCA, X_train; maxoutdim = 10)\nX_train_pc = predict(trained_pca, X_train)\nX_test_pc = predict(trained_pca, X_test)"
+    "objectID": "05-covariate-modelling.html#what-were-really-after",
+    "href": "05-covariate-modelling.html#what-were-really-after",
+    "title": "Complex covariates",
+    "section": "What we’re really after",
+    "text": "What we’re really after\n\\[\n\\eta_i \\sim p(\\eta | \\text{covariates})\n\\]\nA rich description of how covariate information affects the prior distribution of the random effects.\nTo be presented at ACoP in two weeks"
   },
   {
-    "objectID": "05-complex-covariates.html#embedding-space-structure",
-    "href": "05-complex-covariates.html#embedding-space-structure",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Embedding Space Structure",
-    "text": "Embedding Space Structure\n\n\n\n\n\nText embeddings capture meaningful clinical information!"
-  },
-  {
-    "objectID": "05-complex-covariates.html#connecting-embeddings-to-ebes",
-    "href": "05-complex-covariates.html#connecting-embeddings-to-ebes",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Connecting Embeddings to EBEs",
-    "text": "Connecting Embeddings to EBEs\n\nStrong correlations between text embeddings and patient-specific parameters!"
-  },
-  {
-    "objectID": "05-complex-covariates.html#neural-network-architecture",
-    "href": "05-complex-covariates.html#neural-network-architecture",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Neural Network Architecture",
-    "text": "Neural Network Architecture\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nText → Embeddings → Neural Network → Patient Parameters"
-  },
-  {
-    "objectID": "05-complex-covariates.html#usage-with-nlme",
-    "href": "05-complex-covariates.html#usage-with-nlme",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Usage with NLME",
-    "text": "Usage with NLME\nMultiple approaches available:\n\nUse embeddings as NLME covariates\n\nStraightforward integration\nLimited by traditional covariate modeling\n\nJointly model NLME and embeddings\n\nMore sophisticated approach\nAccounts for uncertainty in embeddings\n\nAugment existing models\n\nAdd predicted EBEs to trained models\nPreserve existing model structure"
-  },
-  {
-    "objectID": "05-complex-covariates.html#embedding-augmented-predictions",
-    "href": "05-complex-covariates.html#embedding-augmented-predictions",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Embedding-Augmented Predictions",
-    "text": "Embedding-Augmented Predictions\n\n\n\nPerformance on test data\n\n\n\nsource\nMAE\nr2\n\n\n\n\nOriginal\n0.361\n0.712\n\n\nAugmented\n0.27\n0.82\n\n\nDataModel\n0.229\n0.865\n\n\n\n\n\n\n\n\n\nSignificant improvement using text embeddings!"
-  },
-  {
-    "objectID": "05-complex-covariates.html#improved-population-modeling",
-    "href": "05-complex-covariates.html#improved-population-modeling",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Improved Population Modeling",
-    "text": "Improved Population Modeling\nBefore (traditional NLME) \nAfter (embedding-augmented) \nBetter population-level predictions and reduced unexplained variability!"
-  },
-  {
-    "objectID": "05-complex-covariates.html#embeddings-from-any-data",
-    "href": "05-complex-covariates.html#embeddings-from-any-data",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Embeddings from Any Data",
-    "text": "Embeddings from Any Data\n\nText (clinical notes, patient descriptions)\n2D Images (X-rays, histology, photos)\n3D Images (CT scans, MRI - limited model availability)\n\nOmics data (genomics, proteomics - specialized models)\nTime series (ECG, continuous monitoring)\nMixed modalities (combining multiple data types)"
-  },
-  {
-    "objectID": "05-complex-covariates.html#simple-conceptual-pipeline",
-    "href": "05-complex-covariates.html#simple-conceptual-pipeline",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Simple Conceptual Pipeline",
-    "text": "Simple Conceptual Pipeline\n\nModel longitudinal data with traditional NLME\nConvert complex covariates to embeddings using pre-trained models\nFind relevant subspace using dimensionality reduction (PCA)\nRegress embeddings to EBEs using neural networks\nPredict patient parameters for new subjects: \\(η_{pred}\\)\nAugment NLME model: \\(η \\rightarrow η + η_{pred}\\)\nRefit residual distribution to reflect reduced unexplained variability\nApply standard NLME methods (VPC, simulations, etc.)\n\nClose to trivial to implement!"
-  },
-  {
-    "objectID": "05-complex-covariates.html#generalized-framework",
-    "href": "05-complex-covariates.html#generalized-framework",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Generalized Framework",
-    "text": "Generalized Framework\nTraining Phase: \\[\n\\max_θ \\log p(y | θ) = \\sum_i^N \\log \\int p(y_i | θ, η_i) \\cdot p(η_i | θ) dη_i\n\\]\nEmbedding Phase:\n\\[\nz_i^* = \\text{Embed}(x_i) \\quad \\text{where } x_i \\text{ is complex covariate data}\n\\]\nJoint Modeling: \\[\n\\max_{θ,w} \\log p(y | θ, z^*) = \\sum_i^N \\log \\int p(y_i | θ, η_i, z_i^*) \\cdot p(η_i | θ) dη_i\n\\]"
-  },
-  {
-    "objectID": "05-complex-covariates.html#key-advantages",
-    "href": "05-complex-covariates.html#key-advantages",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Key Advantages",
-    "text": "Key Advantages\n\nLeverages existing models: Use pre-trained embeddings (GPT, BERT, vision models)\nData efficient: Much less data needed than training from scratch\nScientifically grounded: Preserves mechanistic understanding in NLME\nFlexible: Works with any type of complex covariate\nInterpretable: Can understand which parts are mechanism vs data-driven\nScalable: Can handle large-scale clinical datasets"
-  },
-  {
-    "objectID": "05-complex-covariates.html#next-steps",
-    "href": "05-complex-covariates.html#next-steps",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Next Steps",
-    "text": "Next Steps\n\nComing up: Hands-on implementation\n\nWork with synthetic text data\nBuild embedding pipelines\n\nAugment NLME models\nSee the power of complex covariates in action"
-  },
-  {
-    "objectID": "06-epidemiology-demo.html#setup",
-    "href": "06-epidemiology-demo.html#setup",
+    "objectID": "07-epidemiology-demo.html#setup",
+    "href": "07-epidemiology-demo.html#setup",
     "title": "Epidemiology Demo",
     "section": "Setup",
     "text": "Setup"
   },
   {
-    "objectID": "06-epidemiology-demo.html#the-problem-age-stratified-seroprevalence",
-    "href": "06-epidemiology-demo.html#the-problem-age-stratified-seroprevalence",
+    "objectID": "07-epidemiology-demo.html#the-problem-age-stratified-seroprevalence",
+    "href": "07-epidemiology-demo.html#the-problem-age-stratified-seroprevalence",
     "title": "Epidemiology Demo",
     "section": "The Problem: Age-Stratified Seroprevalence",
     "text": "The Problem: Age-Stratified Seroprevalence"
   },
   {
-    "objectID": "06-epidemiology-demo.html#the-challenge",
-    "href": "06-epidemiology-demo.html#the-challenge",
+    "objectID": "07-epidemiology-demo.html#the-challenge",
+    "href": "07-epidemiology-demo.html#the-challenge",
     "title": "Epidemiology Demo",
     "section": "The Challenge",
     "text": "The Challenge\n\nMulti-country seroprevalence data across age groups\nUnknown force of infection λ(age) patterns\n\nHeterogeneous data quality: Some countries well-sampled, others sparse\nNeed to share information between heterogeneous countries\nDiscover age-specific transmission patterns\n\nDeepNLME approach: Let data discover the functional form!"
   },
   {
-    "objectID": "06-epidemiology-demo.html#deepnlme-epidemiological-model",
-    "href": "06-epidemiology-demo.html#deepnlme-epidemiological-model",
+    "objectID": "07-epidemiology-demo.html#deepnlme-epidemiological-model",
+    "href": "07-epidemiology-demo.html#deepnlme-epidemiological-model",
     "title": "Epidemiology Demo",
     "section": "DeepNLME Epidemiological Model",
     "text": "DeepNLME Epidemiological Model\n\nepi_model = @model begin\n  @param begin\n    N ∈ RealDomain(; lower=0, init=1000)\n    λ ∈ MLPDomain(2, 5, 5, (1, softplus); reg=L2(1e-2))\n  end\n  @random η ~ Normal(0, 0.1)\n  @init S = 1\n  @dynamics begin\n    S' = - λ(t/100, η)[1] * S\n  end\n  @derived PosFrac ~ @. Beta(abs(N*(1-0.99S)), abs(N*(0.99S)))\nend\n\nSIR model, except that we don’t need the I or R here.\nKey features:\n\nNeural network λ discovers age-specific force of infection\nIndividual random effects η allow country-specific scaling\nShared function across populations with individual tuning\nMechanistic structure preserves epidemiological interpretation"
   },
   {
-    "objectID": "06-epidemiology-demo.html#model-predictions",
-    "href": "06-epidemiology-demo.html#model-predictions",
+    "objectID": "07-epidemiology-demo.html#model-predictions",
+    "href": "07-epidemiology-demo.html#model-predictions",
     "title": "Epidemiology Demo",
     "section": "Model Predictions",
     "text": "Model Predictions\n\nExcellent fit across all countries, including sparsely sampled test data!"
   },
   {
-    "objectID": "06-epidemiology-demo.html#comparison-with-truth",
-    "href": "06-epidemiology-demo.html#comparison-with-truth",
+    "objectID": "07-epidemiology-demo.html#comparison-with-truth",
+    "href": "07-epidemiology-demo.html#comparison-with-truth",
     "title": "Epidemiology Demo",
     "section": "Comparison with Truth",
     "text": "Comparison with Truth\n\nNeural network accurately recovers the true underlying force of infection!"
   },
   {
-    "objectID": "06-epidemiology-demo.html#discovered-force-of-infection-pattern",
-    "href": "06-epidemiology-demo.html#discovered-force-of-infection-pattern",
+    "objectID": "07-epidemiology-demo.html#discovered-force-of-infection-pattern",
+    "href": "07-epidemiology-demo.html#discovered-force-of-infection-pattern",
     "title": "Epidemiology Demo",
     "section": "Discovered Force of Infection Pattern",
     "text": "Discovered Force of Infection Pattern\n\nComplex multi-modal pattern discovered automatically from data!"
   },
   {
-    "objectID": "06-epidemiology-demo.html#information-sharing-across-populations",
-    "href": "06-epidemiology-demo.html#information-sharing-across-populations",
+    "objectID": "07-epidemiology-demo.html#information-sharing-across-populations",
+    "href": "07-epidemiology-demo.html#information-sharing-across-populations",
     "title": "Epidemiology Demo",
     "section": "Information Sharing Across Populations",
     "text": "Information Sharing Across Populations\n\nDense data informs sparse data through shared neural network function!"
   },
   {
-    "objectID": "06-epidemiology-demo.html#what-deepnlme-achieved",
-    "href": "06-epidemiology-demo.html#what-deepnlme-achieved",
+    "objectID": "07-epidemiology-demo.html#what-deepnlme-achieved",
+    "href": "07-epidemiology-demo.html#what-deepnlme-achieved",
     "title": "Epidemiology Demo",
     "section": "What DeepNLME Achieved",
     "text": "What DeepNLME Achieved\n\nData-driven discovery of force of infection λ(age)\nAutomatic pattern recognition without pre-specifying functional forms\n\nInformation sharing\nIndividual adaptation / posterior predictions\nRobust extrapolation to poorly sampled regions/countries"

@@ -14,7 +14,7 @@
 
   <meta name="author" content="Niklas Korsbo">
   <meta name="dcterms.date" content="2025-10-11">
-  <title>DeepPumas for Viral Dynamics Workshop – Random effects</title>
+  <title>DeepPumas for Viral Dynamics Workshop – Epidemiology Demo</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -32,6 +32,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-77ea5dc2933c7a4939bdb94c5d315545.css">
   <link rel="stylesheet" href="CSS/style.css">
@@ -135,8 +201,8 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Random effects</h1>
-  <p class="subtitle">And how they interact with machine learning</p>
+  <h1 class="title">Epidemiology Demo</h1>
+  <p class="subtitle">DeepNLME for Population-Level Viral Dynamics</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -148,338 +214,98 @@ Niklas Korsbo
 
   <p class="date">2025-10-11</p>
 </section>
+<section id="setup" class="slide level2 center">
+<h2>Setup</h2>
+</section>
 <section>
-<section id="mixed-effects" class="title-slide slide level1 center">
-<h1>Mixed effects (?)</h1>
+<section id="epidemiological-modeling-challenge" class="title-slide slide level1 center">
+<h1>Epidemiological Modeling Challenge</h1>
 
 </section>
-<section id="what-are-mixed-effects-models" class="slide level2 center">
-<h2>What are mixed effects models?</h2>
-<ul>
-<li>Fixed effects, <span class="math inline">\(θ\)</span>
-<ul>
-<li>Model parameters modelled as deterministic quantities</li>
-</ul></li>
-<li>Random effects, <span class="math inline">\(η_i\)</span>
-<ul>
-<li>Model parameters modelled as random variables</li>
-</ul></li>
-</ul>
-<p><span class="att"><strong>Hierarchical</strong></span></p>
-<p>We typically define hierarchies where <span class="math inline">\(θ\)</span> are shared parameters but <span class="math inline">\(η\)</span> is subject-specific.</p>
+<section id="the-problem-age-stratified-seroprevalence" class="slide level2 center">
+<h2>The Problem: Age-Stratified Seroprevalence</h2>
+<p><a href="assets/epi_data.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="assets/epi_data.png"></a></p>
 </section>
-<section id="no-need-to-assign-too-much-meaning-to-random-effects" class="slide level2 center">
-<h2>No need to assign too much meaning to random effects</h2>
+<section id="the-challenge" class="slide level2 center">
+<h2>The Challenge</h2>
 <ul>
-<li>Indicates unknown parameters that vary between subjects (or whatever hierarchy we use)</li>
-<li>Usually tied very closely to a specific parameter in pharmacometrics. <span class="math inline">\(CL = tvCL \cdot e^{η_{CL}}\)</span></li>
-<li>Enables degree o freedom along which the model can account for heterogenous outcomes</li>
+<li><strong>Multi-country seroprevalence data</strong> across age groups</li>
+<li><strong>Unknown force of infection</strong> λ(age) patterns<br>
+</li>
+<li><strong>Heterogeneous data quality</strong>: Some countries well-sampled, others sparse</li>
+<li><strong>Need to share information</strong> between heterogeneous countries</li>
+<li><strong>Discover age-specific transmission patterns</strong></li>
 </ul>
+<p><strong>DeepNLME approach:</strong> Let data discover the functional form!</p>
 </section>
-<section id="simulating-with-random-effects" class="slide level2 center">
-<h2>Simulating with random effects</h2>
-<p><span class="att">Simple</span></p>
-<ul>
-<li>We have given <span class="math inline">\(θ\)</span> and covariates <span class="math inline">\(x\)</span></li>
-<li><span class="att">Sample</span> from the prior <span class="math inline">\(η | θ\)</span></li>
-<li>Compute your individual parameters and propagate your ODE</li>
-<li>Sample your observations <span class="math inline">\(y | θ, η, x\)</span></li>
-</ul>
-</section>
-<section id="fitting-with-random-effects" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<p><span class="att">Conditional probability / Joint likelihood / MLE</span></p>
-<p>Probability of the response <span class="att"><span class="math inline">\(y\)</span></span> according to the model given specific values of <span class="att"><span class="math inline">\(θ\)</span></span>, <span class="att"><span class="math inline">\(η\)</span></span>, and <span class="att"><span class="math inline">\(x\)</span></span>.</p>
-<p><span class="math display">\[
-p_c(y | θ, η, x)
-\]</span></p>
-<p>Fit model by simply finding the values of <span class="att"><span class="math inline">\(θ\)</span></span> and <span class="att"><span class="math inline">\(η\)</span></span> that jointly maximize the probability?</p>
-<p>Equivalent to minimizing a distance metric (e.g.&nbsp;MSE) between observed and predicted data.</p>
-<div class="fragment">
-<p><span class="att">Not what we do</span></p>
+<section id="deepnlme-epidemiological-model" class="slide level2 smaller center">
+<h2>DeepNLME Epidemiological Model</h2>
+<div id="8" class="cell" data-execution_count="0">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a></a>epi_model <span class="op">=</span> <span class="pp">@model</span> <span class="cf">begin</span></span>
+<span id="cb1-2"><a></a>  <span class="pp">@param</span> <span class="cf">begin</span></span>
+<span id="cb1-3"><a></a>    N <span class="op">∈</span> <span class="fu">RealDomain</span>(; lower<span class="op">=</span><span class="fl">0</span>, init<span class="op">=</span><span class="fl">1000</span>)</span>
+<span id="cb1-4"><a></a>    λ <span class="op">∈</span> <span class="fu">MLPDomain</span>(<span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">5</span>, (<span class="fl">1</span>, softplus); reg<span class="op">=</span><span class="fu">L2</span>(<span class="fl">1e-2</span>))</span>
+<span id="cb1-5"><a></a>  <span class="cf">end</span></span>
+<span id="cb1-6"><a></a>  <span class="pp">@random</span> η <span class="op">~</span> <span class="fu">Normal</span>(<span class="fl">0</span>, <span class="fl">0.1</span>)</span>
+<span id="cb1-7"><a></a>  <span class="pp">@init</span> S <span class="op">=</span> <span class="fl">1</span></span>
+<span id="cb1-8"><a></a>  <span class="pp">@dynamics</span> <span class="cf">begin</span></span>
+<span id="cb1-9"><a></a>    S<span class="op">'</span> <span class="op">=</span> <span class="op">-</span> <span class="fu">λ</span>(t<span class="op">/</span><span class="fl">100</span>, η)[<span class="fl">1</span>] <span class="op">*</span> S</span>
+<span id="cb1-10"><a></a>  <span class="cf">end</span></span>
+<span id="cb1-11"><a></a>  <span class="pp">@derived</span> PosFrac <span class="op">~</span> @. <span class="fu">Beta</span>(<span class="fu">abs</span>(<span class="fu">N*</span>(<span class="fl">1</span><span class="op">-</span><span class="fl">0.99</span>S)), <span class="fu">abs</span>(<span class="fu">N*</span>(<span class="fl">0.99</span>S)))</span>
+<span id="cb1-12"><a></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
-<section id="fitting-with-random-effects-1" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<p><span class="att">Marginal probability</span></p>
-<p>Integrates out the effect of the random effects.</p>
-<p><span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<p>Average conditional probability weighted by a prior</p>
-</section>
-<section id="fitting-with-random-effects-2" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><a href="assets/random_effects_marginal_likelihood.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="&nbsp;"><img data-src="assets/random_effects_marginal_likelihood.png" alt="&nbsp;"></a></p>
-<figcaption>&nbsp;</figcaption>
-</figure>
-</div>
-</section>
-<section id="one-dimension-per-random-effect" class="slide level2 center">
-<h2>One dimension per random effect</h2>
+<p>SIR model, except that we don’t need the I or R here.</p>
+<p><strong>Key features:</strong></p>
 <ul>
-<li><span class="math inline">\(η\)</span> here can be multi-dimensional</li>
+<li><strong>Neural network λ</strong> discovers age-specific force of infection</li>
+<li><strong>Individual random effects</strong> η allow country-specific scaling</li>
+<li><strong>Shared function</strong> across populations with individual tuning</li>
+<li><strong>Mechanistic structure</strong> preserves epidemiological interpretation</li>
 </ul>
-<p><span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<ul>
-<li><p>This is a multi-variate integral</p></li>
-<li><p>One dimension (degree of freedom) along which to account for between subject variability in the data for each random effect.</p></li>
-<li><p>Marginalization incentivizes that each random effect controls a single <span class="att">smooth</span> dimension between-subject variability.</p></li>
-</ul>
-</section>
-<section id="smoothness" class="slide level2 smaller center">
-<h2>“Smoothness”?</h2>
-<div class="columns">
-<div class="column" style="width:55%;">
-<p><span class="att">Classical NLME</span> <span class="math display">\[
-EFF = \left(1 + Smax \cdot \frac{C}{tvSC50 \cdot exp\left(\mathbf{\eta}\right) + C}\right)
-\]</span></p>
-<ul>
-<li>This function is somewhat smooth in <span class="math inline">\(η\)</span> by structural definition.</li>
-<li>Very little flexibility to affect the smoothness by tuning fixed effects.</li>
-</ul>
-</div><div class="column" style="width:45%;">
-<p><a href="assets/eff_classical.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/eff_classical.png"></a></p>
-</div></div>
-<p><span class="att">DeepNLME</span></p>
-<p><span class="math display">\[
-EFF = \left(1 + NN(C, η)\right)
-\]</span></p>
-<ul>
-<li>This function <em>can</em> be very non-smooth in <span class="math inline">\(η\)</span>.</li>
-<li>Lots of flexibility to affect the smoothness by tuning fixed effects.</li>
-<li>Incentivizing smoothness by marginalization in the fit really helps here!</li>
-</ul>
-</section>
-<section id="smoothness-in-deepnlme" class="slide level2 smaller center">
-<h2>Smoothness in DeepNLME</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><span class="att">Data-generating function:</span> <span class="math display">\[
-Y = \frac{E_{max} \cdot x}{EC_{50} + x} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)
-\]</span></p>
-<p>where <span class="math display">\[
-\begin{align}
-E_{max} &amp;\sim \mathcal{U}(0.5, 1.5) \\
-EC_{50} &amp;\sim \mathrm{LogNormal}(-2, 1.0)
-\end{align}
-\]</span></p>
-<p><span class="att">DeepNLME model:</span> <span class="math display">\[
-\begin{align}
-Y &amp;= {\color{orange}NN(x, η₁, η₂)} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)\\
-η &amp;\sim \mathcal{N}(0, I)
-\end{align}
-\]</span></p>
-</div><div class="column" style="width:50%;">
-<p><a href="assets/me_ipred.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/me_ipred.png"></a></p>
-</div></div>
-</section>
-<section id="section" class="slide level2 center">
-<h2></h2>
-<p><a href="assets/eff_deepnlme.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/eff_deepnlme.png"></a></p>
 </section></section>
-<section id="maximizing-the-marginal-likelihood" class="title-slide slide level1 center">
-<h1>Maximizing the marginal likelihood</h1>
-<p>The marginal likelihood is often intractable to compute exactly. <span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li><span class="att">No marginalization</span>
-<ul>
-<li><code>NaivePooled()</code> <!-- - Ignores random effects --> <!-- - Equivalent to assuming $η=0$ for all subjects --></li>
-<li><code>JointMAP()</code> <!-- - Maximizes the joint aposteriori likelihood
-  - Equivalent to estimating $η$ as fixed effects --></li>
-</ul></li>
-<li><span class="att">Maximize an approximation</span>
-<ul>
-<li><code>LaplaceI()</code></li>
-<li><code>FOCE()</code> - Often our first choice</li>
-<li><code>FO()</code></li>
-</ul></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<ul>
-<li><span class="att">Expectation maximization (EM, indirect)</span>
-<ul>
-<li><code>SAEM()</code></li>
-<li>Markov Chain EM</li>
-<li>Variational EM (Later this year)</li>
-</ul></li>
-<li><span class="att">Monte Carlo integration</span>
-<ul>
-<li><code>BayesMCMC()</code></li>
-<li><code>MarginalMCMC()</code></li>
-</ul></li>
-</ul>
-</div></div>
-<p>Many can be wrapped in <code>MAP()</code> to do maximum a-posteriori estimation of fixed effects.</p>
-<!-- 
-      
-## Let's incrementally break this
-
-```qlabouc
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=3.,
-  tvVc=1.,
-  Ω = Diagonal([0.1]),
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.1:1)
-end
-pop = Subject.(sims)
-
-latexify(pkmodel, :dynamics)
-plotgrid(sims)
-```
-
-
-```qlabouc
-model1 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc #* exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-
-
-fpm = fit(model1, pop, init_params(model1), FOCE())
-```
-
-
-```qlabouc
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PSDDomain(2)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc * exp(η[2])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=0.7,
-  tvVc=1.,
-  Ω = [0.1 0.0
-       0.0 0.1],
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.4:2)
-end
-pop = Subject.(sims)
-
-plotgrid(sims)
-```
-
-
-```qlabouc
-model2 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```qlabouc
-model3 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    c in RealDomain(; lower=0, upper=1, init=0.5)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(c * η[1])
-    Vc = tvVc * exp((1 - c) * η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```qlabouc
-fpm1 = fit(model1, pop, init_params(model1), FOCE())
-fpm2 = fit(model2, pop, init_params(model2), FOCE())
-fpm3 = fit(model3, pop, init_params(model3), FOCE())
-```
-```qlabouc
-coef(fpm3).c
-```
-
-@show loglikelihood(pkmodel, pop, param, FOCE())
-@show loglikelihood(fpm1)
-@show loglikelihood(fpm2)
-@show loglikelihood(fpm3)
-``` -->
-
+<section>
+<section id="results" class="title-slide slide level1 center">
+<h1>Results</h1>
 
 </section>
+<section id="model-predictions" class="slide level2 center">
+<h2>Model Predictions</h2>
+<p><a href="assets/epi_ipred.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/epi_ipred.png"></a></p>
+<p><strong>Excellent fit across all countries</strong>, including sparsely sampled test data!</p>
+</section>
+<section id="comparison-with-truth" class="slide level2 center">
+<h2>Comparison with Truth</h2>
+<p><a href="assets/epi_ipred_truth.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/epi_ipred_truth.png"></a></p>
+<p><strong>Neural network accurately recovers</strong> the true underlying force of infection!</p>
+</section>
+<section id="discovered-force-of-infection-pattern" class="slide level2 center">
+<h2>Discovered Force of Infection Pattern</h2>
+<p><a href="assets/epi_foi.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/epi_foi.png"></a></p>
+<p><strong>Complex multi-modal pattern</strong> discovered automatically from data!</p>
+</section>
+<section id="information-sharing-across-populations" class="slide level2 center">
+<h2>Information Sharing Across Populations</h2>
+<p><a href="assets/epi_comparison.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="assets/epi_comparison.png"></a></p>
+<p><strong>Dense data informs sparse data</strong> through shared neural network function!</p>
+</section></section>
+<section>
+<section id="key-insights" class="title-slide slide level1 center">
+<h1>Key Insights</h1>
+
+</section>
+<section id="what-deepnlme-achieved" class="slide level2 center">
+<h2>What DeepNLME Achieved</h2>
+<ul>
+<li><strong>Data-driven discovery</strong> of force of infection λ(age)</li>
+<li><strong>Automatic pattern recognition</strong> without pre-specifying functional forms<br>
+</li>
+<li><strong>Information sharing</strong></li>
+<li><strong>Individual adaptation / posterior predictions</strong></li>
+<li><strong>Robust extrapolation</strong> to poorly sampled regions/countries</li>
+</ul>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg" class="slide-logo"></p>

@@ -14,7 +14,7 @@
 
   <meta name="author" content="Niklas Korsbo">
   <meta name="dcterms.date" content="2025-10-11">
-  <title>DeepPumas for Viral Dynamics Workshop – Random effects</title>
+  <title>DeepPumas for Viral Dynamics Workshop – DeepNLME with Complex Covariates</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -32,6 +32,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-77ea5dc2933c7a4939bdb94c5d315545.css">
   <link rel="stylesheet" href="CSS/style.css">
@@ -135,8 +201,8 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Random effects</h1>
-  <p class="subtitle">And how they interact with machine learning</p>
+  <h1 class="title">DeepNLME with Complex Covariates</h1>
+  <p class="subtitle">Embeddings, Text Data, and Advanced Applications</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -149,337 +215,316 @@ Niklas Korsbo
   <p class="date">2025-10-11</p>
 </section>
 <section>
-<section id="mixed-effects" class="title-slide slide level1 center">
-<h1>Mixed effects (?)</h1>
+<section id="complex-covariates-in-nlme" class="title-slide slide level1 center">
+<h1>Complex Covariates in NLME</h1>
 
 </section>
-<section id="what-are-mixed-effects-models" class="slide level2 center">
-<h2>What are mixed effects models?</h2>
-<ul>
-<li>Fixed effects, <span class="math inline">\(θ\)</span>
-<ul>
-<li>Model parameters modelled as deterministic quantities</li>
-</ul></li>
-<li>Random effects, <span class="math inline">\(η_i\)</span>
-<ul>
-<li>Model parameters modelled as random variables</li>
-</ul></li>
-</ul>
-<p><span class="att"><strong>Hierarchical</strong></span></p>
-<p>We typically define hierarchies where <span class="math inline">\(θ\)</span> are shared parameters but <span class="math inline">\(η\)</span> is subject-specific.</p>
+<section id="the-data-challenge" class="slide level2 center">
+<h2>The Data Challenge</h2>
+<p><a href="assets/data_example.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="assets/data_example.png" style="width:80.0%"></a></p>
+<p><strong>Challenge:</strong> How do we use rich text descriptions as covariates in NLME models?</p>
 </section>
-<section id="no-need-to-assign-too-much-meaning-to-random-effects" class="slide level2 center">
-<h2>No need to assign too much meaning to random effects</h2>
-<ul>
-<li>Indicates unknown parameters that vary between subjects (or whatever hierarchy we use)</li>
-<li>Usually tied very closely to a specific parameter in pharmacometrics. <span class="math inline">\(CL = tvCL \cdot e^{η_{CL}}\)</span></li>
-<li>Enables degree o freedom along which the model can account for heterogenous outcomes</li>
-</ul>
+<section id="traditional-nlme-with-simple-covariates" class="slide level2 center">
+<h2>Traditional NLME with Simple Covariates</h2>
+<p><a href="assets/ipred_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/ipred_traj.png"></a></p>
+<p>Good predictions, but <strong>missing information from complex covariates</strong></p>
+</section></section>
+<section>
+<section id="patient-embeddings" class="title-slide slide level1 center">
+<h1>Patient Embeddings</h1>
+
 </section>
-<section id="simulating-with-random-effects" class="slide level2 center">
-<h2>Simulating with random effects</h2>
-<p><span class="att">Simple</span></p>
-<ul>
-<li>We have given <span class="math inline">\(θ\)</span> and covariates <span class="math inline">\(x\)</span></li>
-<li><span class="att">Sample</span> from the prior <span class="math inline">\(η | θ\)</span></li>
-<li>Compute your individual parameters and propagate your ODE</li>
-<li>Sample your observations <span class="math inline">\(y | θ, η, x\)</span></li>
-</ul>
-</section>
-<section id="fitting-with-random-effects" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<p><span class="att">Conditional probability / Joint likelihood / MLE</span></p>
-<p>Probability of the response <span class="att"><span class="math inline">\(y\)</span></span> according to the model given specific values of <span class="att"><span class="math inline">\(θ\)</span></span>, <span class="att"><span class="math inline">\(η\)</span></span>, and <span class="att"><span class="math inline">\(x\)</span></span>.</p>
-<p><span class="math display">\[
-p_c(y | θ, η, x)
-\]</span></p>
-<p>Fit model by simply finding the values of <span class="att"><span class="math inline">\(θ\)</span></span> and <span class="att"><span class="math inline">\(η\)</span></span> that jointly maximize the probability?</p>
-<p>Equivalent to minimizing a distance metric (e.g.&nbsp;MSE) between observed and predicted data.</p>
-<div class="fragment">
-<p><span class="att">Not what we do</span></p>
+<section id="ebes-as-patient-embeddings" class="slide level2 center">
+<h2>EBEs as Patient Embeddings</h2>
+<div class="center-h quarto-layout-panel" data-layout="[30, 5, 30, 5, 30]">
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div id="first-column" class="center-h quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
+<p><strong>Data</strong></p>
+<p><a href="assets/encoder_1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/encoder_1.png"></a></p>
 </div>
+<div class="quarto-layout-cell" style="flex-basis: 5.0%;justify-content: flex-start;">
+
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
+<p><strong>Embedding</strong></p>
+<div class="small-text center">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;"><strong>patient</strong></th>
+<th style="text-align: right;"><strong>η₁</strong></th>
+<th style="text-align: right;"><strong>η₂</strong></th>
+<th style="text-align: right;"><strong>η₃</strong></th>
+<th style="text-align: right;"><strong>η₄</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">Patient 1</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.1</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">0.28</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">Patient 2</td>
+<td style="text-align: right;">0.66</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">-0.92</td>
+<td style="text-align: right;">0.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">Patient 3</td>
+<td style="text-align: right;">-0.43</td>
+<td style="text-align: right;">-0.03</td>
+<td style="text-align: right;">0.23</td>
+<td style="text-align: right;">-0.28</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 5.0%;justify-content: flex-start;">
+
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 30.0%;justify-content: center;">
+<p><strong>Generated</strong></p>
+<p><a href="assets/encoder_2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/encoder_2.png"></a></p>
+</div>
+</div>
+</div>
+<p><strong>Key insight:</strong> EBEs encode patient-specific information as low-dimensional vectors!</p>
 </section>
-<section id="fitting-with-random-effects-1" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<p><span class="att">Marginal probability</span></p>
-<p>Integrates out the effect of the random effects.</p>
-<p><span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<p>Average conditional probability weighted by a prior</p>
-</section>
-<section id="fitting-with-random-effects-2" class="slide level2 center">
-<h2>Fitting with random effects</h2>
+<section id="validation-known-relationships" class="slide level2 center">
+<h2>Validation: Known Relationships</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><a href="assets/random_effects_marginal_likelihood.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="&nbsp;"><img data-src="assets/random_effects_marginal_likelihood.png" alt="&nbsp;"></a></p>
-<figcaption>&nbsp;</figcaption>
+<p><a href="assets/ebe_vs_latent.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="assets/ebe_vs_latent.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></a></p>
 </figure>
 </div>
-</section>
-<section id="one-dimension-per-random-effect" class="slide level2 center">
-<h2>One dimension per random effect</h2>
-<ul>
-<li><span class="math inline">\(η\)</span> here can be multi-dimensional</li>
-</ul>
-<p><span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<ul>
-<li><p>This is a multi-variate integral</p></li>
-<li><p>One dimension (degree of freedom) along which to account for between subject variability in the data for each random effect.</p></li>
-<li><p>Marginalization incentivizes that each random effect controls a single <span class="att">smooth</span> dimension between-subject variability.</p></li>
-</ul>
-</section>
-<section id="smoothness" class="slide level2 smaller center">
-<h2>“Smoothness”?</h2>
-<div class="columns">
-<div class="column" style="width:55%;">
-<p><span class="att">Classical NLME</span> <span class="math display">\[
-EFF = \left(1 + Smax \cdot \frac{C}{tvSC50 \cdot exp\left(\mathbf{\eta}\right) + C}\right)
-\]</span></p>
-<ul>
-<li>This function is somewhat smooth in <span class="math inline">\(η\)</span> by structural definition.</li>
-<li>Very little flexibility to affect the smoothness by tuning fixed effects.</li>
-</ul>
-</div><div class="column" style="width:45%;">
-<p><a href="assets/eff_classical.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/eff_classical.png"></a></p>
-</div></div>
-<p><span class="att">DeepNLME</span></p>
-<p><span class="math display">\[
-EFF = \left(1 + NN(C, η)\right)
-\]</span></p>
-<ul>
-<li>This function <em>can</em> be very non-smooth in <span class="math inline">\(η\)</span>.</li>
-<li>Lots of flexibility to affect the smoothness by tuning fixed effects.</li>
-<li>Incentivizing smoothness by marginalization in the fit really helps here!</li>
-</ul>
-</section>
-<section id="smoothness-in-deepnlme" class="slide level2 smaller center">
-<h2>Smoothness in DeepNLME</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><span class="att">Data-generating function:</span> <span class="math display">\[
-Y = \frac{E_{max} \cdot x}{EC_{50} + x} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)
-\]</span></p>
-<p>where <span class="math display">\[
-\begin{align}
-E_{max} &amp;\sim \mathcal{U}(0.5, 1.5) \\
-EC_{50} &amp;\sim \mathrm{LogNormal}(-2, 1.0)
-\end{align}
-\]</span></p>
-<p><span class="att">DeepNLME model:</span> <span class="math display">\[
-\begin{align}
-Y &amp;= {\color{orange}NN(x, η₁, η₂)} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)\\
-η &amp;\sim \mathcal{N}(0, I)
-\end{align}
-\]</span></p>
-</div><div class="column" style="width:50%;">
-<p><a href="assets/me_ipred.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/me_ipred.png"></a></p>
-</div></div>
-</section>
-<section id="section" class="slide level2 center">
-<h2></h2>
-<p><a href="assets/eff_deepnlme.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/eff_deepnlme.png"></a></p>
+<p>EBEs capture the underlying patient characteristics!</p>
 </section></section>
-<section id="maximizing-the-marginal-likelihood" class="title-slide slide level1 center">
-<h1>Maximizing the marginal likelihood</h1>
-<p>The marginal likelihood is often intractable to compute exactly. <span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li><span class="att">No marginalization</span>
-<ul>
-<li><code>NaivePooled()</code> <!-- - Ignores random effects --> <!-- - Equivalent to assuming $η=0$ for all subjects --></li>
-<li><code>JointMAP()</code> <!-- - Maximizes the joint aposteriori likelihood
-  - Equivalent to estimating $η$ as fixed effects --></li>
-</ul></li>
-<li><span class="att">Maximize an approximation</span>
-<ul>
-<li><code>LaplaceI()</code></li>
-<li><code>FOCE()</code> - Often our first choice</li>
-<li><code>FO()</code></li>
-</ul></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<ul>
-<li><span class="att">Expectation maximization (EM, indirect)</span>
-<ul>
-<li><code>SAEM()</code></li>
-<li>Markov Chain EM</li>
-<li>Variational EM (Later this year)</li>
-</ul></li>
-<li><span class="att">Monte Carlo integration</span>
-<ul>
-<li><code>BayesMCMC()</code></li>
-<li><code>MarginalMCMC()</code></li>
-</ul></li>
-</ul>
-</div></div>
-<p>Many can be wrapped in <code>MAP()</code> to do maximum a-posteriori estimation of fixed effects.</p>
-<!-- 
-      
-## Let's incrementally break this
-
-```qlabouc
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=3.,
-  tvVc=1.,
-  Ω = Diagonal([0.1]),
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.1:1)
-end
-pop = Subject.(sims)
-
-latexify(pkmodel, :dynamics)
-plotgrid(sims)
-```
-
-
-```qlabouc
-model1 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc #* exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-
-
-fpm = fit(model1, pop, init_params(model1), FOCE())
-```
-
-
-```qlabouc
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PSDDomain(2)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc * exp(η[2])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=0.7,
-  tvVc=1.,
-  Ω = [0.1 0.0
-       0.0 0.1],
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.4:2)
-end
-pop = Subject.(sims)
-
-plotgrid(sims)
-```
-
-
-```qlabouc
-model2 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```qlabouc
-model3 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    c in RealDomain(; lower=0, upper=1, init=0.5)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(c * η[1])
-    Vc = tvVc * exp((1 - c) * η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```qlabouc
-fpm1 = fit(model1, pop, init_params(model1), FOCE())
-fpm2 = fit(model2, pop, init_params(model2), FOCE())
-fpm3 = fit(model3, pop, init_params(model3), FOCE())
-```
-```qlabouc
-coef(fpm3).c
-```
-
-@show loglikelihood(pkmodel, pop, param, FOCE())
-@show loglikelihood(fpm1)
-@show loglikelihood(fpm2)
-@show loglikelihood(fpm3)
-``` -->
-
+<section>
+<section id="text-embeddings" class="title-slide slide level1 center">
+<h1>Text Embeddings</h1>
 
 </section>
+<section id="the-ease-of-creating-embeddings" class="slide level2 center">
+<h2>The Ease of Creating Embeddings</h2>
+<div id="16" class="cell" data-execution_count="0">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a></a><span class="co"># Load a pre-trained text embedding model from HuggingFace</span></span>
+<span id="cb1-2"><a></a>loaded_model <span class="op">=</span> hgf<span class="st">"avsolatorio/NoInstruct-small-Embedding-v0"</span></span>
+<span id="cb1-3"><a></a></span>
+<span id="cb1-4"><a></a><span class="kw">const</span> encoder <span class="op">=</span> loaded_model[<span class="fl">1</span>]</span>
+<span id="cb1-5"><a></a><span class="kw">const</span> llm <span class="op">=</span> loaded_model[<span class="fl">2</span>];</span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a><span class="co"># Define how to get a patient's embedding</span></span>
+<span id="cb1-8"><a></a><span class="fu">get_embedding</span>(subj<span class="op">::</span><span class="dt">DeepPumas.Pumas.Subject</span>) <span class="op">=</span> <span class="fu">get_embedding</span>(subj.<span class="fu">covariates</span>(<span class="fl">0</span>).Description)</span>
+<span id="cb1-9"><a></a><span class="kw">function</span> <span class="fu">get_embedding</span>(context)</span>
+<span id="cb1-10"><a></a>    enc <span class="op">=</span> <span class="fu">encode</span>(encoder, context)</span>
+<span id="cb1-11"><a></a>    out <span class="op">=</span> <span class="fu">llm</span>(enc)</span>
+<span id="cb1-12"><a></a>    <span class="cf">return</span> out.pooled</span>
+<span id="cb1-13"><a></a><span class="kw">end</span></span>
+<span id="cb1-14"><a></a></span>
+<span id="cb1-15"><a></a><span class="co"># Get the embeddings for all patients and put it in a matrix</span></span>
+<span id="cb1-16"><a></a>X_train <span class="op">=</span> <span class="fu">mapreduce</span>(get_embedding, hcat, train_pop)</span>
+<span id="cb1-17"><a></a>X_test <span class="op">=</span> <span class="fu">mapreduce</span>(get_embedding, hcat, test_pop)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="embedding-subspacing" class="slide level2 center">
+<h2>Embedding Subspacing</h2>
+<ul>
+<li class="fragment">Consider the embedding space as a “meaning space”</li>
+<li class="fragment">The original model had Shakespeare and Twitter in its training</li>
+<li class="fragment">Our data are all about describing wellness</li>
+<li class="fragment">Our data should be on a <strong>low-dimensional manifold</strong> of the embedding space</li>
+</ul>
+<p><strong>Solution:</strong> Use PCA for dimension reduction</p>
+<div id="18" class="cell" data-execution_count="0">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a></a>trained_pca <span class="op">=</span> <span class="fu">fit</span>(PCA, X_train; maxoutdim <span class="op">=</span> <span class="fl">10</span>)</span>
+<span id="cb2-2"><a></a>X_train_pc <span class="op">=</span> <span class="fu">predict</span>(trained_pca, X_train)</span>
+<span id="cb2-3"><a></a>X_test_pc <span class="op">=</span> <span class="fu">predict</span>(trained_pca, X_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="embedding-space-structure" class="slide level2 center">
+<h2>Embedding Space Structure</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="assets/wellness_vs_latent.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img data-src="assets/wellness_vs_latent.png" class="quarto-figure quarto-figure-center" style="width:60.0%"></a></p>
+</figure>
+</div>
+<p>Text embeddings capture meaningful clinical information!</p>
+</section>
+<section id="connecting-embeddings-to-ebes" class="slide level2 center">
+<h2>Connecting Embeddings to EBEs</h2>
+<p><a href="assets/ebe_vs_embedding.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img data-src="assets/ebe_vs_embedding.png"></a></p>
+<p><strong>Strong correlations</strong> between text embeddings and patient-specific parameters!</p>
+</section></section>
+<section>
+<section id="predicting-patient-parameters" class="title-slide slide level1 center">
+<h1>Predicting Patient Parameters</h1>
+
+</section>
+<section id="neural-network-architecture" class="slide level2 center">
+<h2>Neural Network Architecture</h2>
+<div class="quarto-layout-panel" data-layout="[0.5,1]">
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><a href="assets/nn.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img data-src="assets/nn.png" class="quarto-figure quarto-figure-center"></a></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 66.7%;justify-content: center;">
+<p><a href="assets/predicted_ebes.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img data-src="assets/predicted_ebes.png"></a></p>
+</div>
+</div>
+</div>
+<p><strong>Text → Embeddings → Neural Network → Patient Parameters</strong></p>
+</section></section>
+<section>
+<section id="augmented-nlme-models" class="title-slide slide level1 center">
+<h1>Augmented NLME Models</h1>
+
+</section>
+<section id="usage-with-nlme" class="slide level2 center">
+<h2>Usage with NLME</h2>
+<p>Multiple approaches available:</p>
+<ol type="1">
+<li class="fragment"><strong>Use embeddings as NLME covariates</strong>
+<ul>
+<li class="fragment">Straightforward integration</li>
+<li class="fragment">Limited by traditional covariate modeling</li>
+</ul></li>
+<li class="fragment"><strong>Jointly model NLME and embeddings</strong>
+<ul>
+<li class="fragment">More sophisticated approach</li>
+<li class="fragment">Accounts for uncertainty in embeddings</li>
+</ul></li>
+<li class="fragment"><strong>Augment existing models</strong>
+<ul>
+<li class="fragment">Add predicted EBEs to trained models</li>
+<li class="fragment">Preserve existing model structure</li>
+</ul></li>
+</ol>
+</section>
+<section id="embedding-augmented-predictions" class="slide level2 center">
+<h2>Embedding-Augmented Predictions</h2>
+<div class="quarto-layout-panel" data-layout="[20, 80]">
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="small-text center quarto-layout-cell" style="flex-basis: 20.0%;justify-content: center;">
+<p><strong>Performance on test data</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: right;"><strong>source</strong></th>
+<th style="text-align: right;"><strong>MAE</strong></th>
+<th style="text-align: right;"><strong>r2</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">Original</td>
+<td style="text-align: right;">0.361</td>
+<td style="text-align: right;">0.712</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">Augmented</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: right;">0.82</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">DataModel</td>
+<td style="text-align: right;">0.229</td>
+<td style="text-align: right;">0.865</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 80.0%;justify-content: center;">
+<p><a href="assets/aug_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img data-src="assets/aug_traj.png"></a></p>
+</div>
+</div>
+</div>
+<p><strong>Significant improvement</strong> using text embeddings!</p>
+</section>
+<section id="improved-population-modeling" class="slide level2 center">
+<h2>Improved Population Modeling</h2>
+<p><strong>Before (traditional NLME)</strong> <img data-src="assets/vpc1.png" style="width:80.0%"></p>
+<p><strong>After (embedding-augmented)</strong> <img data-src="assets/vpc2.png" style="width:80.0%"></p>
+<p>Better population-level predictions and reduced unexplained variability!</p>
+</section></section>
+<section>
+<section id="generalization-to-other-data-types" class="title-slide slide level1 center">
+<h1>Generalization to Other Data Types</h1>
+
+</section>
+<section id="embeddings-from-any-data" class="slide level2 center">
+<h2>Embeddings from Any Data</h2>
+<ul>
+<li class="fragment"><strong>Text</strong> (clinical notes, patient descriptions)</li>
+<li class="fragment"><strong>2D Images</strong> (X-rays, histology, photos)</li>
+<li class="fragment"><strong>3D Images</strong> (CT scans, MRI - limited model availability)<br>
+</li>
+<li class="fragment"><strong>Omics data</strong> (genomics, proteomics - specialized models)</li>
+<li class="fragment"><strong>Time series</strong> (ECG, continuous monitoring)</li>
+<li class="fragment"><strong>Mixed modalities</strong> (combining multiple data types)</li>
+</ul>
+</section>
+<section id="simple-conceptual-pipeline" class="slide level2 center">
+<h2>Simple Conceptual Pipeline</h2>
+<ol type="1">
+<li class="fragment"><strong>Model longitudinal data</strong> with traditional NLME</li>
+<li class="fragment"><strong>Convert complex covariates</strong> to embeddings using pre-trained models</li>
+<li class="fragment"><strong>Find relevant subspace</strong> using dimensionality reduction (PCA)</li>
+<li class="fragment"><strong>Regress embeddings to EBEs</strong> using neural networks</li>
+<li class="fragment"><strong>Predict patient parameters</strong> for new subjects: <span class="math inline">\(η_{pred}\)</span></li>
+<li class="fragment"><strong>Augment NLME model:</strong> <span class="math inline">\(η \rightarrow η + η_{pred}\)</span></li>
+<li class="fragment"><strong>Refit residual distribution</strong> to reflect reduced unexplained variability</li>
+<li class="fragment"><strong>Apply standard NLME methods</strong> (VPC, simulations, etc.)</li>
+</ol>
+<p><strong>Close to trivial to implement!</strong></p>
+</section>
+<section id="generalized-framework" class="slide level2 center">
+<h2>Generalized Framework</h2>
+<p><strong>Training Phase:</strong> <span class="math display">\[
+\max_θ \log p(y | θ) = \sum_i^N \log \int p(y_i | θ, η_i) \cdot p(η_i | θ) dη_i
+\]</span></p>
+<p><strong>Embedding Phase:</strong><br>
+<span class="math display">\[
+z_i^* = \text{Embed}(x_i) \quad \text{where } x_i \text{ is complex covariate data}
+\]</span></p>
+<p><strong>Joint Modeling:</strong> <span class="math display">\[
+\max_{θ,w} \log p(y | θ, z^*) = \sum_i^N \log \int p(y_i | θ, η_i, z_i^*) \cdot p(η_i | θ) dη_i
+\]</span></p>
+</section>
+<section id="key-advantages" class="slide level2 center">
+<h2>Key Advantages</h2>
+<ul>
+<li class="fragment"><strong>Leverages existing models</strong>: Use pre-trained embeddings (GPT, BERT, vision models)</li>
+<li class="fragment"><strong>Data efficient</strong>: Much less data needed than training from scratch</li>
+<li class="fragment"><strong>Scientifically grounded</strong>: Preserves mechanistic understanding in NLME</li>
+<li class="fragment"><strong>Flexible</strong>: Works with any type of complex covariate</li>
+<li class="fragment"><strong>Interpretable</strong>: Can understand which parts are mechanism vs data-driven</li>
+<li class="fragment"><strong>Scalable</strong>: Can handle large-scale clinical datasets</li>
+</ul>
+</section>
+<section id="next-steps" class="slide level2 center">
+<h2>Next Steps</h2>
+<div class="center">
+<p><strong>Coming up:</strong> Hands-on implementation</p>
+<ul>
+<li>Work with synthetic text data</li>
+<li>Build embedding pipelines<br>
+</li>
+<li>Augment NLME models</li>
+<li>See the power of complex covariates in action</li>
+</ul>
+</div>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg" class="slide-logo"></p>
