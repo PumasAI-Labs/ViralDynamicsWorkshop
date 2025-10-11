@@ -18,7 +18,7 @@
     "href": "index.html#schedule-and-materials",
     "title": "DeepPumas for Viral Dynamics Workshop",
     "section": "2 Schedule and Materials",
-    "text": "2 Schedule and Materials\n\n\n\nTime\nSession\nMaterials\n\n\n\n\n09:00 - 09:20\nWelcome and Introduction\nSlides\n\n\n09:20 - 10:30\nNLME modeling in Pumas\nHands-on\n\n\n10:30 - 10:45\n☕ Coffee Break\n\n\n\n10:45 - 11:15\nDeepNLME\nSlides\n\n\n\nNeural networks, SciML, UDEs and NeuralODEs\n\n\n\n11:15 - 12:30\nDeepNLME (hands-on)\nHands-on\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n\n\n\n13:30 - 13:55\nRandom effects, fitting NLME, and Generative AI\nSlides\n\n\n13:55 - 14:25\nNLME and Generative AI\nSlides\n\n\n14:25 - 15:30\nDeepNLME with Complex Covariates\nSlides and hands-on\n\n\n15:30 - 15:45\n☕ Coffee Break\n\n\n\n15:45 - 16:15\nEpidemiology Demo\nSlides\n\n\n16:15 - 17:00\nDiscussions and Conclusions"
+    "text": "2 Schedule and Materials\n\n\n\nTime\nSession\nMaterials\n\n\n\n\n09:00 - 09:20\nWelcome and Introduction\nSlides\n\n\n09:20 - 10:30\nNLME modeling in Pumas\nHands-on\n\n\n10:30 - 10:45\n☕ Coffee Break\n\n\n\n10:45 - 11:15\nDeepNLME\nSlides\n\n\n\nNeural networks, SciML, UDEs and NeuralODEs\n\n\n\n11:15 - 12:30\nDeepNLME (hands-on)\nHands-on\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n\n\n\n13:30 - 13:55\nRandom effects, fitting NLME, and Generative AI\nSlides\n\n\n13:55 - 14:25\nNLME and Generative AI\nSlides\n\n\n14:25 - 14:40\nDeepNLME with Complex Covariates\nSlides and hands-on\n\n\n14:40 - 15:00\nDeepNLME with Complex Covariates hands-on\n\n\n\n15:00 - 15:30\nEmbeddings\nSlides\n\n\n15:30 - 15:45\n☕ Coffee Break\n\n\n\n15:45 - 16:15\nEpidemiology Demo\nSlides\n\n\n16:15 - 17:00\nDiscussions and Conclusions"
   },
   {
     "objectID": "index.html#key-concepts-covered",
@@ -47,6 +47,293 @@
     "title": "DeepPumas for Viral Dynamics Workshop",
     "section": "6 Resources",
     "text": "6 Resources\n\nDeepPumas Documentation\nPumas Documentation\nWorkshop GitHub Repository"
+  },
+  {
+    "objectID": "05-covariate-modelling.html#augment-workflow",
+    "href": "05-covariate-modelling.html#augment-workflow",
+    "title": "Complex covariates",
+    "section": "Augment workflow",
+    "text": "Augment workflow\n\n\nGreen: observed quantities\nBlue: Fixed effects\nRed: Random effects"
+  },
+  {
+    "objectID": "05-covariate-modelling.html#covariate-free-model",
+    "href": "05-covariate-modelling.html#covariate-free-model",
+    "title": "Complex covariates",
+    "section": "Covariate-free model",
+    "text": "Covariate-free model\n\n\nSo far, our models have been covariate-free\nThey cannot exploit known heterogeneity in the patients to give better predictions\n\nCan we predict the values of the random effect from the covariates?"
+  },
+  {
+    "objectID": "05-covariate-modelling.html#supervised-learning",
+    "href": "05-covariate-modelling.html#supervised-learning",
+    "title": "Complex covariates",
+    "section": "Supervised learning",
+    "text": "Supervised learning"
+  },
+  {
+    "objectID": "05-covariate-modelling.html#augmented-model",
+    "href": "05-covariate-modelling.html#augmented-model",
+    "title": "Complex covariates",
+    "section": "Augmented model",
+    "text": "Augmented model"
+  },
+  {
+    "objectID": "05-covariate-modelling.html#to-make-it-harder",
+    "href": "05-covariate-modelling.html#to-make-it-harder",
+    "title": "Complex covariates",
+    "section": "To make it harder…",
+    "text": "To make it harder…\n\nWe could use EBEs directly - in DeepPumas, we don’t\nWe can use transformed EBEs - that we do\n\northogonalized MvNormals\nstandardized to similar absolute values\nunconstrained values\ninvertible\nWe can weight with sensitivity of the loglikelihood\n\nWe could use the “full” posterior distribution"
+  },
+  {
+    "objectID": "05-covariate-modelling.html#what-were-really-after",
+    "href": "05-covariate-modelling.html#what-were-really-after",
+    "title": "Complex covariates",
+    "section": "What we’re really after",
+    "text": "What we’re really after\n\\[\n\\eta_i \\sim p(\\eta | \\text{covariates})\n\\]\nA rich description of how covariate information affects the prior distribution of the random effects.\nTo be presented at ACoP in two weeks"
+  },
+  {
+    "objectID": "04-generative-ai.html#generative-ai",
+    "href": "04-generative-ai.html#generative-ai",
+    "title": "Generative AI and NLME",
+    "section": "Generative AI",
+    "text": "Generative AI\nGoal: Generate data indistinguishable in distribution to real data"
+  },
+  {
+    "objectID": "04-generative-ai.html#section",
+    "href": "04-generative-ai.html#section",
+    "title": "Generative AI and NLME",
+    "section": "",
+    "text": "~ \nwww.thispersondoesnotexist.com"
+  },
+  {
+    "objectID": "04-generative-ai.html#how-is-that-done",
+    "href": "04-generative-ai.html#how-is-that-done",
+    "title": "Generative AI and NLME",
+    "section": "How is that done?",
+    "text": "How is that done?\n\n\nData is a mix of\n\nObserved quantities (pixel intensities)\nUnobserved quantities (faces, smiling, …)\n\nWe humans learn to extract the unobserved quantities\nGenAI needs to do that too."
+  },
+  {
+    "objectID": "04-generative-ai.html#how-is-that-done-1",
+    "href": "04-generative-ai.html#how-is-that-done-1",
+    "title": "Generative AI and NLME",
+    "section": "How is that done?",
+    "text": "How is that done?\n\n\nData is a mix of\n\nObserved quantities (\\(y\\))\nUnobserved quantities (\\(z\\) - “latent variables”)"
+  },
+  {
+    "objectID": "04-generative-ai.html#generative-models",
+    "href": "04-generative-ai.html#generative-models",
+    "title": "Generative AI and NLME",
+    "section": "Generative models",
+    "text": "Generative models\n\nDefinitions\n\n\\(z\\): latent variables of dimension \\(d\\)\n\\(y\\): observed data\n\\(y_g\\): generated/simulated/synthetic data\n\nModel\n\n\\[\n\\begin{aligned}\ny_g &= f(z) + \\epsilon \\\\\nz &\\sim Normal(0, I_{d\\times d}) \\\\\n\\epsilon &\\sim Normal(0, \\sigma^2)\n\\end{aligned}\n\\]\n\nObjective: find \\(f\\) such that the distribution of \\(y_g\\) is close to the distribution of the observed data \\(y\\)"
+  },
+  {
+    "objectID": "04-generative-ai.html#nlme-is-generative-ai",
+    "href": "04-generative-ai.html#nlme-is-generative-ai",
+    "title": "Generative AI and NLME",
+    "section": "NLME is Generative AI!",
+    "text": "NLME is Generative AI!\n\nDefinitions\n\n\\(\\eta\\): latent variables of dimension \\(d\\) and covariance matrix \\(\\Omega\\)\n\\(x\\): observed covariates\n\\(dv\\): observed data/response\n\\(dv_g\\): generated/simulated/synthetic data\n\nModel\n\n\\[\n\\begin{aligned}\ndv_g &= f_\\theta(\\eta, x) + \\epsilon \\\\\n\\eta &\\sim Normal(0, \\Omega) \\\\\n\\epsilon &\\sim Normal(0, \\sigma^2)\n\\end{aligned}\n\\]\n\nObjective: find \\(f\\) such that the conditional distribution of \\(dv_g | x\\) is close to the distribution of the observed data \\(dv\\)"
+  },
+  {
+    "objectID": "04-generative-ai.html#nlme-is-generative-ai-1",
+    "href": "04-generative-ai.html#nlme-is-generative-ai-1",
+    "title": "Generative AI and NLME",
+    "section": "NLME is Generative AI!",
+    "text": "NLME is Generative AI!\nNLME objective: Maximize marginal likelihood of observations \\(y\\) given covariates \\(c\\):\n\\[\np_\\theta(y | c) = \\int p_\\theta(y | \\eta, c) \\cdot p(\\eta) d\\eta\n\\]\nVariational Autoencoder (GenAI) objective: Maximize likelihood of data \\(x\\):\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\nThey’re identical!\n\nRandom effects \\(\\eta\\) ↔︎ Latent variables \\(z\\)\nObservations \\(y\\) ↔︎ Generated data \\(x\\)\nIndividual predictions ↔︎ Generative model"
+  },
+  {
+    "objectID": "04-generative-ai.html#generative-ai-typical-anatomy",
+    "href": "04-generative-ai.html#generative-ai-typical-anatomy",
+    "title": "Generative AI and NLME",
+    "section": "Generative AI – Typical anatomy",
+    "text": "Generative AI – Typical anatomy"
+  },
+  {
+    "objectID": "04-generative-ai.html#nlme-as-genai",
+    "href": "04-generative-ai.html#nlme-as-genai",
+    "title": "Generative AI and NLME",
+    "section": "NLME as GenAI",
+    "text": "NLME as GenAI\n\n\n\nInput: Time series\nOutput: Time series\n\n \n\nDecoder: The “structural” NLME model\nEncoder: an inverse problem of the decoder"
+  },
+  {
+    "objectID": "04-generative-ai.html#what-are-latent-variables",
+    "href": "04-generative-ai.html#what-are-latent-variables",
+    "title": "Generative AI and NLME",
+    "section": "What Are Latent Variables?",
+    "text": "What Are Latent Variables?\nIn Traditional NLME: Meaning is structurally engineered\n\\[\nCL = tvCL \\cdot e^{\\eta_1}\n\\]\nIn DeepNLME: More flexible, but still some structure\n\\[\n\\frac{dR}{dt} = NN\\left(\\frac{Central}{Vc}, R, \\eta_1, \\eta_2 \\right)\n\\]\nIn Pure GenAI: Meaning emerges from data and training\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\\(z\\) captures informative properties not directly observed"
+  },
+  {
+    "objectID": "04-generative-ai.html#latent-variables-as-information",
+    "href": "04-generative-ai.html#latent-variables-as-information",
+    "title": "Generative AI and NLME",
+    "section": "Latent Variables as Information",
+    "text": "Latent Variables as Information\nFor images:\n\nNot pixel-by-pixel intensity\nRather: Objects, characteristics, actions, style, lighting\n\nFor text:\n\nNot individual words\nRather: Sentiment, information content, writing style, language\n\nFor clinical data:\n\nNot individual measurements\nRather: Disease state, treatment response, patient phenotype"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#traditional-nlme",
+    "href": "02-deepnlme-part1.html#traditional-nlme",
+    "title": "DeepNLME",
+    "section": "Traditional NLME",
+    "text": "Traditional NLME\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\frac{CL}{Vc} \\cdot Central(t)\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#what-if-components-are-unknown",
+    "href": "02-deepnlme-part1.html#what-if-components-are-unknown",
+    "title": "DeepNLME",
+    "section": "What if components are unknown?",
+    "text": "What if components are unknown?\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight, \\; \\color{red}{???}\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\cdot \\color{red}{???} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{???}\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#neural-networks",
+    "href": "02-deepnlme-part1.html#neural-networks",
+    "title": "DeepNLME",
+    "section": "Neural networks",
+    "text": "Neural networks\n\n\nInformation processing mechanism\n\nLoosely based on neurons\n\n\n\n\n\n\n\n\n\n \n\n\n\nMathematically just a function!\nUsable anywhere you’d use a function!\n\n\nUniversal approximators!\nVideo\n\nApproximate any function\nFunctional form tuned by parameters"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
+    "href": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
+    "title": "DeepNLME",
+    "section": "Neural networks in NLME dynamics",
+    "text": "Neural networks in NLME dynamics\n\n\nFocus: Neural Networks in Dynamics\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics ← This lecture focuses here \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{NN(...)}\n\\end{align*}\n\\]\nError model \\[\nDV(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
+    "href": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
+    "title": "DeepNLME",
+    "section": "Neural-embedded dynamical systems",
+    "text": "Neural-embedded dynamical systems\n2018 - “Neural Ordinary Differential Equations”, Chen et al.\n\n2020 - “Universal Differential Equations for Scientific Machine Learning”, Rackauckas et al.\n\n\n\nNeural ODE\n\\[\n\\frac{d\\mathbf{X}}{dt} = NN(\\mathbf{X}(t), t)\n\\]\n\n\nODE solver as scaffold for neural networks\nSimilar to recurrent neural networks and ResNets\nPure machine learning approach\n\n\n\n\nUniversal Differential Equations (UDE)\n\\[\\begin{align*}\n\\frac{dx}{dt} &= x \\cdot y - NN(x)\\\\\n\\frac{dy}{dt} &= p - x \\cdot y\n\\end{align*}\\]\n\n\nInsert universal approximators (NNs) to capture unknown terms\nCombine scientific knowledge with machine learning\nMore data-efficient than pure ML approaches\n\n\n\n\n\nScientific Machine Learning (SciML)\n\n\nAbstract idea: mixing science and machine learning\nUmbrella term for hybrid approaches\nIncludes UDEs, Physics-Informed NNs, etc.\nGoal: leverage domain knowledge to improve ML"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#encoding-knowledge",
+    "href": "02-deepnlme-part1.html#encoding-knowledge",
+    "title": "DeepNLME",
+    "section": "Encoding Knowledge",
+    "text": "Encoding Knowledge\n\n\nPure Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= NN(Depot, Central, R)[1]\\\\\n\\frac{dCentral}{dt} &= NN(Depot, Central, R)[2]\\\\\n\\frac{dR}{dt} &= NN(Depot, Central, R)[3]\n\\end{aligned}\n\\]\n\nNumber of states\n\n\nGraph Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - NN_1(Depot)\\\\\n\\frac{dCentral}{dt} &= NN_1(Depot) - NN_2(Central)\\\\\n\\frac{dR}{dt} &= NN_3(Central, R)\n\\end{aligned}\n\\]\n\nNumber of states\nDependencies\n\nConservation principles\n\n\n\n\nUDE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= NN_3\\left(\\frac{Central}{V_c}, R\\right)\n\\end{aligned}\n\\]\n\nExplicit knowledge of some terms\nNeural networks only where needed\n\n\n\nTargeted Neural Enhancement (still a UDE) \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= k_{in} \\cdot \\left(1 + NN\\left(\\frac{Central}{V_c}\\right)\\right) - k_{out} \\cdot R\n\\end{aligned}\n\\]\n\nMost knowledge encoded!\nNeural network captures unknown drug effect\nPrecise positioning and inputs"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
+    "href": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
+    "title": "DeepNLME",
+    "section": "Extending for longitudinal data with DeepNLME",
+    "text": "Extending for longitudinal data with DeepNLME\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]"
+  },
+  {
+    "objectID": "02-deepnlme-part1.html#individual-level-neural-networks",
+    "href": "02-deepnlme-part1.html#individual-level-neural-networks",
+    "title": "DeepNLME",
+    "section": "Individual-level neural networks",
+    "text": "Individual-level neural networks\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c}, {\\color{orange} η₁} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]"
+  },
+  {
+    "objectID": "01-introduction.html#workshop-overview",
+    "href": "01-introduction.html#workshop-overview",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Workshop Overview",
+    "text": "Workshop Overview\n\n\n\nTime\nSession\nDuration\n\n\n\n\n10:00 - 10:20\nIntroduction\n20 min\n\n\n10:20 - 11:30\nNLME modeling in Pumas (hands-on)\n1h 10min\n\n\n11:30 - 12:00\nDeepNLME - Part 1 (lecture)\n30 min\n\n\n12:00 - 12:30\nDeepNLME - Part 1 (hands-on)\n30 min\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n1h\n\n\n13:30 - 15:30\nDeepNLME with complex covariates\n2h\n\n\n15:30 - 15:45\n☕ Coffee Break\n15 min\n\n\n15:45 - 16:15\nEpidemiology demo\n30 min\n\n\n16:15 - 17:00\nDiscussions and conclusions\n45 min"
+  },
+  {
+    "objectID": "01-introduction.html#section",
+    "href": "01-introduction.html#section",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "",
+    "text": "Machine learning\n\n\n\n\nData-driven model discovery\nFinds unintuitive relationships\nHandles complex data\n\n\n\n\n\n\n\n\nLacks scientific understanding\nRequires big data\n\n\n\n\n\nScientific modelling\n\n\n\n\nEncodes scientific understanding\nData-efficient\nInterpretable\nSimple counterfactuals\n\n\n\n\n\n\n\n\nLabor intensive\nMisses unintuitive relationships\nHard to utilize complex data"
+  },
+  {
+    "objectID": "01-introduction.html#data-knowledge",
+    "href": "01-introduction.html#data-knowledge",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Data + Knowledge",
+    "text": "Data + Knowledge"
+  },
+  {
+    "objectID": "01-introduction.html#vision-spanning-pharma",
+    "href": "01-introduction.html#vision-spanning-pharma",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Vision Spanning Pharma",
+    "text": "Vision Spanning Pharma"
+  },
+  {
+    "objectID": "01-introduction.html#what-well-build-today",
+    "href": "01-introduction.html#what-well-build-today",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "What We’ll Build Today",
+    "text": "What We’ll Build Today\nStarting with traditional NLME models…"
+  },
+  {
+    "objectID": "01-introduction.html#traditional-nlme",
+    "href": "01-introduction.html#traditional-nlme",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Traditional NLME",
+    "text": "Traditional NLME\n\n\nNonlinear Mixed Effects\n\n\n\n\n\n\n\n\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\n\n\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\n\n\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\frac{CL}{Vc} \\cdot Central(t)\n\\end{align*}\n\\]\n\n\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
+  },
+  {
+    "objectID": "01-introduction.html#lets-get-started",
+    "href": "01-introduction.html#lets-get-started",
+    "title": "DeepPumas for Viral Dynamics",
+    "section": "Let’s Get Started!",
+    "text": "Let’s Get Started!\n\nNext up: Hands-on NLME modeling with Pumas\n\nSynthetic viral dynamics data mimicking HIV\nModel building and fitting\n\nUnderstanding the foundations before we add neural networks"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#what-are-mixed-effects-models",
+    "href": "03-random-effects-revisited.html#what-are-mixed-effects-models",
+    "title": "Random effects",
+    "section": "What are mixed effects models?",
+    "text": "What are mixed effects models?\n\nFixed effects, \\(θ\\)\n\nModel parameters modelled as deterministic quantities\n\nRandom effects, \\(η_i\\)\n\nModel parameters modelled as random variables\n\n\nHierarchical\nWe typically define hierarchies where \\(θ\\) are shared parameters but \\(η\\) is subject-specific."
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#no-need-to-assign-too-much-meaning-to-random-effects",
+    "href": "03-random-effects-revisited.html#no-need-to-assign-too-much-meaning-to-random-effects",
+    "title": "Random effects",
+    "section": "No need to assign too much meaning to random effects",
+    "text": "No need to assign too much meaning to random effects\n\nIndicates unknown parameters that vary between subjects (or whatever hierarchy we use)\nUsually tied very closely to a specific parameter in pharmacometrics. \\(CL = tvCL \\cdot e^{η_{CL}}\\)\nEnables degree o freedom along which the model can account for heterogenous outcomes"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#simulating-with-random-effects",
+    "href": "03-random-effects-revisited.html#simulating-with-random-effects",
+    "title": "Random effects",
+    "section": "Simulating with random effects",
+    "text": "Simulating with random effects\nSimple\n\nWe have given \\(θ\\) and covariates \\(x\\)\nSample from the prior \\(η | θ\\)\nCompute your individual parameters and propagate your ODE\nSample your observations \\(y | θ, η, x\\)"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects",
+    "href": "03-random-effects-revisited.html#fitting-with-random-effects",
+    "title": "Random effects",
+    "section": "Fitting with random effects",
+    "text": "Fitting with random effects\nConditional probability / Joint likelihood / MLE\nProbability of the response \\(y\\) according to the model given specific values of \\(θ\\), \\(η\\), and \\(x\\).\n\\[\np_c(y | θ, η, x)\n\\]\nFit model by simply finding the values of \\(θ\\) and \\(η\\) that jointly maximize the probability?\nEquivalent to minimizing a distance metric (e.g. MSE) between observed and predicted data.\n\nNot what we do"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects-1",
+    "href": "03-random-effects-revisited.html#fitting-with-random-effects-1",
+    "title": "Random effects",
+    "section": "Fitting with random effects",
+    "text": "Fitting with random effects\nMarginal probability\nIntegrates out the effect of the random effects.\n\\[\np_m(y | θ, x) = \\int p_c(y | θ, η, x) \\cdot p_{prior}(η | θ) dη\n\\]\nAverage conditional probability weighted by a prior"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects-2",
+    "href": "03-random-effects-revisited.html#fitting-with-random-effects-2",
+    "title": "Random effects",
+    "section": "Fitting with random effects",
+    "text": "Fitting with random effects"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#one-dimension-per-random-effect",
+    "href": "03-random-effects-revisited.html#one-dimension-per-random-effect",
+    "title": "Random effects",
+    "section": "One dimension per random effect",
+    "text": "One dimension per random effect\n\n\\(η\\) here can be multi-dimensional\n\n\\[\np_m(y | θ, x) = \\int p_c(y | θ, η, x) \\cdot p_{prior}(η | θ) dη\n\\]\n\nThis is a multi-variate integral\nOne dimension (degree of freedom) along which to account for between subject variability in the data for each random effect.\nMarginalization incentivizes that each random effect controls a single smooth dimension between-subject variability."
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#smoothness",
+    "href": "03-random-effects-revisited.html#smoothness",
+    "title": "Random effects",
+    "section": "“Smoothness”?",
+    "text": "“Smoothness”?\n\n\nClassical NLME \\[\nEFF = \\left(1 + Smax \\cdot \\frac{C}{tvSC50 \\cdot exp\\left(\\mathbf{\\eta}\\right) + C}\\right)\n\\]\n\nThis function is somewhat smooth in \\(η\\) by structural definition.\nVery little flexibility to affect the smoothness by tuning fixed effects.\n\n\n\n\nDeepNLME\n\\[\nEFF = \\left(1 + NN(C, η)\\right)\n\\]\n\nThis function can be very non-smooth in \\(η\\).\nLots of flexibility to affect the smoothness by tuning fixed effects.\nIncentivizing smoothness by marginalization in the fit really helps here!"
+  },
+  {
+    "objectID": "03-random-effects-revisited.html#smoothness-in-deepnlme",
+    "href": "03-random-effects-revisited.html#smoothness-in-deepnlme",
+    "title": "Random effects",
+    "section": "Smoothness in DeepNLME",
+    "text": "Smoothness in DeepNLME\n\n\nData-generating function: \\[\nY = \\frac{E_{max} \\cdot x}{EC_{50} + x} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\n\\]\nwhere \\[\n\\begin{align}\nE_{max} &\\sim \\mathcal{U}(0.5, 1.5) \\\\\nEC_{50} &\\sim \\mathrm{LogNormal}(-2, 1.0)\n\\end{align}\n\\]\nDeepNLME model: \\[\n\\begin{align}\nY &= {\\color{orange}NN(x, η₁, η₂)} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\\\\\nη &\\sim \\mathcal{N}(0, I)\n\\end{align}\n\\]"
   },
   {
     "objectID": "05-complex-covariates.html#the-data-challenge",
@@ -166,328 +453,6 @@
     "title": "DeepNLME with Complex Covariates",
     "section": "Next Steps",
     "text": "Next Steps\n\nComing up: Hands-on implementation\n\nWork with synthetic text data\nBuild embedding pipelines\n\nAugment NLME models\nSee the power of complex covariates in action"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#what-are-mixed-effects-models",
-    "href": "03-random-effects-revisited.html#what-are-mixed-effects-models",
-    "title": "Random effects",
-    "section": "What are mixed effects models?",
-    "text": "What are mixed effects models?\n\nFixed effects, \\(θ\\)\n\nModel parameters modelled as deterministic quantities\n\nRandom effects, \\(η_i\\)\n\nModel parameters modelled as random variables\n\n\nHierarchical\nWe typically define hierarchies where \\(θ\\) are shared parameters but \\(η\\) is subject-specific."
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#no-need-to-assign-too-much-meaning-to-random-effects",
-    "href": "03-random-effects-revisited.html#no-need-to-assign-too-much-meaning-to-random-effects",
-    "title": "Random effects",
-    "section": "No need to assign too much meaning to random effects",
-    "text": "No need to assign too much meaning to random effects\n\nIndicates unknown parameters that vary between subjects (or whatever hierarchy we use)\nUsually tied very closely to a specific parameter in pharmacometrics. \\(CL = tvCL \\cdot e^{η_{CL}}\\)\nEnables degree o freedom along which the model can account for heterogenous outcomes"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#simulating-with-random-effects",
-    "href": "03-random-effects-revisited.html#simulating-with-random-effects",
-    "title": "Random effects",
-    "section": "Simulating with random effects",
-    "text": "Simulating with random effects\nSimple\n\nWe have given \\(θ\\) and covariates \\(x\\)\nSample from the prior \\(η | θ\\)\nCompute your individual parameters and propagate your ODE\nSample your observations \\(y | θ, η, x\\)"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects",
-    "href": "03-random-effects-revisited.html#fitting-with-random-effects",
-    "title": "Random effects",
-    "section": "Fitting with random effects",
-    "text": "Fitting with random effects\nConditional probability / Joint likelihood / MLE\nProbability of the response \\(y\\) according to the model given specific values of \\(θ\\), \\(η\\), and \\(x\\).\n\\[\np_c(y | θ, η, x)\n\\]\nFit model by simply finding the values of \\(θ\\) and \\(η\\) that jointly maximize the probability?\nEquivalent to minimizing a distance metric (e.g. MSE) between observed and predicted data.\n\nNot what we do"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects-1",
-    "href": "03-random-effects-revisited.html#fitting-with-random-effects-1",
-    "title": "Random effects",
-    "section": "Fitting with random effects",
-    "text": "Fitting with random effects\nMarginal probability\nIntegrates out the effect of the random effects.\n\\[\np_m(y | θ, x) = \\int p_c(y | θ, η, x) \\cdot p_{prior}(η | θ) dη\n\\]\nAverage conditional probability weighted by a prior"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#fitting-with-random-effects-2",
-    "href": "03-random-effects-revisited.html#fitting-with-random-effects-2",
-    "title": "Random effects",
-    "section": "Fitting with random effects",
-    "text": "Fitting with random effects"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#one-dimension-per-random-effect",
-    "href": "03-random-effects-revisited.html#one-dimension-per-random-effect",
-    "title": "Random effects",
-    "section": "One dimension per random effect",
-    "text": "One dimension per random effect\n\n\\(η\\) here can be multi-dimensional\n\n\\[\np_m(y | θ, x) = \\int p_c(y | θ, η, x) \\cdot p_{prior}(η | θ) dη\n\\]\n\nThis is a multi-variate integral\nOne dimension (degree of freedom) along which to account for between subject variability in the data for each random effect.\nMarginalization incentivizes that each random effect controls a single smooth dimension between-subject variability."
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#smoothness",
-    "href": "03-random-effects-revisited.html#smoothness",
-    "title": "Random effects",
-    "section": "“Smoothness”?",
-    "text": "“Smoothness”?\n\n\nClassical NLME \\[\nEFF = \\left(1 + Smax \\cdot \\frac{C}{tvSC50 \\cdot exp\\left(\\mathbf{\\eta}\\right) + C}\\right)\n\\]\n\nThis function is somewhat smooth in \\(η\\) by structural definition.\nVery little flexibility to affect the smoothness by tuning fixed effects.\n\n\n\n\nDeepNLME\n\\[\nEFF = \\left(1 + NN(C, η)\\right)\n\\]\n\nThis function can be very non-smooth in \\(η\\).\nLots of flexibility to affect the smoothness by tuning fixed effects.\nIncentivizing smoothness by marginalization in the fit really helps here!"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#smoothness-in-deepnlme",
-    "href": "03-random-effects-revisited.html#smoothness-in-deepnlme",
-    "title": "Random effects",
-    "section": "Smoothness in DeepNLME",
-    "text": "Smoothness in DeepNLME\n\n\nData-generating function: \\[\nY = \\frac{E_{max} \\cdot x}{EC_{50} + x} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\n\\]\nwhere \\[\n\\begin{align}\nE_{max} &\\sim \\mathcal{U}(0.5, 1.5) \\\\\nEC_{50} &\\sim \\mathrm{LogNormal}(-2, 1.0)\n\\end{align}\n\\]\nDeepNLME model: \\[\n\\begin{align}\nY &= {\\color{orange}NN(x, η₁, η₂)} + \\epsilon, \\quad \\epsilon \\sim \\mathcal{N}(0, \\sigma^2)\\\\\nη &\\sim \\mathcal{N}(0, I)\n\\end{align}\n\\]"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#generative-ai-1",
-    "href": "03-random-effects-revisited.html#generative-ai-1",
-    "title": "Random effects",
-    "section": "Generative AI",
-    "text": "Generative AI\nGoal: Generate data indistinguishable in distribution to real data"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#section-1",
-    "href": "03-random-effects-revisited.html#section-1",
-    "title": "Random effects",
-    "section": "",
-    "text": "~ \nwww.thispersondoesnotexist.com"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#how-is-that-done",
-    "href": "03-random-effects-revisited.html#how-is-that-done",
-    "title": "Random effects",
-    "section": "How is that done?",
-    "text": "How is that done?\n\n\nData is a mix of\n\nObserved quantities (pixel intensities)\nUnobserved quantities (faces, smiling, …)\n\nWe humans learn to extract the unobserved quantities\nGenAI needs to do that too."
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#how-is-that-done-1",
-    "href": "03-random-effects-revisited.html#how-is-that-done-1",
-    "title": "Random effects",
-    "section": "How is that done?",
-    "text": "How is that done?\n\n\nData is a mix of\n\nObserved quantities (\\(y\\))\nUnobserved quantities (\\(z\\) - “latent variables”)"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#generative-models",
-    "href": "03-random-effects-revisited.html#generative-models",
-    "title": "Random effects",
-    "section": "Generative models",
-    "text": "Generative models\n\nDefinitions\n\n\\(z\\): latent variables of dimension \\(d\\)\n\\(y\\): observed data\n\\(y_g\\): generated/simulated/synthetic data\n\nModel\n\n\\[\n\\begin{aligned}\ny_g &= f(z) + \\epsilon \\\\\nz &\\sim Normal(0, I_{d\\times d}) \\\\\n\\epsilon &\\sim Normal(0, \\sigma^2)\n\\end{aligned}\n\\]\n\nObjective: find \\(f\\) such that the distribution of \\(y_g\\) is close to the distribution of the observed data \\(y\\)"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#nlme-is-generative-ai",
-    "href": "03-random-effects-revisited.html#nlme-is-generative-ai",
-    "title": "Random effects",
-    "section": "NLME is Generative AI!",
-    "text": "NLME is Generative AI!\n\nDefinitions\n\n\\(\\eta\\): latent variables of dimension \\(d\\) and covariance matrix \\(\\Omega\\)\n\\(x\\): observed covariates\n\\(dv\\): observed data/response\n\\(dv_g\\): generated/simulated/synthetic data\n\nModel\n\n\\[\n\\begin{aligned}\ndv_g &= f_\\theta(\\eta, x) + \\epsilon \\\\\n\\eta &\\sim Normal(0, \\Omega) \\\\\n\\epsilon &\\sim Normal(0, \\sigma^2)\n\\end{aligned}\n\\]\n\nObjective: find \\(f\\) such that the conditional distribution of \\(dv_g | x\\) is close to the distribution of the observed data \\(dv\\)"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#nlme-is-generative-ai-1",
-    "href": "03-random-effects-revisited.html#nlme-is-generative-ai-1",
-    "title": "Random effects",
-    "section": "NLME is Generative AI!",
-    "text": "NLME is Generative AI!\nNLME objective: Maximize marginal likelihood of observations \\(y\\) given covariates \\(c\\):\n\\[\np_\\theta(y | c) = \\int p_\\theta(y | \\eta, c) \\cdot p(\\eta) d\\eta\n\\]\nVariational Autoencoder (GenAI) objective: Maximize likelihood of data \\(x\\):\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\nThey’re identical!\n\nRandom effects \\(\\eta\\) ↔︎ Latent variables \\(z\\)\nObservations \\(y\\) ↔︎ Generated data \\(x\\)\nIndividual predictions ↔︎ Generative model"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#generative-ai-typical-anatomy",
-    "href": "03-random-effects-revisited.html#generative-ai-typical-anatomy",
-    "title": "Random effects",
-    "section": "Generative AI – Typical anatomy",
-    "text": "Generative AI – Typical anatomy"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#nlme-as-genai",
-    "href": "03-random-effects-revisited.html#nlme-as-genai",
-    "title": "Random effects",
-    "section": "NLME as GenAI",
-    "text": "NLME as GenAI\n\n\n\nInput: Time series\nOutput: Time series\n\n \n\nDecoder: The “structural” NLME model\nEncoder: an inverse problem of the decoder"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#what-are-latent-variables",
-    "href": "03-random-effects-revisited.html#what-are-latent-variables",
-    "title": "Random effects",
-    "section": "What Are Latent Variables?",
-    "text": "What Are Latent Variables?\nIn Traditional NLME: Meaning is structurally engineered\n\\[\nCL = tvCL \\cdot e^{\\eta_1}\n\\]\nIn DeepNLME: More flexible, but still some structure\n\\[\n\\frac{dR}{dt} = NN\\left(\\frac{Central}{Vc}, R, \\eta_1, \\eta_2 \\right)\n\\]\nIn Pure GenAI: Meaning emerges from data and training\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\\(z\\) captures informative properties not directly observed"
-  },
-  {
-    "objectID": "03-random-effects-revisited.html#latent-variables-as-information",
-    "href": "03-random-effects-revisited.html#latent-variables-as-information",
-    "title": "Random effects",
-    "section": "Latent Variables as Information",
-    "text": "Latent Variables as Information\nFor images:\n\nNot pixel-by-pixel intensity\nRather: Objects, characteristics, actions, style, lighting\n\nFor text:\n\nNot individual words\nRather: Sentiment, information content, writing style, language\n\nFor clinical data:\n\nNot individual measurements\nRather: Disease state, treatment response, patient phenotype"
-  },
-  {
-    "objectID": "01-introduction.html#workshop-overview",
-    "href": "01-introduction.html#workshop-overview",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "Workshop Overview",
-    "text": "Workshop Overview\n\n\n\nTime\nSession\nDuration\n\n\n\n\n10:00 - 10:20\nIntroduction\n20 min\n\n\n10:20 - 11:30\nNLME modeling in Pumas (hands-on)\n1h 10min\n\n\n11:30 - 12:00\nDeepNLME - Part 1 (lecture)\n30 min\n\n\n12:00 - 12:30\nDeepNLME - Part 1 (hands-on)\n30 min\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n1h\n\n\n13:30 - 15:30\nDeepNLME with complex covariates\n2h\n\n\n15:30 - 15:45\n☕ Coffee Break\n15 min\n\n\n15:45 - 16:15\nEpidemiology demo\n30 min\n\n\n16:15 - 17:00\nDiscussions and conclusions\n45 min"
-  },
-  {
-    "objectID": "01-introduction.html#section",
-    "href": "01-introduction.html#section",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "",
-    "text": "Machine learning\n\n\n\n\nData-driven model discovery\nFinds unintuitive relationships\nHandles complex data\n\n\n\n\n\n\n\n\nLacks scientific understanding\nRequires big data\n\n\n\n\n\nScientific modelling\n\n\n\n\nEncodes scientific understanding\nData-efficient\nInterpretable\nSimple counterfactuals\n\n\n\n\n\n\n\n\nLabor intensive\nMisses unintuitive relationships\nHard to utilize complex data"
-  },
-  {
-    "objectID": "01-introduction.html#data-knowledge",
-    "href": "01-introduction.html#data-knowledge",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "Data + Knowledge",
-    "text": "Data + Knowledge"
-  },
-  {
-    "objectID": "01-introduction.html#vision-spanning-pharma",
-    "href": "01-introduction.html#vision-spanning-pharma",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "Vision Spanning Pharma",
-    "text": "Vision Spanning Pharma"
-  },
-  {
-    "objectID": "01-introduction.html#what-well-build-today",
-    "href": "01-introduction.html#what-well-build-today",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "What We’ll Build Today",
-    "text": "What We’ll Build Today\nStarting with traditional NLME models…"
-  },
-  {
-    "objectID": "01-introduction.html#traditional-nlme",
-    "href": "01-introduction.html#traditional-nlme",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "Traditional NLME",
-    "text": "Traditional NLME\n\n\nNonlinear Mixed Effects\n\n\n\n\n\n\n\n\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\n\n\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\n\n\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\frac{CL}{Vc} \\cdot Central(t)\n\\end{align*}\n\\]\n\n\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
-  },
-  {
-    "objectID": "01-introduction.html#lets-get-started",
-    "href": "01-introduction.html#lets-get-started",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "Let’s Get Started!",
-    "text": "Let’s Get Started!\n\nNext up: Hands-on NLME modeling with Pumas\n\nSynthetic viral dynamics data mimicking HIV\nModel building and fitting\n\nUnderstanding the foundations before we add neural networks"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#traditional-nlme",
-    "href": "02-deepnlme-part1.html#traditional-nlme",
-    "title": "DeepNLME",
-    "section": "Traditional NLME",
-    "text": "Traditional NLME\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\frac{CL}{Vc} \\cdot Central(t)\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#what-if-components-are-unknown",
-    "href": "02-deepnlme-part1.html#what-if-components-are-unknown",
-    "title": "DeepNLME",
-    "section": "What if components are unknown?",
-    "text": "What if components are unknown?\n\n\nNonlinear Mixed Effects\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight, \\; \\color{red}{???}\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\cdot \\color{red}{???} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{???}\n\\end{align*}\n\\]\nError model \\[\ndv(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#neural-networks",
-    "href": "02-deepnlme-part1.html#neural-networks",
-    "title": "DeepNLME",
-    "section": "Neural networks",
-    "text": "Neural networks\n\n\nInformation processing mechanism\n\nLoosely based on neurons\n\n\n\n\n\n\n\n\n\n \n\n\n\nMathematically just a function!\nUsable anywhere you’d use a function!\n\n\nUniversal approximators!\nVideo\n\nApproximate any function\nFunctional form tuned by parameters"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
-    "href": "02-deepnlme-part1.html#neural-networks-in-nlme-dynamics",
-    "title": "DeepNLME",
-    "section": "Neural networks in NLME dynamics",
-    "text": "Neural networks in NLME dynamics\n\n\nFocus: Neural Networks in Dynamics\n\n\n\n\nTypical values \\[\ntvKa, \\; tvCL, \\; tvVc, \\; Ω, \\; σ\n\\]\nCovariates \\[\nAge, \\; Weight\n\\]\nRandom effects \\[\nη \\sim MvNormal(Ω)\n\\]\nIndividual parameters \\[\\begin{align*}\nKa_i &= tvKa \\cdot e^{η_{i,1}} \\\\\nCL_i &= tvCL \\cdot e^{η_{i,2}} \\\\\nVc_i &= tvVc \\cdot e^{η_{i,3}}\n\\end{align*}\\]\nDynamics ← This lecture focuses here \\[\n\\begin{align*}\n\\frac{dDepot(t)}{dt} =&  - Ka \\cdot Depot(t) \\\\\n\\frac{dCentral(t)}{dt} =& Ka \\cdot Depot(t) - \\color{red}{NN(...)}\n\\end{align*}\n\\]\nError model \\[\nDV(t) \\sim Normal\\left(\\frac{Central(t)}{Vc}, \\frac{Central(t)}{Vc} \\cdot σ\\right)\n\\]"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
-    "href": "02-deepnlme-part1.html#neural-embedded-dynamical-systems",
-    "title": "DeepNLME",
-    "section": "Neural-embedded dynamical systems",
-    "text": "Neural-embedded dynamical systems\n2018 - “Neural Ordinary Differential Equations”, Chen et al.\n\n2020 - “Universal Differential Equations for Scientific Machine Learning”, Rackauckas et al.\n\n\n\nNeural ODE\n\\[\n\\frac{d\\mathbf{X}}{dt} = NN(\\mathbf{X}(t), t)\n\\]\n\n\nODE solver as scaffold for neural networks\nSimilar to recurrent neural networks and ResNets\nPure machine learning approach\n\n\n\n\nUniversal Differential Equations (UDE)\n\\[\\begin{align*}\n\\frac{dx}{dt} &= x \\cdot y - NN(x)\\\\\n\\frac{dy}{dt} &= p - x \\cdot y\n\\end{align*}\\]\n\n\nInsert universal approximators (NNs) to capture unknown terms\nCombine scientific knowledge with machine learning\nMore data-efficient than pure ML approaches\n\n\n\n\n\nScientific Machine Learning (SciML)\n\n\nAbstract idea: mixing science and machine learning\nUmbrella term for hybrid approaches\nIncludes UDEs, Physics-Informed NNs, etc.\nGoal: leverage domain knowledge to improve ML"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#encoding-knowledge",
-    "href": "02-deepnlme-part1.html#encoding-knowledge",
-    "title": "DeepNLME",
-    "section": "Encoding Knowledge",
-    "text": "Encoding Knowledge\n\n\nPure Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= NN(Depot, Central, R)[1]\\\\\n\\frac{dCentral}{dt} &= NN(Depot, Central, R)[2]\\\\\n\\frac{dR}{dt} &= NN(Depot, Central, R)[3]\n\\end{aligned}\n\\]\n\nNumber of states\n\n\nGraph Neural ODE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - NN_1(Depot)\\\\\n\\frac{dCentral}{dt} &= NN_1(Depot) - NN_2(Central)\\\\\n\\frac{dR}{dt} &= NN_3(Central, R)\n\\end{aligned}\n\\]\n\nNumber of states\nDependencies\n\nConservation principles\n\n\n\n\nUDE \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= NN_3\\left(\\frac{Central}{V_c}, R\\right)\n\\end{aligned}\n\\]\n\nExplicit knowledge of some terms\nNeural networks only where needed\n\n\n\nTargeted Neural Enhancement (still a UDE) \\[\n\\begin{aligned}\n\\frac{dDepot}{dt} &= - K_a \\cdot Depot\\\\\n\\frac{dCentral}{dt} &= K_a \\cdot Depot - CL/V_c \\cdot Central\\\\\n\\frac{dR}{dt} &= k_{in} \\cdot \\left(1 + NN\\left(\\frac{Central}{V_c}\\right)\\right) - k_{out} \\cdot R\n\\end{aligned}\n\\]\n\nMost knowledge encoded!\nNeural network captures unknown drug effect\nPrecise positioning and inputs"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
-    "href": "02-deepnlme-part1.html#extending-for-longitudinal-data-with-deepnlme",
-    "title": "DeepNLME",
-    "section": "Extending for longitudinal data with DeepNLME",
-    "text": "Extending for longitudinal data with DeepNLME\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]"
-  },
-  {
-    "objectID": "02-deepnlme-part1.html#individual-level-neural-networks",
-    "href": "02-deepnlme-part1.html#individual-level-neural-networks",
-    "title": "DeepNLME",
-    "section": "Individual-level neural networks",
-    "text": "Individual-level neural networks\n\\[\\begin{equation}\nη \\sim \\mathcal{N}\\left(Ω\\right)\n\\end{equation}\\] \\[\\begin{align*}\nKa &= tvKa \\cdot e^{η_{2}} \\\\\nV_c &= tvV_c \\cdot e^{η_{3}} \\\\\nKout &= tvKout \\cdot e^{η_{4}}\n\\end{align*}\\]\n\\[\\begin{align*}\n\\frac{\\mathrm{d} Depot(t)}{\\mathrm{d}t} &=  - Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} Central(t)}{\\mathrm{d}t} &= \\frac{ - CL \\cdot Central(t)}{V_c} + Ka \\cdot Depot(t) \\\\\n\\frac{\\mathrm{d} R(t)}{\\mathrm{d}t} &= Kin \\cdot \\left( 1 + NN\\left(\\frac{Central}{V_c}, {\\color{orange} η₁} \\right) \\right) - Kout \\cdot R(t)\n\\end{align*}\\]\n\\[\\begin{align*}\nyPK &\\sim \\mathrm{Normal}\\left( \\frac{Central}{V_c}, σ_{pk} \\right) \\\\\nyPD &\\sim \\mathrm{Normal}\\left( R, σ_{pd} \\right)\n\\end{align*}\\]"
-  },
-  {
-    "objectID": "04-generative-ai.html#generative-ai",
-    "href": "04-generative-ai.html#generative-ai",
-    "title": "Generative AI and NLME",
-    "section": "Generative AI",
-    "text": "Generative AI\nGoal: Generate data indistinguishable in distribution to real data"
-  },
-  {
-    "objectID": "04-generative-ai.html#section",
-    "href": "04-generative-ai.html#section",
-    "title": "Generative AI and NLME",
-    "section": "",
-    "text": "~ \nwww.thispersondoesnotexist.com"
-  },
-  {
-    "objectID": "04-generative-ai.html#how-is-that-done",
-    "href": "04-generative-ai.html#how-is-that-done",
-    "title": "Generative AI and NLME",
-    "section": "How is that done?",
-    "text": "How is that done?\n\n\nData is a mix of\n\nObserved quantities (pixel intensities)\nUnobserved quantities (faces, smiling, …)\n\nWe humans learn to extract the unobserved quantities\nGenAI needs to do that too."
-  },
-  {
-    "objectID": "04-generative-ai.html#how-is-that-done-1",
-    "href": "04-generative-ai.html#how-is-that-done-1",
-    "title": "Generative AI and NLME",
-    "section": "How is that done?",
-    "text": "How is that done?\n\n\nData is a mix of\n\nObserved quantities (\\(y\\))\nUnobserved quantities (\\(z\\) - “latent variables”)"
-  },
-  {
-    "objectID": "04-generative-ai.html#generative-models",
-    "href": "04-generative-ai.html#generative-models",
-    "title": "Generative AI and NLME",
-    "section": "Generative models",
-    "text": "Generative models\n\nDefinitions\n\n\\(z\\): latent variables of dimension \\(d\\)\n\\(y\\): observed data\n\\(y_g\\): generated/simulated/synthetic data\n\nModel\n\n\\[\n\\begin{aligned}\ny_g &= f(z) + \\epsilon \\\\\nz &\\sim Normal(0, I_{d\\times d}) \\\\\n\\epsilon &\\sim Normal(0, \\sigma^2)\n\\end{aligned}\n\\]\n\nObjective: find \\(f\\) such that the distribution of \\(y_g\\) is close to the distribution of the observed data \\(y\\)"
-  },
-  {
-    "objectID": "04-generative-ai.html#nlme-is-generative-ai",
-    "href": "04-generative-ai.html#nlme-is-generative-ai",
-    "title": "Generative AI and NLME",
-    "section": "NLME is Generative AI!",
-    "text": "NLME is Generative AI!\n\nDefinitions\n\n\\(\\eta\\): latent variables of dimension \\(d\\) and covariance matrix \\(\\Omega\\)\n\\(x\\): observed covariates\n\\(dv\\): observed data/response\n\\(dv_g\\): generated/simulated/synthetic data\n\nModel\n\n\\[\n\\begin{aligned}\ndv_g &= f_\\theta(\\eta, x) + \\epsilon \\\\\n\\eta &\\sim Normal(0, \\Omega) \\\\\n\\epsilon &\\sim Normal(0, \\sigma^2)\n\\end{aligned}\n\\]\n\nObjective: find \\(f\\) such that the conditional distribution of \\(dv_g | x\\) is close to the distribution of the observed data \\(dv\\)"
-  },
-  {
-    "objectID": "04-generative-ai.html#nlme-is-generative-ai-1",
-    "href": "04-generative-ai.html#nlme-is-generative-ai-1",
-    "title": "Generative AI and NLME",
-    "section": "NLME is Generative AI!",
-    "text": "NLME is Generative AI!\nNLME objective: Maximize marginal likelihood of observations \\(y\\) given covariates \\(c\\):\n\\[\np_\\theta(y | c) = \\int p_\\theta(y | \\eta, c) \\cdot p(\\eta) d\\eta\n\\]\nVariational Autoencoder (GenAI) objective: Maximize likelihood of data \\(x\\):\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\nThey’re identical!\n\nRandom effects \\(\\eta\\) ↔︎ Latent variables \\(z\\)\nObservations \\(y\\) ↔︎ Generated data \\(x\\)\nIndividual predictions ↔︎ Generative model"
-  },
-  {
-    "objectID": "04-generative-ai.html#generative-ai-typical-anatomy",
-    "href": "04-generative-ai.html#generative-ai-typical-anatomy",
-    "title": "Generative AI and NLME",
-    "section": "Generative AI – Typical anatomy",
-    "text": "Generative AI – Typical anatomy"
-  },
-  {
-    "objectID": "04-generative-ai.html#nlme-as-genai",
-    "href": "04-generative-ai.html#nlme-as-genai",
-    "title": "Generative AI and NLME",
-    "section": "NLME as GenAI",
-    "text": "NLME as GenAI\n\n\n\nInput: Time series\nOutput: Time series\n\n \n\nDecoder: The “structural” NLME model\nEncoder: an inverse problem of the decoder"
-  },
-  {
-    "objectID": "04-generative-ai.html#what-are-latent-variables",
-    "href": "04-generative-ai.html#what-are-latent-variables",
-    "title": "Generative AI and NLME",
-    "section": "What Are Latent Variables?",
-    "text": "What Are Latent Variables?\nIn Traditional NLME: Meaning is structurally engineered\n\\[\nCL = tvCL \\cdot e^{\\eta_1}\n\\]\nIn DeepNLME: More flexible, but still some structure\n\\[\n\\frac{dR}{dt} = NN\\left(\\frac{Central}{Vc}, R, \\eta_1, \\eta_2 \\right)\n\\]\nIn Pure GenAI: Meaning emerges from data and training\n\\[\np_\\theta(x) = \\int p_\\theta(x | z) \\cdot p(z) dz\n\\]\n\\(z\\) captures informative properties not directly observed"
-  },
-  {
-    "objectID": "04-generative-ai.html#latent-variables-as-information",
-    "href": "04-generative-ai.html#latent-variables-as-information",
-    "title": "Generative AI and NLME",
-    "section": "Latent Variables as Information",
-    "text": "Latent Variables as Information\nFor images:\n\nNot pixel-by-pixel intensity\nRather: Objects, characteristics, actions, style, lighting\n\nFor text:\n\nNot individual words\nRather: Sentiment, information content, writing style, language\n\nFor clinical data:\n\nNot individual measurements\nRather: Disease state, treatment response, patient phenotype"
   },
   {
     "objectID": "06-epidemiology-demo.html#setup",

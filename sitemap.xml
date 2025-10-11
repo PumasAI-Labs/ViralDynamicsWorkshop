@@ -2,27 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/index.html</loc>
-    <lastmod>2025-10-10T16:22:55.413Z</lastmod>
+    <lastmod>2025-10-11T15:03:02.039Z</lastmod>
   </url>
   <url>
-    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/05-complex-covariates.html</loc>
-    <lastmod>2025-10-08T07:08:41.601Z</lastmod>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/05-covariate-modelling.html</loc>
+    <lastmod>2025-10-11T15:00:12.450Z</lastmod>
   </url>
   <url>
-    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/03-random-effects-revisited.html</loc>
-    <lastmod>2025-10-10T16:24:14.414Z</lastmod>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/04-generative-ai.html</loc>
+    <lastmod>2025-10-11T13:58:43.677Z</lastmod>
+  </url>
+  <url>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/02-deepnlme-part1.html</loc>
+    <lastmod>2025-10-11T13:26:12.696Z</lastmod>
   </url>
   <url>
     <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/01-introduction.html</loc>
     <lastmod>2025-10-09T10:25:21.765Z</lastmod>
   </url>
   <url>
-    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/02-deepnlme-part1.html</loc>
-    <lastmod>2025-10-09T13:46:58.667Z</lastmod>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/03-random-effects-revisited.html</loc>
+    <lastmod>2025-10-11T13:57:13.909Z</lastmod>
   </url>
   <url>
-    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/04-generative-ai.html</loc>
-    <lastmod>2025-10-10T16:09:56.574Z</lastmod>
+    <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/05-complex-covariates.html</loc>
+    <lastmod>2025-10-11T14:00:12.675Z</lastmod>
   </url>
   <url>
     <loc>https://PumasAI-Labs.github.io/ViralDynamicsWorkshop/06-epidemiology-demo.html</loc>

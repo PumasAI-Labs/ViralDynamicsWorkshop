@@ -14,7 +14,7 @@
 
   <meta name="author" content="Niklas Korsbo">
   <meta name="dcterms.date" content="2025-10-11">
-  <title>DeepPumas for Viral Dynamics Workshop – Random effects</title>
+  <title>DeepPumas for Viral Dynamics Workshop – Complex covariates</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -135,8 +135,8 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Random effects</h1>
-  <p class="subtitle">And how they interact with machine learning</p>
+  <h1 class="title">Complex covariates</h1>
+  <p class="subtitle">A DeepPumas take on covariate modelling</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -148,338 +148,77 @@ Niklas Korsbo
 
   <p class="date">2025-10-11</p>
 </section>
-<section>
-<section id="mixed-effects" class="title-slide slide level1 center">
-<h1>Mixed effects (?)</h1>
+<section id="covariates" class="title-slide slide level1 center">
+<h1>Covariates … ?</h1>
+<ul>
+<li>A measurable characteristic of an individual that explains part of the variability in model parameters across a population.</li>
+</ul>
+</section>
 
-</section>
-<section id="what-are-mixed-effects-models" class="slide level2 center">
-<h2>What are mixed effects models?</h2>
+<section>
+<section id="between-subject-variability" class="title-slide slide level1 center">
+<h1>Between-subject variability … ?</h1>
 <ul>
-<li>Fixed effects, <span class="math inline">\(θ\)</span>
-<ul>
-<li>Model parameters modelled as deterministic quantities</li>
-</ul></li>
-<li>Random effects, <span class="math inline">\(η_i\)</span>
-<ul>
-<li>Model parameters modelled as random variables</li>
-</ul></li>
-</ul>
-<p><span class="att"><strong>Hierarchical</strong></span></p>
-<p>We typically define hierarchies where <span class="math inline">\(θ\)</span> are shared parameters but <span class="math inline">\(η\)</span> is subject-specific.</p>
-</section>
-<section id="no-need-to-assign-too-much-meaning-to-random-effects" class="slide level2 center">
-<h2>No need to assign too much meaning to random effects</h2>
-<ul>
-<li>Indicates unknown parameters that vary between subjects (or whatever hierarchy we use)</li>
-<li>Usually tied very closely to a specific parameter in pharmacometrics. <span class="math inline">\(CL = tvCL \cdot e^{η_{CL}}\)</span></li>
-<li>Enables degree o freedom along which the model can account for heterogenous outcomes</li>
+<li><p>Differences in outcomes between individuals that cannot be explained by the model structure and random noise alone</p></li>
+<li><p>Typically handled by introducing individual-specific parameters</p></li>
+<li><p>Random effects can characterize this variability as a posterior distribution of patient features</p></li>
 </ul>
 </section>
-<section id="simulating-with-random-effects" class="slide level2 center">
-<h2>Simulating with random effects</h2>
-<p><span class="att">Simple</span></p>
+<section id="augment-workflow" class="slide level2 center">
+<h2>Augment workflow</h2>
+<p><a href="images/aug1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img data-src="images/aug1.png"></a></p>
 <ul>
-<li>We have given <span class="math inline">\(θ\)</span> and covariates <span class="math inline">\(x\)</span></li>
-<li><span class="att">Sample</span> from the prior <span class="math inline">\(η | θ\)</span></li>
-<li>Compute your individual parameters and propagate your ODE</li>
-<li>Sample your observations <span class="math inline">\(y | θ, η, x\)</span></li>
+<li>Green: observed quantities</li>
+<li>Blue: Fixed effects</li>
+<li>Red: Random effects</li>
 </ul>
-</section>
-<section id="fitting-with-random-effects" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<p><span class="att">Conditional probability / Joint likelihood / MLE</span></p>
-<p>Probability of the response <span class="att"><span class="math inline">\(y\)</span></span> according to the model given specific values of <span class="att"><span class="math inline">\(θ\)</span></span>, <span class="att"><span class="math inline">\(η\)</span></span>, and <span class="att"><span class="math inline">\(x\)</span></span>.</p>
-<p><span class="math display">\[
-p_c(y | θ, η, x)
-\]</span></p>
-<p>Fit model by simply finding the values of <span class="att"><span class="math inline">\(θ\)</span></span> and <span class="att"><span class="math inline">\(η\)</span></span> that jointly maximize the probability?</p>
-<p>Equivalent to minimizing a distance metric (e.g.&nbsp;MSE) between observed and predicted data.</p>
-<div class="fragment">
-<p><span class="att">Not what we do</span></p>
-</div>
-</section>
-<section id="fitting-with-random-effects-1" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<p><span class="att">Marginal probability</span></p>
-<p>Integrates out the effect of the random effects.</p>
-<p><span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<p>Average conditional probability weighted by a prior</p>
-</section>
-<section id="fitting-with-random-effects-2" class="slide level2 center">
-<h2>Fitting with random effects</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><a href="assets/random_effects_marginal_likelihood.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="&nbsp;"><img data-src="assets/random_effects_marginal_likelihood.png" alt="&nbsp;"></a></p>
-<figcaption>&nbsp;</figcaption>
-</figure>
-</div>
-</section>
-<section id="one-dimension-per-random-effect" class="slide level2 center">
-<h2>One dimension per random effect</h2>
-<ul>
-<li><span class="math inline">\(η\)</span> here can be multi-dimensional</li>
-</ul>
-<p><span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<ul>
-<li><p>This is a multi-variate integral</p></li>
-<li><p>One dimension (degree of freedom) along which to account for between subject variability in the data for each random effect.</p></li>
-<li><p>Marginalization incentivizes that each random effect controls a single <span class="att">smooth</span> dimension between-subject variability.</p></li>
-</ul>
-</section>
-<section id="smoothness" class="slide level2 smaller center">
-<h2>“Smoothness”?</h2>
-<div class="columns">
-<div class="column" style="width:55%;">
-<p><span class="att">Classical NLME</span> <span class="math display">\[
-EFF = \left(1 + Smax \cdot \frac{C}{tvSC50 \cdot exp\left(\mathbf{\eta}\right) + C}\right)
-\]</span></p>
-<ul>
-<li>This function is somewhat smooth in <span class="math inline">\(η\)</span> by structural definition.</li>
-<li>Very little flexibility to affect the smoothness by tuning fixed effects.</li>
-</ul>
-</div><div class="column" style="width:45%;">
-<p><a href="assets/eff_classical.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="assets/eff_classical.png"></a></p>
-</div></div>
-<p><span class="att">DeepNLME</span></p>
-<p><span class="math display">\[
-EFF = \left(1 + NN(C, η)\right)
-\]</span></p>
-<ul>
-<li>This function <em>can</em> be very non-smooth in <span class="math inline">\(η\)</span>.</li>
-<li>Lots of flexibility to affect the smoothness by tuning fixed effects.</li>
-<li>Incentivizing smoothness by marginalization in the fit really helps here!</li>
-</ul>
-</section>
-<section id="smoothness-in-deepnlme" class="slide level2 smaller center">
-<h2>Smoothness in DeepNLME</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><span class="att">Data-generating function:</span> <span class="math display">\[
-Y = \frac{E_{max} \cdot x}{EC_{50} + x} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)
-\]</span></p>
-<p>where <span class="math display">\[
-\begin{align}
-E_{max} &amp;\sim \mathcal{U}(0.5, 1.5) \\
-EC_{50} &amp;\sim \mathrm{LogNormal}(-2, 1.0)
-\end{align}
-\]</span></p>
-<p><span class="att">DeepNLME model:</span> <span class="math display">\[
-\begin{align}
-Y &amp;= {\color{orange}NN(x, η₁, η₂)} + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2)\\
-η &amp;\sim \mathcal{N}(0, I)
-\end{align}
-\]</span></p>
-</div><div class="column" style="width:50%;">
-<p><a href="assets/me_ipred.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="assets/me_ipred.png"></a></p>
-</div></div>
 </section>
 <section id="section" class="slide level2 center">
 <h2></h2>
-<p><a href="assets/eff_deepnlme.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="assets/eff_deepnlme.png"></a></p>
-</section></section>
-<section id="maximizing-the-marginal-likelihood" class="title-slide slide level1 center">
-<h1>Maximizing the marginal likelihood</h1>
-<p>The marginal likelihood is often intractable to compute exactly. <span class="math display">\[
-p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
-\]</span></p>
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li><span class="att">No marginalization</span>
-<ul>
-<li><code>NaivePooled()</code> <!-- - Ignores random effects --> <!-- - Equivalent to assuming $η=0$ for all subjects --></li>
-<li><code>JointMAP()</code> <!-- - Maximizes the joint aposteriori likelihood
-  - Equivalent to estimating $η$ as fixed effects --></li>
-</ul></li>
-<li><span class="att">Maximize an approximation</span>
-<ul>
-<li><code>LaplaceI()</code></li>
-<li><code>FOCE()</code> - Often our first choice</li>
-<li><code>FO()</code></li>
-</ul></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<ul>
-<li><span class="att">Expectation maximization (EM, indirect)</span>
-<ul>
-<li><code>SAEM()</code></li>
-<li>Markov Chain EM</li>
-<li>Variational EM (Later this year)</li>
-</ul></li>
-<li><span class="att">Monte Carlo integration</span>
-<ul>
-<li><code>BayesMCMC()</code></li>
-<li><code>MarginalMCMC()</code></li>
-</ul></li>
-</ul>
-</div></div>
-<p>Many can be wrapped in <code>MAP()</code> to do maximum a-posteriori estimation of fixed effects.</p>
-<!-- 
-      
-## Let's incrementally break this
-
-```zsrxxlr
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=3.,
-  tvVc=1.,
-  Ω = Diagonal([0.1]),
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.1:1)
-end
-pop = Subject.(sims)
-
-latexify(pkmodel, :dynamics)
-plotgrid(sims)
-```
-
-
-```zsrxxlr
-model1 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc #* exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-
-
-fpm = fit(model1, pop, init_params(model1), FOCE())
-```
-
-
-```zsrxxlr
-#| output: true 
-#| eval: true
-pkmodel = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PSDDomain(2)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(η[1])
-    Vc = tvVc * exp(η[2])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, Central/Vc * σ)
-end
-
-param = (; 
-  # tvKa = 2.,
-  tvCL=0.7,
-  tvVc=1.,
-  Ω = [0.1 0.0
-       0.0 0.1],
-  σ=0.1
-)
-rng = StableRNG(2)
-sims = map(1:20) do i 
-  _subj = Subject(; id=i, events = DosageRegimen(1))
-  sim = simobs(pkmodel, _subj, param; rng, obstimes = 0:0.4:2)
-end
-pop = Subject.(sims)
-
-plotgrid(sims)
-```
-
-
-```zsrxxlr
-model2 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL #* exp(η[1])
-    Vc = tvVc * exp(η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```zsrxxlr
-model3 = @model begin
-  @param begin
-    # tvKa in RealDomain(; lower=0)
-    tvCL in RealDomain(; lower=0)
-    tvVc in RealDomain(; lower=0)
-    Ω in PDiagDomain(1)
-    c in RealDomain(; lower=0, upper=1, init=0.5)
-    σ in RealDomain(; lower=0)
-  end
-  @random η ~ MvNormal(Ω)
-  @pre begin
-    CL = tvCL * exp(c * η[1])
-    Vc = tvVc * exp((1 - c) * η[1])
-  end
-  @dynamics Central1
-  @derived Concentration ~ @. Normal(Central/Vc, σ)
-end
-```
-
-```zsrxxlr
-fpm1 = fit(model1, pop, init_params(model1), FOCE())
-fpm2 = fit(model2, pop, init_params(model2), FOCE())
-fpm3 = fit(model3, pop, init_params(model3), FOCE())
-```
-```zsrxxlr
-coef(fpm3).c
-```
-
-@show loglikelihood(pkmodel, pop, param, FOCE())
-@show loglikelihood(fpm1)
-@show loglikelihood(fpm2)
-@show loglikelihood(fpm3)
-``` -->
-
-
+<p><a href="images/aug2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img data-src="images/aug2.png"></a></p>
 </section>
+<section id="covariate-free-model" class="slide level2 center">
+<h2>Covariate-free model</h2>
+<p><a href="images/aug3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img data-src="images/aug3.png"></a></p>
+<ul>
+<li>So far, our models have been covariate-free</li>
+<li>They cannot exploit known heterogeneity in the patients to give better predictions</li>
+</ul>
+<p>Can we predict the values of the random effect from the covariates?</p>
+</section>
+<section id="supervised-learning" class="slide level2 center">
+<h2>Supervised learning</h2>
+<p><a href="images/aug4.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img data-src="images/aug4.png"></a></p>
+</section>
+<section id="augmented-model" class="slide level2 center">
+<h2>Augmented model</h2>
+<p><a href="images/aug5.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img data-src="images/aug5.png"></a></p>
+</section>
+<section id="to-make-it-harder" class="slide level2 center">
+<h2>To make it harder…</h2>
+<ul>
+<li>We <em>could</em> use EBEs directly - in DeepPumas, we don’t</li>
+<li>We can use transformed EBEs - that we do
+<ul>
+<li>orthogonalized MvNormals</li>
+<li>standardized to similar absolute values</li>
+<li>unconstrained values</li>
+<li>invertible</li>
+<li>We can weight with sensitivity of the loglikelihood</li>
+</ul></li>
+<li>We could use the “full” posterior distribution</li>
+</ul>
+</section>
+<section id="what-were-really-after" class="slide level2 center">
+<h2>What we’re really after</h2>
+<p><span class="math display">\[
+\eta_i \sim p(\eta | \text{covariates})
+\]</span></p>
+<p>A rich description of how covariate information affects the prior distribution of the random effects.</p>
+<p>To be presented at ACoP in two weeks</p>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="https://pumas-assets.s3.amazonaws.com/CompanyLogos/DeepPumas/RGB/SVG/DeepPumas+Primaryv.svg" class="slide-logo"></p>
