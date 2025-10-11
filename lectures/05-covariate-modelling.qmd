@@ -1,0 +1,58 @@
+---
+title: "Complex covariates"
+subtitle: "A DeepPumas take on covariate modelling"
+format: revealjs
+---
+
+# Covariates ... ?
+
+- A measurable characteristic of an individual that explains part of the variability in model parameters across a population.
+
+# Between-subject variability ... ?
+
+- Differences in outcomes between individuals that cannot be explained by the model structure and random noise alone
+
+- Typically handled by introducing individual-specific parameters
+
+- Random effects can characterize this variability as a posterior distribution of patient features
+
+## Augment workflow
+
+![](images/aug1.png)
+
+- Green: observed quantities
+- Blue: Fixed effects
+- Red: Random effects
+
+##
+![](images/aug2.png)
+
+## Covariate-free model
+![](images/aug3.png)
+
+- So far, our models have been covariate-free
+- They cannot exploit known heterogeneity in the patients to give better predictions
+
+Can we predict the values of the random effect from the covariates?
+
+## Supervised learning
+![](images/aug4.png)
+
+
+## Augmented model
+
+![](images/aug5.png)
+
+## To make it harder...
+
+- We *could* use EBEs directly - in DeepPumas, we don't
+- We can use transformed EBEs - that we do
+    - orthogonalized MvNormals
+    - standardized to similar absolute values
+    - unconstrained values
+    - invertible
+    - We can weight with sensitivity of the loglikelihood
+- We could use the "full" posterior distribution
+
+
+    
