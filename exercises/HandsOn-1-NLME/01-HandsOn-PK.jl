@@ -15,9 +15,6 @@ using CairoMakie
 using CSV
 using DataFrames
 using DataFramesMeta
-using Chain                      # for @chain
-using LinearAlgebra              # Diagonal()
-using Unitful                    # u"d" etc.
 using Random                     # reproducibility
 using Serialization              # serialize/deserialize fits
 # using PharmaDatasets           # optional helper (not required)
@@ -26,17 +23,7 @@ using Serialization              # serialize/deserialize fits
 set_theme!(deep_light())
 
 # All outputs (plots/tables/serialized fits) go here
-# Check if "ASSESTS" directory exists in the current working directory.
-ASSESTS_path = joinpath(@__DIR__, "assests/")
-
-if !isdir(ASSESTS_path)
-    println("ASSESTS directory does not exist. Creating: $ASSESTS_path")
-    mkdir(ASSESTS_path)
-else
-    println("ASSESTS directory already exists: $ASSESTS_path")
-end
-
-ASSETS_DIR = ASSESTS_path
+ASSESTS_DIR = joinpath(@__DIR__, "assests/")
 
 
 ########################################
@@ -129,10 +116,7 @@ model_pk2cmt = @model begin
   end
 
   @derived begin
-    CP ~ @. Normal(
-      Conc,
-      sqrt(σ_addpk^2 + (abs(Conc) * σ_proppk)^2)
-    )
+    CP ~ @. Normal(Conc, sqrt(σ_addpk^2 + (abs(Conc) * σ_proppk)^2))
   end
 end
 
@@ -148,10 +132,12 @@ param_pk2cmt = (
   σ_addpk   = 10.0
 )
 
+# Initial parameters can also be extracted from the model
+init_params(model_pk2cmt)
+
 #########################################
 # 4) Estimation for Model 1 (2CMT first-order absorption)
 #########################################
-# fit_pk2cmt_foce        = fit(model_pk2cmt, pop_pk, init_params(model_pk2cmt), FOCE())
 fit_pk2cmt_foce        = fit(model_pk2cmt, pop_pk, param_pk2cmt, FOCE())
 fit_pk2cmt_np          = fit(model_pk2cmt, pop_pk, param_pk2cmt, NaivePooled(); omegas = (:Ω,))
 fit_pk2cmt_laplace     = fit(model_pk2cmt, pop_pk, param_pk2cmt, LaplaceI())
@@ -233,7 +219,7 @@ model_pkseq = @model begin
 
   @dosecontrol begin
     # Duration for zero-order input into Depot (convert hours → days to match timeu)
-    duration = (; Depot = (tvd) * exp(η[4]))
+    duration = (; Depot = tvd * exp(η[4]))
   end
 
   @init begin
