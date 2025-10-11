@@ -26,7 +26,7 @@ using Serialization              # serialize/deserialize fits
 set_theme!(deep_light())
 
 # Define artifacts path
-ASSESTS_DIR = joinpath(@__DIR__, "assests")
+ASSETS_DIR = joinpath(@__DIR__, "assets")
 
 
 ########################################
@@ -44,7 +44,7 @@ df_pk_seq = @chain df_pk begin
   end
 
 # Load previously fitted PK model (FOCE method) from artifacts
-fit_pkseq_foce = deserialize(joinpath(ASSESTS_DIR, "fit_pkseq_foce.jls"));
+fit_pkseq_foce = deserialize(joinpath(ASSETS_DIR, "fit_pkseq_foce.jls"));
 
 # Inspect the fit object (optional)
 fit_pkseq_foce
@@ -89,7 +89,7 @@ vscodedisplay(pd_dataframe)
 # 3) Save PKPD Dataset
 ########################################
 
-CSV.write(joinpath(ASSESTS_DIR, "hiv-ipp-data.csv"), pd_dataframe)
+CSV.write(joinpath(ASSETS_DIR, "hiv-ipp-data.csv"), pd_dataframe)
 
 # =============================================================================
 # End of the Script

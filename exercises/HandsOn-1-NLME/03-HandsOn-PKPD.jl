@@ -26,15 +26,15 @@ using Serialization        # for saving/loading model fits
 set_theme!(deep_light())
 
 # Set working directory to script folder 
-ASSESTS_DIR = joinpath(@__DIR__, "assests")
+ASSETS_DIR = joinpath(@__DIR__, "assets")
 
 
 ########################################
 # 1) Load & validate the source dataset
 ########################################
 
-# Expect a file "hiv-ipp-data.csv" in ASSESTS_DIR
-DATA_PATH = joinpath(ASSESTS_DIR, "hiv-ipp-data.csv")
+# Expect a file "hiv-ipp-data.csv" in ASSETS_DIR
+DATA_PATH = joinpath(ASSETS_DIR, "hiv-ipp-data.csv")
 
 df_pkpd = CSV.read(DATA_PATH, DataFrame; missingstring = "", stringtype = String)
 
@@ -68,7 +68,7 @@ plotgrid(pop_pd[1:8]; data=(; color=:blue))
 ############################################
 # 3) Define the HIV PKPD Model (PD Only)
 ############################################
-
+# Ref: https://doi.org/10.1371/journal.pone.0040198
 model_pd = @model begin
     @metadata begin
       desc = "HIV PK–PD Model"
@@ -174,12 +174,12 @@ fit_pd_foce = fit(
     FOCE()
 )
 
-# Save and reload the fit for reproducibility
-# serialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"), fit_pd_foce)
-# fit_pd_foce_loaded = deserialize(joinpath(ASSESTS_DIR, "fit_pd_foce.jls"))
 
-# Infer parameter uncertainty
-infer(fit_pd_foce)
+# Note: Ω₁,₁ is very small and may not required!
+
+# Save and reload the fit for reproducibility
+serialize(joinpath(ASSETS_DIR, "fit_pd_foce.jls"), fit_pd_foce)
+# fit_pd_foce = deserialize(joinpath(ASSETS_DIR, "fit_pd_foce.jls"))
 
 ############################################
 # 5) Diagnostics and Goodness-of-Fit

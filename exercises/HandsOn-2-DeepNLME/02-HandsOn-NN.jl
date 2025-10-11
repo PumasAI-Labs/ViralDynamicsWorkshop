@@ -92,7 +92,6 @@ model_hiv = @model begin
         tvV0 ∈ RealDomain(lower = 0.001, init = 0.5)
 
         # Random effects
-        # ω ∈ RealDomain(; lower = 0)
         ωV0  ∈ RealDomain(; lower = 0)
 
         # Residual error
@@ -144,7 +143,7 @@ model_hiv = @model begin
     end
 end
 
-
+# Note: instead of Central/VC, we could have Emax/Imax function
 ########################################
 # 4) Fit the Model
 ########################################

@@ -23,7 +23,7 @@ using Serialization              # serialize/deserialize fits
 set_theme!(deep_light())
 
 # All outputs (plots/tables/serialized fits) go here
-ASSESTS_DIR = joinpath(@__DIR__, "assests/")
+ASSETS_DIR = joinpath(@__DIR__, "assets/")
 
 
 ########################################
@@ -141,7 +141,7 @@ init_params(model_pk2cmt)
 fit_pk2cmt_foce        = fit(model_pk2cmt, pop_pk, param_pk2cmt, FOCE())
 fit_pk2cmt_np          = fit(model_pk2cmt, pop_pk, param_pk2cmt, NaivePooled(); omegas = (:Ω,))
 fit_pk2cmt_laplace     = fit(model_pk2cmt, pop_pk, param_pk2cmt, LaplaceI())
-fit_pk2cmt_foce_fixed  = fit(model_pk2cmt, pop_pk, param_pk2cmt, FOCE(); constantcoef = (:tvcl,))
+fit_pk2cmt_foce_fixed  = fit(model_pk2cmt, pop_pk, param_pk2cmt, FOCE(); constantcoef = (tvcl=10,))
 
 # Coefficients/tables 
 coef(fit_pk2cmt_foce)
@@ -246,6 +246,8 @@ model_pkseq = @model begin
 end
 
 fit_pkseq_foce    = fit(model_pkseq, pop_pk_seq, init_params(model_pkseq), FOCE())
+
+# Note: Ω₄,₄ is very small - may be not required in the model! 
 
 ##########################################
 # 8) Model comparison & diagnostics

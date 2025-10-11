@@ -85,11 +85,11 @@ model_hiv = @model begin
     end
   
     @param begin
-      NN1 ∈ MLPDomain(2 + 1, 7, 7, (1, softplus); reg=L2(1.0, input=false, output=false))
+      NN1 ∈ MLPDomain(2 + 1, 5, 5, (1, softplus); reg=L2(1.0, input=false, output=false))
       tvλ ∈ RealDomain(lower=0)
       d ∈ RealDomain(lower=0)
       a ∈ RealDomain(lower=0)
-      γ ∈ RealDomain(lower=0, init=1.0)
+      γ ∈ RealDomain(lower=0, init=1e5)
       x0 ∈ RealDomain(lower=0)
     #   ω ∈ RealDomain(lower=0)
 
@@ -104,7 +104,6 @@ model_hiv = @model begin
     @random begin
       η ~ MvNormal(Ω)
       EC50_η ~ MvNormal(EC50_Ω)
-      a_η ~ MvNormal(a_Ω)
       η_nn ~ Normal()
     end
   
@@ -138,7 +137,7 @@ model_hiv = @model begin
     @vars begin
     CP   = 1000 * Central / iVc
     EFF  = CP / (EC50 + CP)
-    V = γ * I * 1e5
+    V = γ * I 
     infect_term = iNN_INF(V / 1e5, EFF)[1]
     end
   
@@ -153,7 +152,7 @@ model_hiv = @model begin
     end
   
     @derived begin
-      log10V = @.log10(abs(V))
+      log10V = @.log10(V)
       Virus ~ @. Normal(log10V, σ)
     end
   end
@@ -171,7 +170,7 @@ fit_hiv = fit(
 )
 
 # Save and reload the fit for reproducibility
-# serialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"), fit_hiv)
+serialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"), fit_hiv)
 # fit_hiv = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
 
 ########################################
@@ -215,7 +214,7 @@ vpcfig_hiv
 # External Validation
 ########################################################################################################################
 
-mdl_fit = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
+fit_hiv = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
 
 ########################################
 # 7) Validation dataset
