@@ -55,10 +55,7 @@ end
 # Each patient has a clinical text description in the "Description" field
 DATA_PATH = joinpath(@__DIR__, "../..", "lectures", "data_prognostic_text.csv")
 patient_data = CSV.read(DATA_PATH, DataFrame)
-
-# Display structure
-first(patient_data, 5)
-
+patient_data
 # The data contains:
 # - id: Patient identifier
 # - time: Observation time
@@ -94,20 +91,20 @@ end
 model = @model begin
     @param begin
         # PK parameters
-        tvKa ∈ RealDomain(; lower = 0, init = 0.5)
-        tvCL ∈ RealDomain(; lower = 0, init = 1.0)
-        tvVc ∈ RealDomain(; lower = 0, init = 1.0)
+        tvKa ∈ RealDomain(; lower = 0)
+        tvCL ∈ RealDomain(; lower = 0)
+        tvVc ∈ RealDomain(; lower = 0)
         # PD parameters
-        tvSmax ∈ RealDomain(; lower = 0, init = 2.5)
-        tvn ∈ RealDomain(; lower = 0, init = 1.5)
-        tvSC50 ∈ RealDomain(; lower = 0, init = 0.05)
-        tvKout ∈ RealDomain(; lower = 0, init = 2.0)
-        tvKin ∈ RealDomain(; lower = 0, init = 1.0)
+        tvSmax ∈ RealDomain(; lower = 0)
+        # tvn ∈ RealDomain(; lower = 0)
+        tvSC50 ∈ RealDomain(; lower = 0)
+        tvKout ∈ RealDomain(; lower = 0)
+        tvKin ∈ RealDomain(; lower = 0)
         # Between-subject variability (random effects)
-        Ω ∈ PDiagDomain(5)
+        Ω ∈ PDiagDomain(4)
         # Residual error
-        σ ∈ RealDomain(; lower = 0, init = 0.1)
-        σ_pk ∈ RealDomain(; lower = 0, init = 0.02)
+        σ ∈ RealDomain(; lower = 0)
+        σ_pk ∈ RealDomain(; lower = 0)
     end
 
     @random begin
@@ -121,10 +118,10 @@ model = @model begin
         CL = tvCL
         Vc = tvVc * exp(η[2])
         Smax = tvSmax * exp(η[3])
-        SC50 = tvSC50 * exp(η[4])
-        Kout = tvKout * exp(η[5])
+        SC50 = tvSC50 #* exp(η[4])
+        Kout = tvKout * exp(η[4])
         Kin = tvKin
-        n = tvn
+        n = 1.5
     end
 
     @init begin
@@ -136,7 +133,8 @@ model = @model begin
         # Ensure non-negative PK concentration
         _cp = max(Central / Vc, 0.0)
         # Drug effect using Emax model
-        EFF = Smax * _cp^n / (SC50^n + _cp^n)
+        # EFF = Smax * _cp^n / (SC50^n + _cp^n)
+        EFF = Smax * _cp / (SC50 + _cp)
     end
 
     @dynamics begin
@@ -161,14 +159,13 @@ fitted_nlme = fit(
     train_pop,
     init_params(model),
     MAP(FOCE());
-    optim_options = (; iterations = 100, show_trace = true)
+    optim_options = (; iterations = 200)
 )
 
-# Get empirical Bayes estimates (EBEs) - these are the individual η values
-η_train = empirical_bayes(fitted_nlme)
 
-# EBEs capture patient-specific deviations from population parameters
-# We'll now see if we can predict these from the text descriptions!
+pred = predict(fitted_nlme, test_pop; obstimes = 0:0.1:10)
+plotgrid(pred[1:12])
+
 
 ############################################################################################
 # 3) Create text embeddings using a pre-trained language model
@@ -212,7 +209,7 @@ println("Number of training patients: $(size(X_train, 2))")
 # 4) Dimensionality reduction with PCA
 ############################################################################################
 
-# The original embeddings are high-dimensional (typically 384-768 dimensions)
+# The original embeddings are high-dimensional (in this case 384 dimensions)
 # Our clinical data likely lives on a lower-dimensional manifold
 # Use PCA to find the most important directions
 
@@ -307,9 +304,6 @@ fnn = fit(
     training_fraction = 0.8  # Use 80% for training, 20% for validation
 )
 
-# Evaluate predictions on test set
-vη = empirical_bayes(model, vpope, coef(fitted_nlme), FOCE())
-
 # Compare predictions to computed, "true", EBEs on the validation data
 pred_etas = mapreduce(vcat, vpope) do subj
     predicted_ebe = fnn(subj)[1]
@@ -355,36 +349,9 @@ fit_deep = fit(
 pred_original = predict(fitted_nlme, vpope)
 pred_augmented = predict(deep_fpm, vpope)
 
-# Calculate performance metrics
-let
-    df_orig = DataFrame(pred_original)
-    df_aug = DataFrame(pred_augmented)
-    
-    # Mean Absolute Error for PD predictions
-    mae_orig = mean(abs.(df_orig.yPD .- df_orig.yPD_pred))
-    mae_aug = mean(abs.(df_aug.yPD .- df_aug.yPD_pred))
-    
-    # Correlation for PD predictions
-    r2_orig = cor(df_orig.yPD, df_orig.yPD_pred)^2
-    r2_aug = cor(df_aug.yPD, df_aug.yPD_pred)^2
-    
-    println("\n=== Model Performance on Test Set ===")
-    println("Original Model:")
-    println("  MAE: $(round(mae_orig, digits=3))")
-    println("  R²: $(round(r2_orig, digits=3))")
-    println("\nAugmented Model (with embeddings):")
-    println("  MAE: $(round(mae_aug, digits=3))")
-    println("  R²: $(round(r2_aug, digits=3))")
-    println("\nImprovement:")
-    println("  MAE reduction: $(round(100*(mae_orig - mae_aug)/mae_orig, digits=1))%")
-    println("  R² increase: $(round(100*(r2_aug - r2_orig)/r2_orig, digits=1))%")
-end
-
 # Visualize predictions for first 12 test subjects
 pred_plot = predict(deep_fpm, vpope[1:12]; obstimes = 0:0.1:10)
-fig = plotgrid(pred_plot; ipred = false, observation = :yPD)
-save(joinpath(ASSETS_DIR, "augmented_predictions.png"), fig)
-display(fig)
+plotgrid(pred_plot; ipred = true, observation = :yPD)
 
 ############################################################################################
 # 7) Verify improved population predictions with VPC
@@ -396,30 +363,9 @@ display(fig)
 println("\nGenerating VPCs...")
 
 # VPC for original model
-vpc_original = vpc(fitted_nlme, vpope; observations = [:yPD])
+vpc_original = vpc(fitted_nlme; observations = [:yPD])
 fig_vpc_original = vpc_plot(vpc_original; figure = (; size = (900, 300)))
-save(joinpath(ASSETS_DIR, "vpc_original.png"), fig_vpc_original)
 
 # VPC for augmented model
 vpc_augmented = vpc(fit_deep; observations = [:yPD])
 fig_vpc_augmented = vpc_plot(vpc_augmented; figure = (; size = (900, 300)))
-save(joinpath(ASSETS_DIR, "vpc_augmented.png"), fig_vpc_augmented)
-
-display(fig_vpc_original)
-display(fig_vpc_augmented)
-
-println("\nExercise complete! Check the assests/ folder for all generated plots.")
-
-############################################################################################
-# Summary
-############################################################################################
-
-# What we learned:
-# 1. How to create text embeddings from clinical descriptions using pre-trained models
-# 2. How to reduce dimensionality with PCA to focus on relevant information
-# 3. How to train a neural network to predict patient-specific parameters from embeddings
-# 4. How to augment traditional NLME models with embedding-based predictions
-# 5. How this approach reduces unexplained variability and improves predictions
-#
-# Key insight: Complex covariates like text can be converted to embeddings and 
-# integrated into NLME modeling to capture information that traditional covariates miss!
