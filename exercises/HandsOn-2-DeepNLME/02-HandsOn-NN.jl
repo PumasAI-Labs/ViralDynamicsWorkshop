@@ -223,7 +223,7 @@ df_mDos = CSV.read("hiv-ipp-multiple-dose.csv", DataFrame; missingstring = "", s
 #############################################################
 
 pop_mDos= read_pumas(
-    df_pd;
+    df_mDos;
     id           = :id,
     time         = :time,
     observations = [:Virus],
