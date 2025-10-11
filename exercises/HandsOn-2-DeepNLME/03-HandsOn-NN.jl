@@ -103,7 +103,8 @@ model_hiv = @model begin
   
     @random begin
       η ~ MvNormal(Ω)
-      EC50_η ~ MvNormal(EC50_Ω) 
+      EC50_η ~ MvNormal(EC50_Ω)
+      a_η ~ MvNormal(a_Ω)
       η_nn ~ Normal()
     end
   
@@ -118,7 +119,7 @@ model_hiv = @model begin
     #   V0 = I0 * γ / ω # assume quasi-equilibirum
 
     EC50 = tvec50 * exp(EC50_η[1])
-  
+      
     iNN_INF = fix(NN1, η_nn)
     end
   
@@ -171,14 +172,14 @@ fit_hiv = fit(
 
 # Save and reload the fit for reproducibility
 # serialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"), fit_hiv)
-# mdl_fit = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
+# fit_hiv = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME2_nn.jls"))
 
 ########################################
 # 5) Predict on Validation Set and Plot
 ########################################
 
 # Predict on validation population for days 0 to 30
-model_pred = predict(mdl_fit, validpop; obstimes = 0:0.5:30)
+model_pred = predict(fit_hiv, validpop; obstimes = 0:0.5:30)
 
 # Plot predictions for validation subjects 11 to 22
 plotgrid(
@@ -233,7 +234,7 @@ df_mDos = CSV.read("hiv-ipp-multiple-dose.csv", DataFrame; missingstring = "", s
 #############################################################
 
 pop_mDos= read_pumas(
-    df_pd;
+  df_mDos;
     id           = :id,
     time         = :time,
     observations = [:Virus],
@@ -256,7 +257,7 @@ plotgrid(testpop[1:8]; data = (; color = :blue))
 ########################################
 
 # Predict on validation population for days 0 to 30
-model_pred = predict(mdl_fit, testpop; obstimes = 0:0.1:90)
+model_pred = predict(fit_hiv, testpop; obstimes = 0:0.1:90)
 
 # Plot predictions for validation subjects 11 to 22
 plotgrid(

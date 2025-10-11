@@ -159,7 +159,7 @@ fit_hiv = fit(
 
 # Save and reload the fit for reproducibility
 serialize(joinpath(ASSETS_DIR, "hiv_DeepNLME_nn.jls"), fit_hiv)
-# mdl_fit = deserialize(joinpath(ARTIFACTS_DIR, "hiv_pkpd_nn.jls"))
+# fit_hiv = deserialize(joinpath(ARTIFACTS_DIR, "hiv_pkpd_nn.jls"))
 
 
 ########################################
@@ -204,7 +204,7 @@ vpcfig_hiv
 # External Validation
 ########################################################################################################################
 
-# mdl_fit = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME_nn.jls"))
+fit_hiv = deserialize(joinpath(ASSETS_DIR, "hiv_DeepNLME_nn.jls"))
 
 ########################################
 # 7) Validation dataset
