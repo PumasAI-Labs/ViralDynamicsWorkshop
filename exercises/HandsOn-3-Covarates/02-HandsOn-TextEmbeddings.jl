@@ -2,11 +2,19 @@
 # Workshop: Text Embeddings and Complex Covariates in NLME
 # Goal: Load PK/PD data with text descriptions → Create embeddings → Link embeddings to 
 #       patient parameters → Augment NLME model with predicted patient parameters
+# Warning: This kind of integration is cutting-edge and does not yet have first-class support
+#          It works, but here be dragons.
 ############################################################################################
 
 ############################
 # 0) Environment & Packages
 ############################
+
+# This time, we'll need packages that are not built-in to the app
+# We manage package environments using Julia's built-in Pkg
+using Pkg
+Pkg.activate(@__DIR__() * "/../../lectures")
+Pkg.instantiate()
 
 using AlgebraOfGraphics
 using DeepPumas            # Neural-embedded NLME modeling
