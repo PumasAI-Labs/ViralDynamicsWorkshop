@@ -46,7 +46,7 @@ Latexify.set_default(starred=true, convert_unicode=false)
 
 ## Traditional NLME {.smaller}
 
-:::: {.columns}
+:::: {.columns style="font-size: 85%;"}
 
 ::: {.column width="50%"}
 
@@ -100,7 +100,7 @@ $$
 
 ## What if components are unknown? {.smaller}
 
-:::: {.columns}
+:::: {.columns style="font-size: 85%;"}
 
 ::: {.column width="50%"}
 
@@ -228,7 +228,7 @@ end
 
 ## Neural networks in NLME dynamics {.smaller}
 
-:::: {.columns}
+:::: {.columns style="font-size: 85%;"}
 
 ::: {.column width="50%"}
 
@@ -289,7 +289,7 @@ $$
 2020 - "Universal Differential Equations for Scientific Machine Learning", Rackauckas et al.
 :::
 
-:::: {.columns}
+:::: {.columns style="font-size: 85%;"}
 ::: {.column width="33%"}
 
 [Neural ODE]{.att}
@@ -342,7 +342,7 @@ $$
 
 ## Encoding Knowledge {.smaller}
 
-:::: {.columns}
+:::: {.columns style="font-size: 85%;"}
 
 ::: {.column width="50%"}
 
