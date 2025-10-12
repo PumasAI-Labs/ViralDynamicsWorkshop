@@ -394,23 +394,22 @@ Niklas Korsbo
 <section id="usage-with-nlme" class="slide level2 center">
 <h2>Usage with NLME</h2>
 <p>Multiple approaches available:</p>
-<ol type="1">
-<li class="fragment"><strong>Use embeddings as NLME covariates</strong>
 <ul>
-<li class="fragment">Straightforward integration</li>
-<li class="fragment">Limited by traditional covariate modeling</li>
-</ul></li>
-<li class="fragment"><strong>Jointly model NLME and embeddings</strong>
+<li><strong>Use embeddings as NLME covariates</strong>
 <ul>
-<li class="fragment">More sophisticated approach</li>
-<li class="fragment">Accounts for uncertainty in embeddings</li>
+<li>Potential dimension reduction first</li>
+<li>Whatever covariate technique you want</li>
 </ul></li>
-<li class="fragment"><strong>Augment existing models</strong>
+<li><strong>Use embeddings as observations</strong>
 <ul>
-<li class="fragment">Add predicted EBEs to trained models</li>
-<li class="fragment">Preserve existing model structure</li>
+<li>FREM modelling?</li>
+<li>Fully joint modelling (requires new algorithms to be feasible)</li>
 </ul></li>
-</ol>
+<li><strong>Augment existing models</strong>
+<ul>
+<li>Predict posterior from embeddings</li>
+</ul></li>
+</ul>
 </section>
 <section id="embedding-augmented-predictions" class="slide level2 center">
 <h2>Embedding-Augmented Predictions</h2>
@@ -466,65 +465,14 @@ Niklas Korsbo
 <section id="embeddings-from-any-data" class="slide level2 center">
 <h2>Embeddings from Any Data</h2>
 <ul>
-<li class="fragment"><strong>Text</strong> (clinical notes, patient descriptions)</li>
-<li class="fragment"><strong>2D Images</strong> (X-rays, histology, photos)</li>
-<li class="fragment"><strong>3D Images</strong> (CT scans, MRI - limited model availability)<br>
+<li><strong>Text</strong> (clinical notes, patient descriptions)</li>
+<li><strong>2D Images</strong> (X-rays, histology, photos)</li>
+<li><strong>3D Images</strong> (CT scans, MRI - limited model availability)<br>
 </li>
-<li class="fragment"><strong>Omics data</strong> (genomics, proteomics - specialized models)</li>
-<li class="fragment"><strong>Time series</strong> (ECG, continuous monitoring)</li>
-<li class="fragment"><strong>Mixed modalities</strong> (combining multiple data types)</li>
+<li><strong>Omics data</strong> (genomics, proteomics - specialized models)</li>
+<li><strong>Time series</strong> (ECG, continuous monitoring)</li>
+<li><strong>Mixed modalities</strong> (combining multiple data types)</li>
 </ul>
-</section>
-<section id="simple-conceptual-pipeline" class="slide level2 center">
-<h2>Simple Conceptual Pipeline</h2>
-<ol type="1">
-<li class="fragment"><strong>Model longitudinal data</strong> with traditional NLME</li>
-<li class="fragment"><strong>Convert complex covariates</strong> to embeddings using pre-trained models</li>
-<li class="fragment"><strong>Find relevant subspace</strong> using dimensionality reduction (PCA)</li>
-<li class="fragment"><strong>Regress embeddings to EBEs</strong> using neural networks</li>
-<li class="fragment"><strong>Predict patient parameters</strong> for new subjects: <span class="math inline">\(η_{pred}\)</span></li>
-<li class="fragment"><strong>Augment NLME model:</strong> <span class="math inline">\(η \rightarrow η + η_{pred}\)</span></li>
-<li class="fragment"><strong>Refit residual distribution</strong> to reflect reduced unexplained variability</li>
-<li class="fragment"><strong>Apply standard NLME methods</strong> (VPC, simulations, etc.)</li>
-</ol>
-<p><strong>Close to trivial to implement!</strong></p>
-</section>
-<section id="generalized-framework" class="slide level2 center">
-<h2>Generalized Framework</h2>
-<p><strong>Training Phase:</strong> <span class="math display">\[
-\max_θ \log p(y | θ) = \sum_i^N \log \int p(y_i | θ, η_i) \cdot p(η_i | θ) dη_i
-\]</span></p>
-<p><strong>Embedding Phase:</strong><br>
-<span class="math display">\[
-z_i^* = \text{Embed}(x_i) \quad \text{where } x_i \text{ is complex covariate data}
-\]</span></p>
-<p><strong>Joint Modeling:</strong> <span class="math display">\[
-\max_{θ,w} \log p(y | θ, z^*) = \sum_i^N \log \int p(y_i | θ, η_i, z_i^*) \cdot p(η_i | θ) dη_i
-\]</span></p>
-</section>
-<section id="key-advantages" class="slide level2 center">
-<h2>Key Advantages</h2>
-<ul>
-<li class="fragment"><strong>Leverages existing models</strong>: Use pre-trained embeddings (GPT, BERT, vision models)</li>
-<li class="fragment"><strong>Data efficient</strong>: Much less data needed than training from scratch</li>
-<li class="fragment"><strong>Scientifically grounded</strong>: Preserves mechanistic understanding in NLME</li>
-<li class="fragment"><strong>Flexible</strong>: Works with any type of complex covariate</li>
-<li class="fragment"><strong>Interpretable</strong>: Can understand which parts are mechanism vs data-driven</li>
-<li class="fragment"><strong>Scalable</strong>: Can handle large-scale clinical datasets</li>
-</ul>
-</section>
-<section id="next-steps" class="slide level2 center">
-<h2>Next Steps</h2>
-<div class="center">
-<p><strong>Coming up:</strong> Hands-on implementation</p>
-<ul>
-<li>Work with synthetic text data</li>
-<li>Build embedding pipelines<br>
-</li>
-<li>Augment NLME models</li>
-<li>See the power of complex covariates in action</li>
-</ul>
-</div>
 
 
 </section></section>

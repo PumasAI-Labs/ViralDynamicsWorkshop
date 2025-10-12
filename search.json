@@ -123,7 +123,7 @@
     "href": "06-embeddings.html#usage-with-nlme",
     "title": "DeepNLME with Complex Covariates",
     "section": "Usage with NLME",
-    "text": "Usage with NLME\nMultiple approaches available:\n\nUse embeddings as NLME covariates\n\nStraightforward integration\nLimited by traditional covariate modeling\n\nJointly model NLME and embeddings\n\nMore sophisticated approach\nAccounts for uncertainty in embeddings\n\nAugment existing models\n\nAdd predicted EBEs to trained models\nPreserve existing model structure"
+    "text": "Usage with NLME\nMultiple approaches available:\n\nUse embeddings as NLME covariates\n\nPotential dimension reduction first\nWhatever covariate technique you want\n\nUse embeddings as observations\n\nFREM modelling?\nFully joint modelling (requires new algorithms to be feasible)\n\nAugment existing models\n\nPredict posterior from embeddings"
   },
   {
     "objectID": "06-embeddings.html#embedding-augmented-predictions",
@@ -145,34 +145,6 @@
     "title": "DeepNLME with Complex Covariates",
     "section": "Embeddings from Any Data",
     "text": "Embeddings from Any Data\n\nText (clinical notes, patient descriptions)\n2D Images (X-rays, histology, photos)\n3D Images (CT scans, MRI - limited model availability)\n\nOmics data (genomics, proteomics - specialized models)\nTime series (ECG, continuous monitoring)\nMixed modalities (combining multiple data types)"
-  },
-  {
-    "objectID": "06-embeddings.html#simple-conceptual-pipeline",
-    "href": "06-embeddings.html#simple-conceptual-pipeline",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Simple Conceptual Pipeline",
-    "text": "Simple Conceptual Pipeline\n\nModel longitudinal data with traditional NLME\nConvert complex covariates to embeddings using pre-trained models\nFind relevant subspace using dimensionality reduction (PCA)\nRegress embeddings to EBEs using neural networks\nPredict patient parameters for new subjects: \\(η_{pred}\\)\nAugment NLME model: \\(η \\rightarrow η + η_{pred}\\)\nRefit residual distribution to reflect reduced unexplained variability\nApply standard NLME methods (VPC, simulations, etc.)\n\nClose to trivial to implement!"
-  },
-  {
-    "objectID": "06-embeddings.html#generalized-framework",
-    "href": "06-embeddings.html#generalized-framework",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Generalized Framework",
-    "text": "Generalized Framework\nTraining Phase: \\[\n\\max_θ \\log p(y | θ) = \\sum_i^N \\log \\int p(y_i | θ, η_i) \\cdot p(η_i | θ) dη_i\n\\]\nEmbedding Phase:\n\\[\nz_i^* = \\text{Embed}(x_i) \\quad \\text{where } x_i \\text{ is complex covariate data}\n\\]\nJoint Modeling: \\[\n\\max_{θ,w} \\log p(y | θ, z^*) = \\sum_i^N \\log \\int p(y_i | θ, η_i, z_i^*) \\cdot p(η_i | θ) dη_i\n\\]"
-  },
-  {
-    "objectID": "06-embeddings.html#key-advantages",
-    "href": "06-embeddings.html#key-advantages",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Key Advantages",
-    "text": "Key Advantages\n\nLeverages existing models: Use pre-trained embeddings (GPT, BERT, vision models)\nData efficient: Much less data needed than training from scratch\nScientifically grounded: Preserves mechanistic understanding in NLME\nFlexible: Works with any type of complex covariate\nInterpretable: Can understand which parts are mechanism vs data-driven\nScalable: Can handle large-scale clinical datasets"
-  },
-  {
-    "objectID": "06-embeddings.html#next-steps",
-    "href": "06-embeddings.html#next-steps",
-    "title": "DeepNLME with Complex Covariates",
-    "section": "Next Steps",
-    "text": "Next Steps\n\nComing up: Hands-on implementation\n\nWork with synthetic text data\nBuild embedding pipelines\n\nAugment NLME models\nSee the power of complex covariates in action"
   },
   {
     "objectID": "04-generative-ai.html#generative-ai",
