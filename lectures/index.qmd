@@ -26,9 +26,9 @@ format:
 
 ## Workshop Materials
 
-This workshop explores how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics applications.
+Welcome to the DeepPumas for Viral Dynamics Workshop! This full-day workshop will teach you how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics and other pharmacometric applications.
 
-To follow along in the presentations, just navigate to any relevant bits from here.
+All materials are ready and available below. Navigate to the slides and exercises using the schedule and links provided.
 
 ### Getting the code to run the hands-on exercises
 
@@ -40,7 +40,7 @@ To follow along in the presentations, just navigate to any relevant bits from he
   - In the **GUI**
     1. Bring up the command pallette (`Ctrl+shift+p`, or from the cogwheel in the bottom left corner)
     1. Search for `git clone`
-    1. clone `https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git`
+    1. clone `https://github.com/PumasAI-Labs/ViralDynamicsWorkshop.git` into `/home/jrun/data/code/`
   - or, in the terminal **terminal**
     1. If you don't have a terminal, open one by searching for `Terminal: focus on terminal view` in the command pallette.
     1. Navigate to `~/data/code`
@@ -68,35 +68,53 @@ To follow along in the presentations, just navigate to any relevant bits from he
 
 ## Key Concepts Covered
 
-### Introduction
-- Comparison of machine learning vs scientific modeling approaches
-- The vision for combining both paradigms
-- Workshop overview and objectives
+### Welcome and Introduction
+- Machine learning vs. scientific modeling: strengths and limitations
+- The vision for combining mechanism and machine learning across pharma
+- Building enhanced NLME models with neural components
 
-### DeepNLME - Part 1  
-- Neural networks as universal approximators
+### NLME Modeling in Pumas
+- Traditional nonlinear mixed effects modeling
+- PK, PK/PD, and sequential data modeling
+- Population parameter estimation and random effects
+- Hands-on implementation with HIV viral dynamics data
+
+### DeepNLME Fundamentals
+- Neural networks as universal function approximators
 - Scientific Machine Learning (SciML) and Universal Differential Equations (UDEs)
-- Neural ODEs vs structured neural enhancement
-- Extending UDEs for longitudinal data with NLME
+- Neural ODEs and structured neural enhancements
+- DeepNLME: extending UDEs for longitudinal pharmacometric data
 
-### Complex Covariates
-- Patient embeddings and Empirical Bayes Estimates (EBEs)
-- Text embeddings using pre-trained models
+### Random Effects and Model Fitting
+- Understanding random effects in mixed models
+- Empirical Bayes Estimates (EBEs) and individual parameter estimation
+- Maximum likelihood estimation and the EM algorithm
+- Computational considerations for fitting DeepNLME models
+
+### Complex Covariates and Embeddings
+- Working with high-dimensional and complex covariates
+- Patient embeddings from EBEs and clinical data
+- Text embeddings using pre-trained language models
 - Dimensionality reduction and subspace analysis
-- Neural networks for predicting patient parameters
-- Augmented NLME models
+- Neural networks for covariate-to-parameter relationships
 
-### Epidemiology Demo
+### NLME and Generative AI
+- Mathematical connections between NLME and modern generative AI
+- Latent variable models, VAEs, and diffusion models
+- Clinical interpretation of learned embeddings
+- Future directions and regulatory considerations
+
+### Embeddings Deep Dive
+- Advanced embedding techniques for pharmacometric applications
+- Integration of multi-modal data (text, images, sequences)
+- Transfer learning from pre-trained models
+- Practical considerations for implementation
+
+### Epidemiology Applications
 - Age-stratified seroprevalence modeling
 - Data-driven discovery of force of infection patterns
-- Information sharing across populations
-- Handling heterogeneous data quality
-
-### Generative AI Connections
-- Mathematical connections between NLME and Generative AI
-- Latent variables, embeddings, and their clinical interpretations
-- Future directions and applications
-- Discussion of regulatory and practical considerations
+- Information sharing across populations and studies
+- Handling heterogeneous data quality and sparse sampling
 
 ## Learning Objectives
 
