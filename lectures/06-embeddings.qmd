@@ -277,9 +277,9 @@ X_test = mapreduce(get_embedding, hcat, test_pop)
 - Our data should be on a **low-dimensional manifold** of the embedding space
   
 
-## Useful spatial patterns in the embedding space (T-SNE)
+## Spatial patterns (T-SNE)
 
-![](images/embedding_space_4.png)
+![&nbsp;](images/embedding_space_4.png){width=70%}
 
 
 ## Principal components of the embeddings
@@ -435,19 +435,16 @@ fig
 
 Multiple approaches available:
 
-::: {.incremental}
-1. **Use embeddings as NLME covariates**
-   - Straightforward integration
-   - Limited by traditional covariate modeling
-   
-2. **Jointly model NLME and embeddings** 
-   - More sophisticated approach
-   - Accounts for uncertainty in embeddings
-   
-3. **Augment existing models**
-   - Add predicted EBEs to trained models
-   - Preserve existing model structure
-:::
+- **Use embeddings as NLME covariates**
+  - Potential dimension reduction first
+  - Whatever covariate technique you want
+
+- **Use embeddings as observations**
+  - FREM modelling?
+  - Fully joint modelling (requires new algorithms to be feasible)
+
+- **Augment existing models**
+   - Predict posterior from embeddings
 
 ## Embedding-Augmented Predictions
 
@@ -528,65 +525,9 @@ Better population-level predictions and reduced unexplained variability!
 
 ## Embeddings from Any Data
 
-::: {.incremental}
 - **Text** (clinical notes, patient descriptions)
 - **2D Images** (X-rays, histology, photos)
 - **3D Images** (CT scans, MRI - limited model availability)  
 - **Omics data** (genomics, proteomics - specialized models)
 - **Time series** (ECG, continuous monitoring)
 - **Mixed modalities** (combining multiple data types)
-:::
-
-## Simple Conceptual Pipeline
-
-::: {.incremental}
-1. **Model longitudinal data** with traditional NLME
-2. **Convert complex covariates** to embeddings using pre-trained models
-3. **Find relevant subspace** using dimensionality reduction (PCA)
-4. **Regress embeddings to EBEs** using neural networks
-5. **Predict patient parameters** for new subjects: $η_{pred}$
-6. **Augment NLME model:** $η \rightarrow η + η_{pred}$
-7. **Refit residual distribution** to reflect reduced unexplained variability
-8. **Apply standard NLME methods** (VPC, simulations, etc.)
-:::
-
-**Close to trivial to implement!**
-
-## Generalized Framework
-
-**Training Phase:**
-$$
-\max_θ \log p(y | θ) = \sum_i^N \log \int p(y_i | θ, η_i) \cdot p(η_i | θ) dη_i
-$$
-
-**Embedding Phase:**  
-$$
-z_i^* = \text{Embed}(x_i) \quad \text{where } x_i \text{ is complex covariate data}
-$$
-
-**Joint Modeling:**
-$$
-\max_{θ,w} \log p(y | θ, z^*) = \sum_i^N \log \int p(y_i | θ, η_i, z_i^*) \cdot p(η_i | θ) dη_i
-$$
-
-## Key Advantages
-
-::: {.incremental}
-- **Leverages existing models**: Use pre-trained embeddings (GPT, BERT, vision models)
-- **Data efficient**: Much less data needed than training from scratch
-- **Scientifically grounded**: Preserves mechanistic understanding in NLME
-- **Flexible**: Works with any type of complex covariate
-- **Interpretable**: Can understand which parts are mechanism vs data-driven
-- **Scalable**: Can handle large-scale clinical datasets
-:::
-
-## Next Steps
-
-::: {.center}
-**Coming up:** Hands-on implementation
-
-- Work with synthetic text data
-- Build embedding pipelines  
-- Augment NLME models
-- See the power of complex covariates in action
-:::
