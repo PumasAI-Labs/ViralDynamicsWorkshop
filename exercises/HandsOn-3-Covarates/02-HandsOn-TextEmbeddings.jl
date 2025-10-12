@@ -292,7 +292,7 @@ nn = MLPDomain(
     (numoutputs(target), identity);  # Output size and activation
     backend = :staticflux,
     act = tanh,           # Activation function
-    reg = L1(1)           # L1 regularization to prevent overfitting
+    reg = L2(1)           # L2 regularization to prevent overfitting
 )
 
 # Fit the neural network to predict EBEs from embeddings
