@@ -271,23 +271,26 @@ X_test = mapreduce(get_embedding, hcat, test_pop)
 
 ## Embedding Subspacing
 
-::: {.incremental}
 - Consider the embedding space as a "meaning space"
 - The original model had Shakespeare and Twitter in its training
 - Our data are all about describing wellness
 - Our data should be on a **low-dimensional manifold** of the embedding space
-:::
+  
 
-**Solution:** Use PCA for dimension reduction
+## Useful spatial patterns in the embedding space (T-SNE)
+
+![](images/embedding_space_4.png)
+
+
+## Principal components of the embeddings
 
 ```{julia}
-#| echo: true
+#| echo: false
 trained_pca = fit(PCA, X_train; maxoutdim = 10)
 X_train_pc = predict(trained_pca, X_train)
 X_test_pc = predict(trained_pca, X_test)
 ```
 
-## Embedding Space Structure
 
 ```{julia}
 scores = unique(patient_data, :id).Score
