@@ -91,11 +91,11 @@
     "text": "Embedding Subspacing\n\nConsider the embedding space as a “meaning space”\nThe original model had Shakespeare and Twitter in its training\nOur data are all about describing wellness\nOur data should be on a low-dimensional manifold of the embedding space"
   },
   {
-    "objectID": "06-embeddings.html#useful-spatial-patterns-in-the-embedding-space-t-sne",
-    "href": "06-embeddings.html#useful-spatial-patterns-in-the-embedding-space-t-sne",
+    "objectID": "06-embeddings.html#spatial-patterns-t-sne",
+    "href": "06-embeddings.html#spatial-patterns-t-sne",
     "title": "DeepNLME with Complex Covariates",
-    "section": "Useful spatial patterns in the embedding space (T-SNE)",
-    "text": "Useful spatial patterns in the embedding space (T-SNE)"
+    "section": "Spatial patterns (T-SNE)",
+    "text": "Spatial patterns (T-SNE)"
   },
   {
     "objectID": "06-embeddings.html#principal-components-of-the-embeddings",
