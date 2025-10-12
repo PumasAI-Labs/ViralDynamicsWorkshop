@@ -9,17 +9,22 @@ format: revealjs
 
 ## Workshop Overview
 
-| Time | Session | Duration |
-|------|---------|----------|
-| 10:00 - 10:20 | **Introduction** | **20 min** |
-| 10:20 - 11:30 | NLME modeling in Pumas (hands-on) | 1h 10min |
-| 11:30 - 12:00 | DeepNLME - Part 1 (lecture) | 30 min |
-| 12:00 - 12:30 | DeepNLME - Part 1 (hands-on) | 30 min |
-| 12:30 - 13:30 | 🍽️ Lunch Break | 1h |
-| 13:30 - 15:30 | DeepNLME with complex covariates | 2h |
-| 15:30 - 15:45 | ☕ Coffee Break | 15 min |
-| 15:45 - 16:15 | Epidemiology demo | 30 min |
-| 16:15 - 17:00 | Discussions and conclusions | 45 min |
+| Time | Session |
+|------|---------|
+| 09:00 - 09:20 | **Welcome and Introduction** |
+| 09:20 - 10:30 | **NLME modeling in Pumas** |
+| 10:30 - 10:45 | ☕ **Coffee Break** |
+| 10:45 - 11:15 | **DeepNLME** |
+| | *Neural networks, SciML, UDEs and NeuralODEs* |
+| 11:15 - 12:30 | **DeepNLME (hands-on)** |
+| 12:30 - 13:30 | 🍽️ **Lunch Break** |
+| 13:30 - 13:55 | **Random effects, fitting NLME, and Generative AI** |
+| 13:55 - 14:40 | **DeepNLME with Complex Covariates** |
+| 14:40 - 15:00 | **NLME and Generative AI** |
+| 15:00 - 15:30 | **Embeddings** |
+| 15:30 - 15:45 | ☕ **Coffee Break** |
+| 15:45 - 16:15 | **Epidemiology Demo** |
+| 16:15 - 17:00 | **Discussions and Conclusions** |
 
 ## 
 
@@ -106,9 +111,6 @@ figure = (; resolution=(1200, 700), fontsize=25)
 Latexify.set_default(starred=true, convert_unicode=false)
 ```
 
-## What We'll Build Today
-
-Starting with traditional NLME models...
 
 ```{julia}
 #| output: false
