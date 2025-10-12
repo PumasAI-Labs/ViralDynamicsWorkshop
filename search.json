@@ -305,7 +305,7 @@
     "href": "01-introduction.html#workshop-overview",
     "title": "DeepPumas for Viral Dynamics",
     "section": "Workshop Overview",
-    "text": "Workshop Overview\n\n\n\nTime\nSession\nDuration\n\n\n\n\n10:00 - 10:20\nIntroduction\n20 min\n\n\n10:20 - 11:30\nNLME modeling in Pumas (hands-on)\n1h 10min\n\n\n11:30 - 12:00\nDeepNLME - Part 1 (lecture)\n30 min\n\n\n12:00 - 12:30\nDeepNLME - Part 1 (hands-on)\n30 min\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n1h\n\n\n13:30 - 15:30\nDeepNLME with complex covariates\n2h\n\n\n15:30 - 15:45\n☕ Coffee Break\n15 min\n\n\n15:45 - 16:15\nEpidemiology demo\n30 min\n\n\n16:15 - 17:00\nDiscussions and conclusions\n45 min"
+    "text": "Workshop Overview\n\n\n\nTime\nSession\n\n\n\n\n09:00 - 09:20\nWelcome and Introduction\n\n\n09:20 - 10:30\nNLME modeling in Pumas\n\n\n10:30 - 10:45\n☕ Coffee Break\n\n\n10:45 - 11:15\nDeepNLME\n\n\n\nNeural networks, SciML, UDEs and NeuralODEs\n\n\n11:15 - 12:30\nDeepNLME (hands-on)\n\n\n12:30 - 13:30\n🍽️ Lunch Break\n\n\n13:30 - 13:55\nRandom effects, fitting NLME, and Generative AI\n\n\n13:55 - 14:40\nDeepNLME with Complex Covariates\n\n\n14:40 - 15:00\nNLME and Generative AI\n\n\n15:00 - 15:30\nEmbeddings\n\n\n15:30 - 15:45\n☕ Coffee Break\n\n\n15:45 - 16:15\nEpidemiology Demo\n\n\n16:15 - 17:00\nDiscussions and Conclusions"
   },
   {
     "objectID": "01-introduction.html#section",
@@ -327,13 +327,6 @@
     "title": "DeepPumas for Viral Dynamics",
     "section": "Vision Spanning Pharma",
     "text": "Vision Spanning Pharma"
-  },
-  {
-    "objectID": "01-introduction.html#what-well-build-today",
-    "href": "01-introduction.html#what-well-build-today",
-    "title": "DeepPumas for Viral Dynamics",
-    "section": "What We’ll Build Today",
-    "text": "What We’ll Build Today\nStarting with traditional NLME models…"
   },
   {
     "objectID": "01-introduction.html#traditional-nlme",
