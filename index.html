@@ -321,11 +321,14 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#schedule-and-materials" id="toc-schedule-and-materials" class="nav-link" data-scroll-target="#schedule-and-materials"><span class="header-section-number">2</span> Schedule and Materials</a></li>
   <li><a href="#key-concepts-covered" id="toc-key-concepts-covered" class="nav-link" data-scroll-target="#key-concepts-covered"><span class="header-section-number">3</span> Key Concepts Covered</a>
   <ul class="collapse">
-  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">3.1</span> Introduction</a></li>
-  <li><a href="#deepnlme---part-1" id="toc-deepnlme---part-1" class="nav-link" data-scroll-target="#deepnlme---part-1"><span class="header-section-number">3.2</span> DeepNLME - Part 1</a></li>
-  <li><a href="#complex-covariates" id="toc-complex-covariates" class="nav-link" data-scroll-target="#complex-covariates"><span class="header-section-number">3.3</span> Complex Covariates</a></li>
-  <li><a href="#epidemiology-demo" id="toc-epidemiology-demo" class="nav-link" data-scroll-target="#epidemiology-demo"><span class="header-section-number">3.4</span> Epidemiology Demo</a></li>
-  <li><a href="#generative-ai-connections" id="toc-generative-ai-connections" class="nav-link" data-scroll-target="#generative-ai-connections"><span class="header-section-number">3.5</span> Generative AI Connections</a></li>
+  <li><a href="#welcome-and-introduction" id="toc-welcome-and-introduction" class="nav-link" data-scroll-target="#welcome-and-introduction"><span class="header-section-number">3.1</span> Welcome and Introduction</a></li>
+  <li><a href="#nlme-modeling-in-pumas" id="toc-nlme-modeling-in-pumas" class="nav-link" data-scroll-target="#nlme-modeling-in-pumas"><span class="header-section-number">3.2</span> NLME Modeling in Pumas</a></li>
+  <li><a href="#deepnlme-fundamentals" id="toc-deepnlme-fundamentals" class="nav-link" data-scroll-target="#deepnlme-fundamentals"><span class="header-section-number">3.3</span> DeepNLME Fundamentals</a></li>
+  <li><a href="#random-effects-and-model-fitting" id="toc-random-effects-and-model-fitting" class="nav-link" data-scroll-target="#random-effects-and-model-fitting"><span class="header-section-number">3.4</span> Random Effects and Model Fitting</a></li>
+  <li><a href="#complex-covariates-and-embeddings" id="toc-complex-covariates-and-embeddings" class="nav-link" data-scroll-target="#complex-covariates-and-embeddings"><span class="header-section-number">3.5</span> Complex Covariates and Embeddings</a></li>
+  <li><a href="#nlme-and-generative-ai" id="toc-nlme-and-generative-ai" class="nav-link" data-scroll-target="#nlme-and-generative-ai"><span class="header-section-number">3.6</span> NLME and Generative AI</a></li>
+  <li><a href="#embeddings-deep-dive" id="toc-embeddings-deep-dive" class="nav-link" data-scroll-target="#embeddings-deep-dive"><span class="header-section-number">3.7</span> Embeddings Deep Dive</a></li>
+  <li><a href="#epidemiology-applications" id="toc-epidemiology-applications" class="nav-link" data-scroll-target="#epidemiology-applications"><span class="header-section-number">3.8</span> Epidemiology Applications</a></li>
   </ul></li>
   <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">4</span> Learning Objectives</a></li>
   <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites"><span class="header-section-number">5</span> Prerequisites</a></li>
@@ -376,8 +379,8 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="workshop-materials" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="workshop-materials"><span class="header-section-number">1</span> Workshop Materials</h2>
-<p>This workshop explores how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics applications.</p>
-<p>To follow along in the presentations, just navigate to any relevant bits from here.</p>
+<p>Welcome to the DeepPumas for Viral Dynamics Workshop! This full-day workshop will teach you how to combine mechanistic modeling with machine learning using DeepPumas for viral dynamics and other pharmacometric applications.</p>
+<p>All materials are ready and available below. Navigate to the slides and exercises using the schedule and links provided.</p>
 <section id="getting-the-code-to-run-the-hands-on-exercises" class="level3" data-number="1.1">
 <h3 data-number="1.1" class="anchored" data-anchor-id="getting-the-code-to-run-the-hands-on-exercises"><span class="header-section-number">1.1</span> Getting the code to run the hands-on exercises</h3>
 <ul>
@@ -491,49 +494,76 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="key-concepts-covered" class="level2" data-number="3">
 <h2 data-number="3" class="anchored" data-anchor-id="key-concepts-covered"><span class="header-section-number">3</span> Key Concepts Covered</h2>
-<section id="introduction" class="level3" data-number="3.1">
-<h3 data-number="3.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">3.1</span> Introduction</h3>
+<section id="welcome-and-introduction" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="welcome-and-introduction"><span class="header-section-number">3.1</span> Welcome and Introduction</h3>
 <ul>
-<li>Comparison of machine learning vs scientific modeling approaches</li>
-<li>The vision for combining both paradigms</li>
-<li>Workshop overview and objectives</li>
+<li>Machine learning vs.&nbsp;scientific modeling: strengths and limitations</li>
+<li>The vision for combining mechanism and machine learning across pharma</li>
+<li>Building enhanced NLME models with neural components</li>
 </ul>
 </section>
-<section id="deepnlme---part-1" class="level3" data-number="3.2">
-<h3 data-number="3.2" class="anchored" data-anchor-id="deepnlme---part-1"><span class="header-section-number">3.2</span> DeepNLME - Part 1</h3>
+<section id="nlme-modeling-in-pumas" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="nlme-modeling-in-pumas"><span class="header-section-number">3.2</span> NLME Modeling in Pumas</h3>
 <ul>
-<li>Neural networks as universal approximators</li>
+<li>Traditional nonlinear mixed effects modeling</li>
+<li>PK, PK/PD, and sequential data modeling</li>
+<li>Population parameter estimation and random effects</li>
+<li>Hands-on implementation with HIV viral dynamics data</li>
+</ul>
+</section>
+<section id="deepnlme-fundamentals" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="deepnlme-fundamentals"><span class="header-section-number">3.3</span> DeepNLME Fundamentals</h3>
+<ul>
+<li>Neural networks as universal function approximators</li>
 <li>Scientific Machine Learning (SciML) and Universal Differential Equations (UDEs)</li>
-<li>Neural ODEs vs structured neural enhancement</li>
-<li>Extending UDEs for longitudinal data with NLME</li>
+<li>Neural ODEs and structured neural enhancements</li>
+<li>DeepNLME: extending UDEs for longitudinal pharmacometric data</li>
 </ul>
 </section>
-<section id="complex-covariates" class="level3" data-number="3.3">
-<h3 data-number="3.3" class="anchored" data-anchor-id="complex-covariates"><span class="header-section-number">3.3</span> Complex Covariates</h3>
+<section id="random-effects-and-model-fitting" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="random-effects-and-model-fitting"><span class="header-section-number">3.4</span> Random Effects and Model Fitting</h3>
 <ul>
-<li>Patient embeddings and Empirical Bayes Estimates (EBEs)</li>
-<li>Text embeddings using pre-trained models</li>
-<li>Dimensionality reduction and subspace analysis</li>
-<li>Neural networks for predicting patient parameters</li>
-<li>Augmented NLME models</li>
+<li>Understanding random effects in mixed models</li>
+<li>Empirical Bayes Estimates (EBEs) and individual parameter estimation</li>
+<li>Maximum likelihood estimation and the EM algorithm</li>
+<li>Computational considerations for fitting DeepNLME models</li>
 </ul>
 </section>
-<section id="epidemiology-demo" class="level3" data-number="3.4">
-<h3 data-number="3.4" class="anchored" data-anchor-id="epidemiology-demo"><span class="header-section-number">3.4</span> Epidemiology Demo</h3>
+<section id="complex-covariates-and-embeddings" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="complex-covariates-and-embeddings"><span class="header-section-number">3.5</span> Complex Covariates and Embeddings</h3>
+<ul>
+<li>Working with high-dimensional and complex covariates</li>
+<li>Patient embeddings from EBEs and clinical data</li>
+<li>Text embeddings using pre-trained language models</li>
+<li>Dimensionality reduction and subspace analysis</li>
+<li>Neural networks for covariate-to-parameter relationships</li>
+</ul>
+</section>
+<section id="nlme-and-generative-ai" class="level3" data-number="3.6">
+<h3 data-number="3.6" class="anchored" data-anchor-id="nlme-and-generative-ai"><span class="header-section-number">3.6</span> NLME and Generative AI</h3>
+<ul>
+<li>Mathematical connections between NLME and modern generative AI</li>
+<li>Latent variable models, VAEs, and diffusion models</li>
+<li>Clinical interpretation of learned embeddings</li>
+<li>Future directions and regulatory considerations</li>
+</ul>
+</section>
+<section id="embeddings-deep-dive" class="level3" data-number="3.7">
+<h3 data-number="3.7" class="anchored" data-anchor-id="embeddings-deep-dive"><span class="header-section-number">3.7</span> Embeddings Deep Dive</h3>
+<ul>
+<li>Advanced embedding techniques for pharmacometric applications</li>
+<li>Integration of multi-modal data (text, images, sequences)</li>
+<li>Transfer learning from pre-trained models</li>
+<li>Practical considerations for implementation</li>
+</ul>
+</section>
+<section id="epidemiology-applications" class="level3" data-number="3.8">
+<h3 data-number="3.8" class="anchored" data-anchor-id="epidemiology-applications"><span class="header-section-number">3.8</span> Epidemiology Applications</h3>
 <ul>
 <li>Age-stratified seroprevalence modeling</li>
 <li>Data-driven discovery of force of infection patterns</li>
-<li>Information sharing across populations</li>
-<li>Handling heterogeneous data quality</li>
-</ul>
-</section>
-<section id="generative-ai-connections" class="level3" data-number="3.5">
-<h3 data-number="3.5" class="anchored" data-anchor-id="generative-ai-connections"><span class="header-section-number">3.5</span> Generative AI Connections</h3>
-<ul>
-<li>Mathematical connections between NLME and Generative AI</li>
-<li>Latent variables, embeddings, and their clinical interpretations</li>
-<li>Future directions and applications</li>
-<li>Discussion of regulatory and practical considerations</li>
+<li>Information sharing across populations and studies</li>
+<li>Handling heterogeneous data quality and sparse sampling</li>
 </ul>
 </section>
 </section>
