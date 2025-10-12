@@ -182,3 +182,7 @@ $z$ captures informative properties not directly observed
 
 - Not individual measurements
 - **Rather:** Disease state, treatment response, patient phenotype
+  
+# Embedding models
+
+![](images/vae_encoder.png)
