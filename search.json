@@ -46,7 +46,7 @@
     "href": "index.html#resources",
     "title": "DeepPumas for Viral Dynamics Workshop",
     "section": "6 Resources",
-    "text": "6 Resources\n\nDeepPumas Documentation\nPumas Documentation\nWorkshop GitHub Repository"
+    "text": "6 Resources\n\nDeepPumas Documentation\nPumas Documentation\nWorkshop GitHub Repository\n\n\nFeedback form"
   },
   {
     "objectID": "06-embeddings.html#the-data-challenge",
@@ -88,14 +88,21 @@
     "href": "06-embeddings.html#embedding-subspacing",
     "title": "DeepNLME with Complex Covariates",
     "section": "Embedding Subspacing",
-    "text": "Embedding Subspacing\n\nConsider the embedding space as a “meaning space”\nThe original model had Shakespeare and Twitter in its training\nOur data are all about describing wellness\nOur data should be on a low-dimensional manifold of the embedding space\n\nSolution: Use PCA for dimension reduction\n\ntrained_pca = fit(PCA, X_train; maxoutdim = 10)\nX_train_pc = predict(trained_pca, X_train)\nX_test_pc = predict(trained_pca, X_test)"
+    "text": "Embedding Subspacing\n\nConsider the embedding space as a “meaning space”\nThe original model had Shakespeare and Twitter in its training\nOur data are all about describing wellness\nOur data should be on a low-dimensional manifold of the embedding space"
   },
   {
-    "objectID": "06-embeddings.html#embedding-space-structure",
-    "href": "06-embeddings.html#embedding-space-structure",
+    "objectID": "06-embeddings.html#useful-spatial-patterns-in-the-embedding-space-t-sne",
+    "href": "06-embeddings.html#useful-spatial-patterns-in-the-embedding-space-t-sne",
     "title": "DeepNLME with Complex Covariates",
-    "section": "Embedding Space Structure",
-    "text": "Embedding Space Structure\n\n\n\n\n\nText embeddings capture meaningful clinical information!"
+    "section": "Useful spatial patterns in the embedding space (T-SNE)",
+    "text": "Useful spatial patterns in the embedding space (T-SNE)"
+  },
+  {
+    "objectID": "06-embeddings.html#principal-components-of-the-embeddings",
+    "href": "06-embeddings.html#principal-components-of-the-embeddings",
+    "title": "DeepNLME with Complex Covariates",
+    "section": "Principal components of the embeddings",
+    "text": "Principal components of the embeddings\n\n\n\n\n\nText embeddings capture meaningful clinical information!"
   },
   {
     "objectID": "06-embeddings.html#connecting-embeddings-to-ebes",

@@ -334,30 +334,28 @@ Niklas Korsbo
 <section id="embedding-subspacing" class="slide level2 center">
 <h2>Embedding Subspacing</h2>
 <ul>
-<li class="fragment">Consider the embedding space as a “meaning space”</li>
-<li class="fragment">The original model had Shakespeare and Twitter in its training</li>
-<li class="fragment">Our data are all about describing wellness</li>
-<li class="fragment">Our data should be on a <strong>low-dimensional manifold</strong> of the embedding space</li>
+<li>Consider the embedding space as a “meaning space”</li>
+<li>The original model had Shakespeare and Twitter in its training</li>
+<li>Our data are all about describing wellness</li>
+<li>Our data should be on a <strong>low-dimensional manifold</strong> of the embedding space</li>
 </ul>
-<p><strong>Solution:</strong> Use PCA for dimension reduction</p>
-<div id="18" class="cell" data-execution_count="0">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource julia number-lines code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a></a>trained_pca <span class="op">=</span> <span class="fu">fit</span>(PCA, X_train; maxoutdim <span class="op">=</span> <span class="fl">10</span>)</span>
-<span id="cb2-2"><a></a>X_train_pc <span class="op">=</span> <span class="fu">predict</span>(trained_pca, X_train)</span>
-<span id="cb2-3"><a></a>X_test_pc <span class="op">=</span> <span class="fu">predict</span>(trained_pca, X_test)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </section>
-<section id="embedding-space-structure" class="slide level2 center">
-<h2>Embedding Space Structure</h2>
+<section id="useful-spatial-patterns-in-the-embedding-space-t-sne" class="slide level2 center">
+<h2>Useful spatial patterns in the embedding space (T-SNE)</h2>
+<p><a href="images/embedding_space_4.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img data-src="images/embedding_space_4.png"></a></p>
+</section>
+<section id="principal-components-of-the-embeddings" class="slide level2 center">
+<h2>Principal components of the embeddings</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><a href="assets/wellness_vs_latent.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img data-src="assets/wellness_vs_latent.png" class="quarto-figure quarto-figure-center" style="width:60.0%"></a></p>
+<p><a href="assets/wellness_vs_latent.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img data-src="assets/wellness_vs_latent.png" class="quarto-figure quarto-figure-center" style="width:60.0%"></a></p>
 </figure>
 </div>
 <p>Text embeddings capture meaningful clinical information!</p>
 </section>
 <section id="connecting-embeddings-to-ebes" class="slide level2 center">
 <h2>Connecting Embeddings to EBEs</h2>
-<p><a href="assets/ebe_vs_embedding.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img data-src="assets/ebe_vs_embedding.png"></a></p>
+<p><a href="assets/ebe_vs_embedding.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img data-src="assets/ebe_vs_embedding.png"></a></p>
 <p><strong>Strong correlations</strong> between text embeddings and patient-specific parameters!</p>
 </section></section>
 <section>
@@ -372,12 +370,12 @@ Niklas Korsbo
 <div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><a href="assets/nn.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img data-src="assets/nn.png" class="quarto-figure quarto-figure-center"></a></p>
+<p><a href="assets/nn.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img data-src="assets/nn.png" class="quarto-figure quarto-figure-center"></a></p>
 </figure>
 </div>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 66.7%;justify-content: center;">
-<p><a href="assets/predicted_ebes.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img data-src="assets/predicted_ebes.png"></a></p>
+<p><a href="assets/predicted_ebes.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img data-src="assets/predicted_ebes.png"></a></p>
 </div>
 </div>
 </div>
@@ -443,7 +441,7 @@ Niklas Korsbo
 </table>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 80.0%;justify-content: center;">
-<p><a href="assets/aug_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img data-src="assets/aug_traj.png"></a></p>
+<p><a href="assets/aug_traj.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img data-src="assets/aug_traj.png"></a></p>
 </div>
 </div>
 </div>
