@@ -13,7 +13,7 @@
   <meta name="generator" content="quarto-1.8.24">
 
   <meta name="author" content="Niklas Korsbo">
-  <meta name="dcterms.date" content="2025-10-11">
+  <meta name="dcterms.date" content="2025-10-12">
   <title>DeepPumas for Viral Dynamics Workshop – Random effects</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -146,7 +146,7 @@ Niklas Korsbo
 </div>
 </div>
 
-  <p class="date">2025-10-11</p>
+  <p class="date">2025-10-12</p>
 </section>
 <section>
 <section id="mixed-effects" class="title-slide slide level1 center">
@@ -323,7 +323,7 @@ p_m(y | θ, x) = \int p_c(y | θ, η, x) \cdot p_{prior}(η | θ) dη
       
 ## Let's incrementally break this
 
-```rozqhtg
+```wektuox
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -362,7 +362,7 @@ plotgrid(sims)
 ```
 
 
-```rozqhtg
+```wektuox
 model1 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -385,7 +385,7 @@ fpm = fit(model1, pop, init_params(model1), FOCE())
 ```
 
 
-```rozqhtg
+```wektuox
 #| output: true 
 #| eval: true
 pkmodel = @model begin
@@ -424,7 +424,7 @@ plotgrid(sims)
 ```
 
 
-```rozqhtg
+```wektuox
 model2 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -443,7 +443,7 @@ model2 = @model begin
 end
 ```
 
-```rozqhtg
+```wektuox
 model3 = @model begin
   @param begin
     # tvKa in RealDomain(; lower=0)
@@ -463,12 +463,12 @@ model3 = @model begin
 end
 ```
 
-```rozqhtg
+```wektuox
 fpm1 = fit(model1, pop, init_params(model1), FOCE())
 fpm2 = fit(model2, pop, init_params(model2), FOCE())
 fpm3 = fit(model3, pop, init_params(model3), FOCE())
 ```
-```rozqhtg
+```wektuox
 coef(fpm3).c
 ```
 
