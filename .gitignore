@@ -8,3 +8,5 @@ _freeze/
 _site/
 _freeze/
 *.code-workspace
+.quarto/
+Manifest.toml
